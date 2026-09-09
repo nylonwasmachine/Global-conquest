@@ -1,1 +1,139 @@
+```html
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Global Conquest</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="game-screen">
+
+        <header class="game-header">
+
+            <div>
+                <h1>GLOBAL CONQUEST</h1>
+
+                <p id="playerName">
+                    LOADING...
+                </p>
+            </div>
+
+            <button
+                class="logout-button"
+                onclick="logout()">
+                LOG OUT
+            </button>
+
+        </header>
+
+
+        <main class="game-content">
+
+            <section class="welcome-panel">
+
+                <h2>WELCOME, COMMANDER</h2>
+
+                <p>
+                    Je bent succesvol ingelogd.
+                </p>
+
+
+                <div class="stats">
+
+                    <div class="stat">
+                        <span>POINTS</span>
+                        <strong id="points">0</strong>
+                    </div>
+
+                    <div class="stat">
+                        <span>MANPOWER</span>
+                        <strong id="manpower">0</strong>
+                    </div>
+
+                    <div class="stat">
+                        <span>FACTORIES</span>
+                        <strong id="factories">0</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="map-placeholder">
+
+                <div class="map-icon">
+                    🌍
+                </div>
+
+                <h2>WORLD MAP</h2>
+
+                <p>
+                    De wereldkaart wordt hier gebouwd.
+                </p>
+
+                <button class="start-map-button">
+                    ENTER WORLD
+                </button>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script>
+
+        // ==============================
+        // INGelogde speler ophalen
+        // ==============================
+
+        const speler =
+            sessionStorage.getItem(
+                "globalConquestPlayer"
+            );
+
+
+        // ==============================
+        // Controleren of iemand is ingelogd
+        // ==============================
+
+        if (!speler) {
+
+            window.location.href = "index.html";
+
+        } else {
+
+            document.getElementById("playerName")
+                .textContent =
+                "COMMANDER: " + speler;
+
+        }
+
+
+        // ==============================
+        // UITLOGGEN
+        // ==============================
+
+        function logout() {
+
+            sessionStorage.removeItem(
+                "globalConquestPlayer"
+            );
+
+            window.location.href =
+                "index.html";
+        }
+
+    </script>
+
+</body>
+</html>
+```
