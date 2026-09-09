@@ -1,38 +1,23 @@
 /* =========================================================
    GLOBAL CONQUEST
-   MAIN COMMAND INTERFACE
-   ========================================================= */
-
-
-/* =========================================================
-   RESET
    ========================================================= */
 
 * {
     box-sizing: border-box;
-
     margin: 0;
     padding: 0;
 }
 
-
 html,
 body {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
 }
 
-
 body {
-    overflow: hidden;
-
-    background: #020603;
-
-    color: #d9ead8;
-
-    font-family:
-        "Courier New",
-        monospace;
+    background: #020604;
+    color: #d9fff0;
+    font-family: "Courier New", monospace;
 }
 
 
@@ -41,142 +26,65 @@ body {
    ========================================================= */
 
 .start-screen {
-    position: relative;
-
-    width: 100vw;
-    height: 100vh;
-
+    position: fixed;
+    inset: 0;
     overflow: hidden;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
     background:
         radial-gradient(
             circle at center,
-            rgba(38, 100, 50, 0.28) 0%,
-            rgba(10, 31, 17, 0.8) 40%,
-            #020603 85%
-        );
+            rgba(0,255,150,.08),
+            transparent 55%
+        ),
+        #020604;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
-
-/* =========================================================
-   BACKGROUND GRID
-   ========================================================= */
 
 .background-grid {
     position: absolute;
-
     inset: 0;
-
-    pointer-events: none;
 
     background-image:
         linear-gradient(
-            rgba(120, 220, 120, 0.045) 1px,
+            rgba(0,255,150,.06) 1px,
             transparent 1px
         ),
         linear-gradient(
             90deg,
-            rgba(120, 220, 120, 0.045) 1px,
+            rgba(0,255,150,.06) 1px,
             transparent 1px
         );
 
-    background-size: 50px 50px;
-
-    mask-image:
-        radial-gradient(
-            ellipse at center,
-            black 0%,
-            transparent 80%
-        );
+    background-size: 40px 40px;
 }
-
-
-/* =========================================================
-   SCANLINES
-   ========================================================= */
 
 .scanlines {
     position: absolute;
-
     inset: 0;
-
-    pointer-events: none;
 
     background:
         repeating-linear-gradient(
             0deg,
-            rgba(255,255,255,0.018),
-            rgba(255,255,255,0.018) 1px,
-            transparent 1px,
-            transparent 4px
+            transparent,
+            transparent 3px,
+            rgba(0,0,0,.14) 4px
         );
 
-    opacity: 0.45;
-}
-
-
-/* =========================================================
-   DECORATIVE GLOW
-   ========================================================= */
-
-.start-screen::before {
-    content: "";
-
-    position: absolute;
-
-    width: 650px;
-    height: 650px;
-
-    border: 1px solid rgba(100, 200, 100, 0.08);
-
-    border-radius: 50%;
-
-    box-shadow:
-        0 0 100px rgba(60, 160, 70, 0.08);
-
     pointer-events: none;
 }
-
-
-.start-screen::after {
-    content: "";
-
-    position: absolute;
-
-    inset: 30px;
-
-    border: 1px solid rgba(90, 180, 90, 0.08);
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   SYSTEM STATUS
-   ========================================================= */
 
 .system-status {
     position: absolute;
+    top: 25px;
+    left: 30px;
 
-    top: 30px;
-    left: 35px;
-
-    z-index: 3;
-
-    color: #769b7b;
-
+    color: #5d9b7e;
     font-size: 10px;
-
     letter-spacing: 2px;
 }
 
-
-.status-dot {
+.status-light {
     display: inline-block;
 
     width: 7px;
@@ -184,189 +92,697 @@ body {
 
     margin-right: 7px;
 
+    background: #52ffad;
     border-radius: 50%;
 
-    background: #72dc68;
-
     box-shadow:
-        0 0 10px rgba(114, 220, 104, 0.8);
-
-    animation: pulse 2s infinite;
+        0 0 10px #52ffad;
 }
 
+.version {
+    position: absolute;
+    top: 25px;
+    right: 30px;
 
-@keyframes pulse {
+    color: #456b59;
+    font-size: 9px;
+    letter-spacing: 2px;
+}
 
-    0%,
-    100% {
-        opacity: 1;
-    }
+.start-content {
+    position: relative;
+    z-index: 2;
 
-    50% {
-        opacity: 0.4;
-    }
+    text-align: center;
+}
 
+.title-small {
+    color: #6aa78a;
+    font-size: 12px;
+    letter-spacing: 6px;
+    margin-bottom: 15px;
+}
+
+.start-content h1 {
+    color: #dffff0;
+
+    font-size: clamp(
+        50px,
+        9vw,
+        110px
+    );
+
+    line-height: .85;
+    letter-spacing: 7px;
+
+    text-shadow:
+        0 0 20px rgba(0,255,150,.18);
+}
+
+.start-content h1 span {
+    color: #52ffad;
+}
+
+.title-line {
+    width: 240px;
+    height: 1px;
+
+    margin: 30px auto 20px;
+
+    background: #52ffad;
+
+    box-shadow:
+        0 0 15px #52ffad;
+}
+
+.tagline {
+    color: #6d9d87;
+
+    font-size: 10px;
+    letter-spacing: 5px;
+
+    margin-bottom: 35px;
+}
+
+.main-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 25px;
+
+    padding: 15px 30px;
+
+    background: rgba(0,255,150,.06);
+
+    border: 1px solid #52ffad;
+
+    color: #8bffca;
+
+    font-family: inherit;
+    font-weight: bold;
+    letter-spacing: 3px;
+
+    cursor: pointer;
+
+    transition:
+        .2s ease;
+}
+
+.main-button:hover {
+    background: rgba(0,255,150,.15);
+
+    box-shadow:
+        0 0 30px rgba(0,255,150,.2);
+
+    transform:
+        translateY(-2px);
+}
+
+.bottom-info {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    color: #365747;
+
+    font-size: 8px;
+    letter-spacing: 2px;
+
+    white-space: nowrap;
 }
 
 
 /* =========================================================
-   VERSION
+   LOGIN
    ========================================================= */
 
-.version {
+.login-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0,5,3,.92);
+}
+
+.login-overlay.hidden {
+    display: none;
+}
+
+.login-grid {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(0,255,150,.05) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0,255,150,.05) 1px,
+            transparent 1px
+        );
+
+    background-size: 35px 35px;
+}
+
+.login-scanlines {
+    position: absolute;
+    inset: 0;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 4px,
+            rgba(0,0,0,.2) 5px
+        );
+}
+
+.login-box {
+    position: relative;
+    z-index: 2;
+
+    width: min(
+        430px,
+        calc(100% - 35px)
+    );
+
+    padding: 40px;
+
+    background:
+        rgba(3,11,7,.97);
+
+    border: 1px solid rgba(0,255,150,.35);
+
+    box-shadow:
+        0 0 50px rgba(0,0,0,.6);
+}
+
+.login-corner {
     position: absolute;
 
-    top: 30px;
-    right: 35px;
+    width: 15px;
+    height: 15px;
 
-    color: #49674e;
+    border-color: #52ffad;
+}
+
+.login-corner.tl {
+    top: -1px;
+    left: -1px;
+
+    border-top: 2px solid;
+    border-left: 2px solid;
+}
+
+.login-corner.tr {
+    top: -1px;
+    right: -1px;
+
+    border-top: 2px solid;
+    border-right: 2px solid;
+}
+
+.login-corner.bl {
+    bottom: -1px;
+    left: -1px;
+
+    border-bottom: 2px solid;
+    border-left: 2px solid;
+}
+
+.login-corner.br {
+    bottom: -1px;
+    right: -1px;
+
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+}
+
+.login-top {
+    color: #5f9d80;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+
+    margin-bottom: 25px;
+}
+
+.login-box h2 {
+    color: #bffff0;
+
+    font-size: 25px;
+    letter-spacing: 4px;
+}
+
+.login-subtitle {
+    color: #537a67;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+
+    margin:
+        10px 0 30px;
+}
+
+.login-box label {
+    display: block;
+
+    color: #60967c;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+
+    margin:
+        18px 0 7px;
+}
+
+.login-box input {
+    width: 100%;
+
+    padding: 13px;
+
+    background: #020805;
+
+    border: 1px solid #244837;
+
+    color: #cffff0;
+
+    font-family: inherit;
+
+    outline: none;
+}
+
+.login-box input:focus {
+    border-color: #52ffad;
+
+    box-shadow:
+        0 0 12px rgba(0,255,150,.1);
+}
+
+.login-button {
+    width: 100%;
+
+    margin-top: 25px;
+
+    padding: 14px;
+
+    background: rgba(0,255,150,.08);
+
+    border: 1px solid #52ffad;
+
+    color: #7dffc2;
+
+    font-family: inherit;
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background:
+        rgba(0,255,150,.18);
+}
+
+.close-login {
+    display: block;
+
+    margin: 17px auto 0;
+
+    background: none;
+    border: none;
+
+    color: #4e6e5d;
+
+    font-family: inherit;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+
+    cursor: pointer;
+}
+
+.login-status {
+    min-height: 20px;
+
+    margin-top: 20px;
+
+    text-align: center;
+
+    color: #62967d;
+
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.login-status.error {
+    color: #d66a6a;
+}
+
+.login-status.loading {
+    color: #7dffc2;
+}
+
+
+/* =========================================================
+   GAME COMMAND CENTER
+   ========================================================= */
+
+.game-body {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(0,255,150,.06),
+            transparent 45%
+        ),
+        #020604;
+}
+
+.game-screen {
+    min-height: 100vh;
+}
+
+.game-header {
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 25px;
+
+    border-bottom:
+        1px solid rgba(0,255,150,.2);
+
+    background:
+        rgba(3,10,7,.95);
+}
+
+.game-logo {
+    color: #bffff0;
+
+    font-weight: bold;
+
+    letter-spacing: 4px;
+}
+
+.game-logo span {
+    color: #52ffad;
+}
+
+.commander-display {
+    margin-left: auto;
+    margin-right: 25px;
+
+    color: #4e7865;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+.commander-display strong {
+    color: #9bffd1;
+}
+
+.logout-button {
+    padding: 9px 14px;
+
+    background: transparent;
+
+    border: 1px solid #294a39;
+
+    color: #608b75;
+
+    font-family: inherit;
+
+    font-size: 9px;
+
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    border-color: #52ffad;
+    color: #9dffd0;
+}
+
+.game-content {
+    width: min(
+        1250px,
+        calc(100% - 40px)
+    );
+
+    margin: 0 auto;
+
+    padding:
+        30px 0 50px;
+}
+
+.welcome-panel {
+    padding: 25px;
+
+    border:
+        1px solid rgba(0,255,150,.2);
+
+    background:
+        rgba(3,12,8,.8);
+}
+
+.panel-status {
+    color: #52ffad;
+
+    font-size: 8px;
+    letter-spacing: 3px;
+
+    margin-bottom: 15px;
+}
+
+.welcome-panel h1 {
+    color: #cffff0;
+
+    font-size: 25px;
+    letter-spacing: 3px;
+}
+
+.welcome-panel h1 span {
+    color: #52ffad;
+}
+
+.welcome-panel p {
+    color: #557b68;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+
+    margin-top: 10px;
+}
+
+.stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin-top: 25px;
+}
+
+.stat-box {
+    padding: 18px;
+
+    background:
+        rgba(0,255,150,.025);
+
+    border:
+        1px solid rgba(0,255,150,.12);
+}
+
+.stat-label {
+    color: #4e7965;
+
+    font-size: 8px;
+    letter-spacing: 2px;
+}
+
+.stat-value {
+    color: #a9ffda;
+
+    font-size: 25px;
+    font-weight: bold;
+
+    margin-top: 8px;
+}
+
+
+/* =========================================================
+   ENTER WORLD
+   ========================================================= */
+
+.world-entry {
+    position: relative;
+
+    min-height: 440px;
+
+    margin-top: 25px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(0,255,150,.35);
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(0,255,150,.1),
+            transparent 55%
+        ),
+        #050c09;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.world-entry-grid {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(0,255,150,.06) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0,255,150,.06) 1px,
+            transparent 1px
+        );
+
+    background-size: 35px 35px;
+}
+
+.world-entry-scan {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            transparent 48%,
+            rgba(0,255,150,.12) 50%,
+            transparent 52%
+        );
+
+    background-size:
+        100% 10px;
+
+    opacity: .35;
+
+    pointer-events: none;
+}
+
+.world-entry-content {
+    position: relative;
+    z-index: 2;
+
+    text-align: center;
+
+    padding: 45px 20px;
+}
+
+.world-entry-status {
+    color: #6affbd;
+
+    font-size: 10px;
+    letter-spacing: 3px;
+
+    margin-bottom: 20px;
+}
+
+.status-dot {
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    background: #52ffad;
+
+    border-radius: 50%;
+
+    margin-right: 8px;
+
+    box-shadow:
+        0 0 12px #52ffad;
+}
+
+.world-globe {
+    font-size: 70px;
+
+    filter:
+        drop-shadow(
+            0 0 18px
+            rgba(0,255,150,.45)
+        );
+
+    margin-bottom: 5px;
+}
+
+.world-entry h2 {
+    margin: 0;
+
+    color: #d9fff0;
+
+    font-size: 32px;
+
+    letter-spacing: 6px;
+}
+
+.world-entry p {
+    color: #72a890;
+
+    letter-spacing: 3px;
+
+    font-size: 11px;
+}
+
+.world-entry-info {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 25px;
+
+    margin: 25px 0;
+
+    color: #4f806c;
 
     font-size: 9px;
 
     letter-spacing: 2px;
 }
 
-
-/* =========================================================
-   START CONTENT
-   ========================================================= */
-
-.start-content {
-    position: relative;
-
-    z-index: 2;
-
-    width: min(800px, 90%);
-
-    text-align: center;
-}
-
-
-/* =========================================================
-   TOP LABEL
-   ========================================================= */
-
-.top-label {
-    margin-bottom: 20px;
-
-    color: #618e68;
-
-    font-size: 10px;
-
-    letter-spacing: 5px;
-}
-
-
-/* =========================================================
-   TITLE
-   ========================================================= */
-
-.start-content h1 {
-    color: #e0f4db;
-
-    font-size: clamp(
-        48px,
-        9vw,
-        105px
-    );
-
-    line-height: 0.9;
-
-    letter-spacing: 8px;
-
-    font-weight: 900;
-
-    text-shadow:
-        0 0 20px rgba(130, 255, 110, 0.15),
-        0 0 50px rgba(80, 180, 80, 0.08);
-}
-
-
-.start-content h1 span {
-    display: block;
-
-    margin-top: 12px;
-
-    color: #8cff72;
-
-    text-shadow:
-        0 0 15px rgba(140, 255, 114, 0.3);
-}
-
-
-/* =========================================================
-   TAGLINE
-   ========================================================= */
-
-.tagline {
-    margin-top: 28px;
-
-    color: #78977d;
-
-    font-size: 12px;
-
-    letter-spacing: 7px;
-}
-
-
-/* =========================================================
-   LINE
-   ========================================================= */
-
-.start-line {
-    width: 280px;
-
-    height: 1px;
-
-    margin: 35px auto;
+.enter-world-btn {
+    border:
+        1px solid #53ffad;
 
     background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #4cae55,
-            transparent
-        );
-}
+        rgba(0,255,150,.08);
 
+    color: #7dffc2;
 
-/* =========================================================
-   PLAY BUTTON
-   ========================================================= */
+    padding: 14px 30px;
 
-.play-button {
-    position: relative;
-
-    width: min(330px, 90%);
-
-    margin: 0 auto;
-
-    padding: 19px 30px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 15px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #64c965,
-            #3e9949
-        );
-
-    border: 1px solid #9aff89;
-
-    color: #031007;
-
-    font-family:
-        "Courier New",
-        monospace;
-
-    font-size: 13px;
+    font-family: inherit;
 
     font-weight: bold;
 
@@ -374,81 +790,31 @@ body {
 
     cursor: pointer;
 
-    box-shadow:
-        0 0 25px rgba(80, 200, 90, 0.15);
-
-    transition:
-        transform 0.2s,
-        box-shadow 0.2s,
-        background 0.2s;
+    transition: .2s;
 }
 
-
-.play-button:hover {
-    transform: translateY(-3px);
-
+.enter-world-btn:hover {
     background:
-        linear-gradient(
-            180deg,
-            #83e877,
-            #52b85a
-        );
+        rgba(0,255,150,.2);
 
     box-shadow:
-        0 0 35px rgba(90, 220, 100, 0.3);
+        0 0 25px
+        rgba(0,255,150,.25);
+
+    transform:
+        translateY(-2px);
 }
 
+.enter-arrow {
+    margin-left: 15px;
 
-.play-button:active {
-    transform: translateY(1px);
-}
-
-
-.play-icon {
     font-size: 18px;
 }
 
-
-.play-text {
-    font-size: 12px;
-}
-
-
-/* =========================================================
-   START HINT
-   ========================================================= */
-
-.start-hint {
+.world-entry-warning {
     margin-top: 18px;
 
-    color: #4d6e53;
-
-    font-size: 9px;
-
-    letter-spacing: 3px;
-}
-
-
-/* =========================================================
-   BOTTOM INFORMATION
-   ========================================================= */
-
-.bottom-info {
-    position: absolute;
-
-    left: 35px;
-    right: 35px;
-    bottom: 30px;
-
-    z-index: 3;
-
-    display: flex;
-
-    justify-content: center;
-
-    gap: 50px;
-
-    color: #46634b;
+    color: #48675a;
 
     font-size: 8px;
 
@@ -456,524 +822,534 @@ body {
 }
 
 
-.bottom-info strong {
-    margin-left: 7px;
-
-    color: #70a876;
-
-    font-weight: normal;
-}
-
-
 /* =========================================================
-   FULLSCREEN LOGIN
+   WORLD MAP
    ========================================================= */
 
-.login-overlay {
+.world-map-screen {
     position: fixed;
 
     inset: 0;
 
-    width: 100vw;
-    height: 100vh;
-
     z-index: 9999;
 
-    display: none;
+    background: #020604;
 
-    justify-content: center;
+    color: #d8fff0;
+
+    font-family:
+        "Courier New",
+        monospace;
+}
+
+.world-map-screen[hidden] {
+    display: none;
+}
+
+.map-topbar {
+    height: 72px;
+
+    padding: 12px 18px;
+
+    border-bottom:
+        1px solid rgba(0,255,150,.25);
+
+    background: #050c09;
+
+    display: flex;
+
     align-items: center;
+
+    gap: 25px;
+}
+
+.map-title {
+    color: #7dffc2;
+
+    font-weight: bold;
+
+    letter-spacing: 4px;
+}
+
+.map-subtitle {
+    margin-top: 4px;
+
+    color: #4e7866;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+.map-commander {
+    margin-left: auto;
+
+    color: #547b69;
+
+    font-size: 10px;
+}
+
+.map-commander strong {
+    color: #9dffd0;
+}
+
+.map-close-btn {
+    background: transparent;
+
+    color: #6d9b87;
+
+    border:
+        1px solid rgba(0,255,150,.25);
+
+    padding: 10px 14px;
+
+    font-family: inherit;
+
+    cursor: pointer;
+}
+
+.map-close-btn:hover {
+    color: #9dffd0;
+
+    border-color:
+        #53ffad;
+}
+
+.map-layout {
+    height:
+        calc(100vh - 72px);
+
+    display: grid;
+
+    grid-template-columns:
+        240px 1fr;
+}
+
+.map-sidebar {
+    overflow-y: auto;
+
+    border-right:
+        1px solid rgba(0,255,150,.2);
+
+    background: #030906;
+
+    padding: 20px 15px;
+}
+
+.sidebar-title {
+    color: #4e806a;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 15px;
+}
+
+.faction-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #91b6a4;
+
+    font-size: 10px;
+
+    margin-bottom: 13px;
+}
+
+.faction-color {
+    flex:
+        0 0 12px;
+
+    width: 12px;
+    height: 12px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+}
+
+.faction-color.polish {
+    background: #3f69d8;
+}
+
+.faction-color.morocco {
+    background: #b54b45;
+}
+
+.faction-color.japan {
+    background: #a74e9c;
+}
+
+.faction-color.tajik {
+    background: #bd8d35;
+}
+
+.sidebar-divider {
+    height: 1px;
+
+    background:
+        rgba(0,255,150,.12);
+
+    margin: 25px 0;
+}
+
+.sidebar-note {
+    color: #587d6a;
+
+    font-size: 9px;
+
+    line-height: 1.8;
+}
+
+.map-stat {
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 9px;
+
+    color: #456655;
+
+    margin: 12px 0;
+}
+
+.map-stat strong {
+    color: #83b49d;
+}
+
+.map-container {
+    position: relative;
+
+    overflow: hidden;
 
     background:
         radial-gradient(
             circle at center,
-            rgba(35, 95, 46, 0.32),
-            rgba(1, 6, 3, 0.98) 72%
-        );
-
-    backdrop-filter: blur(6px);
-}
-
-
-/* Login grid */
-
-.login-overlay::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    background-image:
-        linear-gradient(
-            rgba(120, 220, 120, 0.04) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(120, 220, 120, 0.04) 1px,
-            transparent 1px
-        );
-
-    background-size: 50px 50px;
-}
-
-
-/* Login scanlines */
-
-.login-overlay::after {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    background:
-        repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,0.015),
-            rgba(255,255,255,0.015) 1px,
-            transparent 1px,
-            transparent 4px
+            #0a1912,
+            #020604 75%
         );
 }
 
-
-/* =========================================================
-   LOGIN BOX
-   ========================================================= */
-
-.login-box {
-    position: relative;
-
-    z-index: 2;
-
-    width: min(460px, 90%);
-
-    padding: 40px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #10271b,
-            #050f08
-        );
-
-    border: 1px solid #4cae55;
-
-    box-shadow:
-        0 0 60px rgba(0, 0, 0, 0.75),
-        0 0 30px rgba(76, 174, 85, 0.08);
-
-    text-align: left;
-}
-
-
-/* Corner decoration */
-
-.login-box::before {
-    content: "";
-
-    position: absolute;
-
-    top: -1px;
-    left: -1px;
-
-    width: 60px;
-    height: 60px;
-
-    border-top: 3px solid #8cff72;
-    border-left: 3px solid #8cff72;
-}
-
-
-.login-box::after {
-    content: "";
-
-    position: absolute;
-
-    right: -1px;
-    bottom: -1px;
-
-    width: 60px;
-    height: 60px;
-
-    border-right: 3px solid #8cff72;
-    border-bottom: 3px solid #8cff72;
-}
-
-
-/* =========================================================
-   LOGIN TOP
-   ========================================================= */
-
-.login-top {
-    margin-bottom: 12px;
-
-    color: #557c5b;
-
-    font-size: 9px;
-
-    letter-spacing: 3px;
-}
-
-
-.login-status-line {
-    margin-bottom: 25px;
-
-    color: #65856b;
-
-    font-size: 9px;
-
-    letter-spacing: 2px;
-}
-
-
-/* =========================================================
-   LOGIN TITLE
-   ========================================================= */
-
-.login-box h2 {
-    color: #9cff86;
-
-    font-size: 25px;
-
-    letter-spacing: 4px;
-
-    text-shadow:
-        0 0 12px rgba(140, 255, 114, 0.25);
-}
-
-
-.login-subtitle {
-    margin-top: 10px;
-    margin-bottom: 28px;
-
-    color: #78977d;
-
-    font-size: 10px;
-
-    letter-spacing: 2px;
-}
-
-
-/* =========================================================
-   LABELS
-   ========================================================= */
-
-.login-box label {
-    display: block;
-
-    margin-bottom: 7px;
-
-    color: #6f9275;
-
-    font-size: 9px;
-
-    letter-spacing: 2px;
-}
-
-
-/* =========================================================
-   INPUTS
-   ========================================================= */
-
-.login-box input {
+#worldMap {
     width: 100%;
+    height: 100%;
 
-    padding: 15px;
+    overflow: auto;
 
-    margin-bottom: 18px;
+    cursor: grab;
+}
 
-    background: #020804;
+#worldMap:active {
+    cursor: grabbing;
+}
 
-    border: 1px solid #285f36;
+#worldMap svg {
+    width: 100%;
+    height: 100%;
 
-    outline: none;
+    min-width: 900px;
+    min-height: 500px;
+}
 
-    color: #c9f5c1;
+.map-province {
+    stroke:
+        rgba(170,255,215,.42);
 
-    font-family:
-        "Courier New",
-        monospace;
+    stroke-width: .35;
 
-    font-size: 12px;
-
-    letter-spacing: 1px;
+    vector-effect:
+        non-scaling-stroke;
 
     transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
+        filter .12s,
+        opacity .12s;
 }
 
+.map-province:hover {
+    filter:
+        brightness(1.45);
 
-.login-box input::placeholder {
-    color: #4d6953;
-}
+    stroke: #ffffff;
 
-
-.login-box input:focus {
-    border-color: #78d967;
-
-    box-shadow:
-        0 0 15px rgba(120, 217, 103, 0.12);
-}
-
-
-/* =========================================================
-   LOGIN BUTTON
-   ========================================================= */
-
-.login-button {
-    width: 100%;
-
-    margin-top: 5px;
-
-    padding: 16px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #64c965,
-            #3f9f4b
-        );
-
-    border: 1px solid #8cff72;
-
-    color: #031007;
-
-    font-family:
-        "Courier New",
-        monospace;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-    letter-spacing: 2px;
+    stroke-width: 1.2;
 
     cursor: pointer;
-
-    transition:
-        transform 0.2s,
-        box-shadow 0.2s;
 }
 
+.map-province.neutral {
+    fill: #26352f;
+}
 
-.login-button:hover {
-    transform: translateY(-2px);
+.map-province.polish {
+    fill: #3f69d8;
+}
+
+.map-province.morocco {
+    fill: #b54b45;
+}
+
+.map-province.japan {
+    fill: #a74e9c;
+}
+
+.map-province.tajik {
+    fill: #bd8d35;
+}
+
+.map-hint {
+    position: absolute;
+
+    left: 50%;
+    bottom: 14px;
+
+    transform:
+        translateX(-50%);
+
+    padding: 7px 14px;
+
+    background:
+        rgba(0,0,0,.75);
+
+    border:
+        1px solid
+        rgba(0,255,150,.2);
+
+    color: #567c69;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    pointer-events: none;
+}
+
+.province-info {
+    position: absolute;
+
+    right: 20px;
+    top: 20px;
+
+    width: 260px;
+
+    padding: 18px;
+
+    background:
+        rgba(3,10,7,.96);
+
+    border:
+        1px solid
+        rgba(0,255,150,.35);
 
     box-shadow:
-        0 0 25px rgba(100, 201, 101, 0.3);
+        0 0 25px
+        rgba(0,0,0,.5);
 }
 
+.province-info[hidden] {
+    display: none;
+}
 
-/* =========================================================
-   BACK BUTTON
-   ========================================================= */
+.province-info button {
+    position: absolute;
 
-.close-login {
-    width: 100%;
-
-    margin-top: 12px;
-
-    padding: 13px;
+    right: 8px;
+    top: 5px;
 
     background: transparent;
 
-    border: 1px solid #285f36;
+    border: 0;
 
-    color: #718d76;
+    color: #638a77;
 
-    font-family:
-        "Courier New",
-        monospace;
-
-    font-size: 10px;
-
-    letter-spacing: 1px;
+    font-size: 20px;
 
     cursor: pointer;
-
-    transition:
-        color 0.2s,
-        border-color 0.2s,
-        background 0.2s;
 }
 
+.province-info-label {
+    color: #4f806b;
 
-.close-login:hover {
-    color: #9cff86;
+    font-size: 8px;
 
-    border-color: #4cae55;
-
-    background: #091b0f;
+    letter-spacing: 2px;
 }
 
+.province-info h3 {
+    color: #c9ffe5;
 
-/* =========================================================
-   LOGIN ERROR / STATUS
-   ========================================================= */
+    margin: 8px 0;
 
-#loginStatus {
-    min-height: 18px;
+    font-size: 18px;
+}
 
-    margin-top: 17px;
-
-    color: #ffb36b;
+#selectedOwner {
+    color: #79b598;
 
     font-size: 10px;
 
     line-height: 1.5;
+}
+
+.map-loading {
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+    color: #5e967c;
+
+    letter-spacing: 3px;
+
+    font-size: 10px;
+}
+
+.map-loading small {
+    color: #486b59;
+
+    font-size: 8px;
+
+    max-width: 500px;
 
     text-align: center;
 }
 
+.loading-spinner {
+    width: 28px;
+    height: 28px;
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
+    border:
+        2px solid
+        rgba(0,255,150,.15);
 
-@media (max-width: 700px) {
+    border-top-color:
+        #53ffad;
 
-    .start-screen::after {
-        inset: 15px;
-    }
+    border-radius: 50%;
 
+    animation:
+        mapSpin .8s linear infinite;
+}
 
-    .system-status {
-        top: 20px;
-        left: 20px;
+@keyframes mapSpin {
 
-        font-size: 8px;
-    }
-
-
-    .version {
-        top: 20px;
-        right: 20px;
-
-        font-size: 7px;
-    }
-
-
-    .top-label {
-        font-size: 8px;
-
-        letter-spacing: 3px;
-    }
-
-
-    .start-content h1 {
-        font-size: 45px;
-
-        letter-spacing: 5px;
-    }
-
-
-    .tagline {
-        font-size: 8px;
-
-        letter-spacing: 4px;
-    }
-
-
-    .bottom-info {
-        left: 15px;
-        right: 15px;
-        bottom: 20px;
-
-        gap: 15px;
-
-        font-size: 7px;
-    }
-
-
-    .bottom-info div {
-        display: flex;
-
-        flex-direction: column;
-
-        gap: 4px;
-
-        text-align: center;
-    }
-
-
-    .bottom-info strong {
-        margin-left: 0;
-    }
-
-
-    .login-box {
-        width: 92%;
-
-        padding: 30px 22px;
-    }
-
-
-    .login-box h2 {
-        font-size: 19px;
-
-        letter-spacing: 3px;
+    to {
+        transform:
+            rotate(360deg);
     }
 
 }
 
 
 /* =========================================================
-   SMALL PHONES
+   RESPONSIVE
    ========================================================= */
 
-@media (max-width: 420px) {
+@media (max-width: 800px) {
 
+    .game-header {
+        padding: 0 15px;
+    }
+
+    .commander-display {
+        display: none;
+    }
+
+    .game-logo {
+        font-size: 12px;
+    }
+
+    .stats {
+        grid-template-columns:
+            1fr;
+    }
+
+    .map-layout {
+        grid-template-columns:
+            1fr;
+    }
+
+    .map-sidebar {
+        display: none;
+    }
+
+    .map-commander {
+        display: none;
+    }
+
+    .world-entry-info {
+        flex-direction: column;
+
+        gap: 7px;
+    }
+
+    .world-entry h2 {
+        font-size: 24px;
+    }
+
+    .map-topbar {
+        height: 62px;
+    }
+
+    .map-layout {
+        height:
+            calc(100vh - 62px);
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .system-status,
     .version {
         display: none;
     }
 
-
     .start-content h1 {
-        font-size: 37px;
-
-        letter-spacing: 4px;
+        font-size: 45px;
     }
 
-
-    .top-label {
-        font-size: 7px;
+    .title-small {
+        font-size: 9px;
     }
-
 
     .tagline {
-        font-size: 7px;
-
+        font-size: 8px;
         letter-spacing: 3px;
     }
 
-
-    .play-button {
-        width: 90%;
-
-        padding: 16px;
-    }
-
-
-    .bottom-info {
-        gap: 10px;
-    }
-
-
-    .bottom-info div {
-        font-size: 6px;
-    }
-
-
     .login-box {
-        padding: 27px 18px;
+        padding: 25px;
+    }
+
+    .game-content {
+        width:
+            calc(100% - 20px);
+    }
+
+    .world-entry {
+        min-height: 400px;
+    }
+
+    .world-globe {
+        font-size: 55px;
+    }
+
+    .province-info {
+        right: 10px;
+        left: 10px;
+
+        width: auto;
     }
 
 }
