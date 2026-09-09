@@ -339,6 +339,8 @@ body {
 
     width: min(330px, 90%);
 
+    margin: 0 auto;
+
     padding: 19px 30px;
 
     display: flex;
