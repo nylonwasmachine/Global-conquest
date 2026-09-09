@@ -1,1 +1,152 @@
+```css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at center, #18351f 0%, #08120b 55%, #030705 100%);
+
+    font-family: "Courier New", monospace;
+    color: #d7f5dc;
+}
+
+.menu {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+/* Titel */
+
+h1 {
+    font-size: clamp(40px, 7vw, 90px);
+    letter-spacing: 6px;
+    color: #a9e8b2;
+
+    text-shadow:
+        4px 4px 0 #071009,
+        8px 8px 0 #020503;
+
+    margin-bottom: 8px;
+
+    image-rendering: pixelated;
+}
+
+.subtitle {
+    font-size: 14px;
+    letter-spacing: 5px;
+    color: #648b6c;
+
+    margin-bottom: 55px;
+}
+
+/* PLAY BUTTON */
+
+.play-button {
+    width: 170px;
+    height: 170px;
+
+    border-radius: 50%;
+
+    border: 8px solid #6fb879;
+
+    background: #183d21;
+
+    cursor: pointer;
+
+    position: relative;
+
+    box-shadow:
+        0 0 0 8px #07130a,
+        10px 10px 0 #020503;
+
+    transition:
+        transform 0.12s,
+        background 0.12s,
+        box-shadow 0.12s;
+}
+
+/* Pixelachtige buitenrand */
+
+.play-button::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -15px;
+
+    border-radius: 50%;
+
+    border: 4px solid #294d30;
+
+    pointer-events: none;
+}
+
+/* Driehoek */
+
+.play-icon {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-40%, -50%);
+
+    width: 0;
+    height: 0;
+
+    border-top: 32px solid transparent;
+    border-bottom: 32px solid transparent;
+    border-left: 48px solid #b8f5c0;
+
+    filter: drop-shadow(5px 5px 0 #071009);
+}
+
+/* Hover */
+
+.play-button:hover {
+    background: #245a30;
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 0 0 8px #07130a,
+        10px 15px 0 #020503;
+}
+
+/* Klik */
+
+.play-button:active {
+    transform: translateY(4px);
+
+    box-shadow:
+        0 0 0 8px #07130a,
+        5px 5px 0 #020503;
+}
+
+.play-text {
+    margin-top: 28px;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    letter-spacing: 8px;
+
+    color: #8fca99;
+
+    text-shadow: 3px 3px 0 #050a06;
+}
+```
