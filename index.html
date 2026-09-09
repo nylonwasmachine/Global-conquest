@@ -1,9 +1,11 @@
 ```html
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Global Conquest</title>
 
     <link rel="stylesheet" href="./style.css">
@@ -12,9 +14,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
+
 <body>
 
-    <!-- STARTSCHERM -->
+    <!-- ==============================
+         STARTSCHERM
+         ============================== -->
 
     <div class="start-screen">
 
@@ -22,22 +27,34 @@
 
         <p>COMMAND • CONQUER • SURVIVE</p>
 
-        <button onclick="openLogin()" class="play-button">
+        <button
+            class="play-button"
+            onclick="openLogin()"
+        >
             ▶
         </button>
 
-        <div>PLAY</div>
+        <div>
+            PLAY
+        </div>
 
     </div>
 
 
-    <!-- LOGIN -->
+    <!-- ==============================
+         LOGIN
+         ============================== -->
 
-    <div id="loginOverlay" class="login-overlay">
+    <div
+        id="loginOverlay"
+        class="login-overlay"
+        style="display: none;"
+    >
 
         <div class="login-box">
 
             <h2>COMMANDER LOGIN</h2>
+
 
             <input
                 id="naam"
@@ -46,6 +63,7 @@
                 autocomplete="username"
             >
 
+
             <input
                 id="wachtwoord"
                 type="password"
@@ -53,13 +71,19 @@
                 autocomplete="current-password"
             >
 
+
             <button onclick="login()">
                 LOGIN
             </button>
 
-            <button onclick="closeLogin()" class="close-login">
+
+            <button
+                onclick="closeLogin()"
+                class="close-login"
+            >
                 CANCEL
             </button>
+
 
             <p id="loginStatus"></p>
 
@@ -96,6 +120,10 @@
             document
                 .getElementById("loginOverlay")
                 .style.display = "flex";
+
+            document
+                .getElementById("loginStatus")
+                .textContent = "";
 
             document
                 .getElementById("naam")
@@ -136,7 +164,6 @@
                     .getElementById("wachtwoord")
                     .value;
 
-
             const status =
                 document.getElementById(
                     "loginStatus"
@@ -161,20 +188,24 @@
                 const {
                     data,
                     error
-                } = await database.functions.invoke(
-                    "login",
-                    {
-                        body: {
-                            naam: naam,
-                            wachtwoord: wachtwoord
+                } =
+                    await database.functions.invoke(
+                        "login",
+                        {
+                            body: {
+                                naam: naam,
+                                wachtwoord: wachtwoord
+                            }
                         }
-                    }
-                );
+                    );
 
 
                 if (error) {
 
-                    console.error(error);
+                    console.error(
+                        "Login fout:",
+                        error
+                    );
 
                     status.textContent =
                         "Login mislukt.";
@@ -196,8 +227,10 @@
 
 
                 /*
-                 * Alleen de accountnaam bewaren.
-                 * Het wachtwoord wordt NIET opgeslagen.
+                 * Alleen de accountnaam wordt
+                 * tijdelijk bewaard.
+                 *
+                 * Het wachtwoord wordt niet opgeslagen.
                  */
 
                 const spelerNaam =
@@ -222,13 +255,14 @@
             catch (fout) {
 
                 console.error(
-                    "Login fout:",
+                    "Onverwachte login fout:",
                     fout
                 );
 
                 status.textContent =
                     "Er ging iets mis bij het inloggen.";
             }
+
         }
 
 
@@ -240,27 +274,24 @@
             "keydown",
             function(event) {
 
+                const overlay =
+                    document.getElementById(
+                        "loginOverlay"
+                    );
+
+
                 if (
-                    event.key === "Enter"
+                    event.key === "Enter" &&
+                    overlay.style.display === "flex"
                 ) {
 
-                    const overlay =
-                        document.getElementById(
-                            "loginOverlay"
-                        );
-
-                    if (
-                        overlay.style.display ===
-                        "flex"
-                    ) {
-
-                        login();
-                    }
+                    login();
                 }
 
 
                 if (
-                    event.key === "Escape"
+                    event.key === "Escape" &&
+                    overlay.style.display === "flex"
                 ) {
 
                     closeLogin();
@@ -272,5 +303,6 @@
     </script>
 
 </body>
+
 </html>
 ```
