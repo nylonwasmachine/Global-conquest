@@ -1,7 +1,5 @@
-```html
 <!DOCTYPE html>
 <html lang="nl">
-
 <head>
 
     <meta charset="UTF-8">
@@ -11,725 +9,1615 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Global Conquest</title>
+    <title>Global Conquest - Command Center</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="./style.css">
 
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 
 </head>
 
-
-<body>
-
-
-    <div class="game-screen">
+<body class="game-body">
 
 
-        <!-- ==============================
-             HEADER
-             ============================== -->
+<!-- COMMAND CENTER -->
 
-        <header class="game-header">
+<div class="game-screen">
 
-            <div>
+    <header class="game-header">
 
-                <h1>
-                    GLOBAL CONQUEST
-                </h1>
+        <div class="game-logo">
+            GLOBAL <span>CONQUEST</span>
+        </div>
 
-                <p id="playerName">
-                    LOADING...
-                </p>
+        <div class="commander-display">
+            COMMANDER:
+            <strong id="playerName">---</strong>
+        </div>
 
+        <button id="logoutBtn" class="logout-button">
+            LOGOUT
+        </button>
+
+    </header>
+
+
+    <main class="game-content">
+
+        <section class="welcome-panel">
+
+            <div class="panel-status">
+                COMMAND CENTER ONLINE
             </div>
 
+            <h1>
+                WELCOME,
+                <span id="welcomeName">COMMANDER</span>
+            </h1>
 
-            <button
-                class="logout-button"
-                onclick="logout()"
-            >
-                LOG OUT
-            </button>
-
-        </header>
-
+            <p>
+                YOUR STRATEGIC COMMAND CENTER IS READY.
+            </p>
 
 
-        <!-- ==============================
-             GAME CONTENT
-             ============================== -->
+            <div class="stats">
 
-        <main class="game-content">
+                <div class="stat-box">
 
-
-            <!-- ==============================
-                 SPELER
-                 ============================== -->
-
-            <section class="welcome-panel">
-
-                <h2>
-                    WELCOME, COMMANDER
-                </h2>
-
-                <p>
-                    Je bent succesvol ingelogd.
-                </p>
-
-
-                <div class="stats">
-
-
-                    <div class="stat">
-
-                        <span>
-                            POINTS
-                        </span>
-
-                        <strong id="points">
-                            0
-                        </strong>
-
+                    <div class="stat-label">
+                        POINTS
                     </div>
 
-
-                    <div class="stat">
-
-                        <span>
-                            MANPOWER
-                        </span>
-
-                        <strong id="manpower">
-                            0
-                        </strong>
-
+                    <div
+                        id="points"
+                        class="stat-value"
+                    >
+                        0
                     </div>
-
-
-                    <div class="stat">
-
-                        <span>
-                            FACTORIES
-                        </span>
-
-                        <strong id="factories">
-                            0
-                        </strong>
-
-                    </div>
-
 
                 </div>
 
-            </section>
+
+                <div class="stat-box">
+
+                    <div class="stat-label">
+                        MANPOWER
+                    </div>
+
+                    <div
+                        id="manpower"
+                        class="stat-value"
+                    >
+                        0
+                    </div>
+
+                </div>
 
 
+                <div class="stat-box">
 
-            <!-- ==============================
-                 WORLD MAP
-                 ============================== -->
+                    <div class="stat-label">
+                        FACTORIES
+                    </div>
 
-            <section class="map-placeholder">
+                    <div
+                        id="factories"
+                        class="stat-value"
+                    >
+                        0
+                    </div>
 
-                <div class="map-icon">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- WORLD ENTRY -->
+
+        <section
+            id="worldEntry"
+            class="world-entry"
+        >
+
+            <div class="world-entry-grid"></div>
+            <div class="world-entry-scan"></div>
+
+            <div class="world-entry-content">
+
+                <div class="world-entry-status">
+                    <span class="status-dot"></span>
+                    CARTOGRAPHY SYSTEM ONLINE
+                </div>
+
+                <div class="world-globe">
                     🌍
                 </div>
 
                 <h2>
-                    WORLD MAP
+                    GLOBAL THEATER
                 </h2>
 
                 <p>
-                    De wereldkaart wordt hier gebouwd.
+                    WORLD MAP // PROVINCES // TERRITORIES
                 </p>
 
+                <div class="world-entry-info">
+
+                    <span>
+                        ADM-1 DATABASE
+                    </span>
+
+                    <span>
+                        POLITICAL MAP
+                    </span>
+
+                    <span>
+                        STRATEGIC VIEW
+                    </span>
+
+                </div>
 
                 <button
-                    class="start-map-button"
+                    id="enterWorldBtn"
+                    class="enter-world-btn"
                 >
-                    ENTER WORLD
+                    <span>ENTER WORLD</span>
+                    <span class="enter-arrow">→</span>
                 </button>
 
-            </section>
+                <div class="world-entry-warning">
+                    MAP VIEW ONLY // MILITARY ACTIONS DISABLED
+                </div>
 
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<!-- WORLD MAP -->
+
+<div
+    id="worldMapScreen"
+    class="world-map-screen"
+    hidden
+>
+
+    <header class="map-topbar">
+
+        <div>
+
+            <div class="map-title">
+                GLOBAL CONQUEST
+            </div>
+
+            <div class="map-subtitle">
+                WORLD THEATER // POLITICAL CONTROL
+            </div>
+
+        </div>
+
+
+        <div class="map-commander">
+
+            COMMANDER:
+
+            <strong id="mapCommanderName">
+                ---
+            </strong>
+
+        </div>
+
+
+        <button
+            id="closeWorldBtn"
+            class="map-close-btn"
+        >
+            ← COMMAND CENTER
+        </button>
+
+    </header>
+
+
+
+    <div class="map-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="map-sidebar">
+
+            <div class="sidebar-title">
+                CONTROLLED POWERS
+            </div>
+
+
+            <div class="faction-item">
+
+                <span
+                    class="faction-color polish"
+                ></span>
+
+                <span>
+                    Pools-Zwitserse Samenwerking
+                </span>
+
+            </div>
+
+
+            <div class="faction-item">
+
+                <span
+                    class="faction-color morocco"
+                ></span>
+
+                <span>
+                    Marokkaanse Rijk
+                </span>
+
+            </div>
+
+
+            <div class="faction-item">
+
+                <span
+                    class="faction-color japan"
+                ></span>
+
+                <span>
+                    Japans-Koreaanse Unie
+                </span>
+
+            </div>
+
+
+            <div class="faction-item">
+
+                <span
+                    class="faction-color tajik"
+                ></span>
+
+                <span>
+                    Tajik-Noordische Samenwerking
+                </span>
+
+            </div>
+
+
+            <div class="sidebar-divider"></div>
+
+
+            <div class="sidebar-title">
+                MAP STATUS
+            </div>
+
+
+            <div class="map-stat">
+
+                <span>
+                    MODE
+                </span>
+
+                <strong>
+                    POLITICAL
+                </strong>
+
+            </div>
+
+
+            <div class="map-stat">
+
+                <span>
+                    PROVINCES
+                </span>
+
+                <strong id="provinceCount">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="map-stat">
+
+                <span>
+                    ACTIONS
+                </span>
+
+                <strong>
+                    DISABLED
+                </strong>
+
+            </div>
+
+
+            <div class="sidebar-divider"></div>
+
+
+            <div class="sidebar-title">
+                MICROSTATES
+            </div>
+
+            <p class="sidebar-note">
+                San Marino → Italië<br>
+                Vaticaanstad → Italië<br>
+                Monaco → Frankrijk
+            </p>
+
+        </aside>
+
+
+
+        <!-- MAP -->
+
+        <main class="map-container">
+
+            <div id="worldMap">
+
+                <div class="map-loading">
+
+                    <div class="loading-spinner"></div>
+
+                    <span>
+                        LOADING WORLD MAP...
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="map-hint">
+                KLIK OP EEN PROVINCIE VOOR INFORMATIE
+            </div>
+
+
+            <div
+                id="provinceInfo"
+                class="province-info"
+                hidden
+            >
+
+                <button
+                    id="closeProvinceInfo"
+                >
+                    ×
+                </button>
+
+                <div class="province-info-label">
+                    TERRITORY
+                </div>
+
+                <h3 id="selectedProvince">
+                    —
+                </h3>
+
+                <div id="selectedOwner">
+                    —
+                </div>
+
+            </div>
 
         </main>
 
     </div>
 
-
-
-    <script>
-
-
-        /* =====================================================
-           SUPABASE
-           ===================================================== */
-
-        const supabaseUrl =
-            "https://qelqaiczgibxyxfqtapg.supabase.co";
-
-
-        const supabaseKey =
-            "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
-
-
-        const database =
-            window.supabase.createClient(
-                supabaseUrl,
-                supabaseKey
-            );
+</div>
 
 
 
-        /* =====================================================
-           INGelogde SPELER
-           ===================================================== */
+<script>
 
-        let speler =
-            sessionStorage.getItem(
-                "globalConquestPlayer"
-            );
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+const supabaseUrl =
+    "https://qelqaiczgibxyxfqtapg.supabase.co";
+
+const supabaseKey =
+    "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
+
+const database =
+    window.supabase.createClient(
+        supabaseUrl,
+        supabaseKey
+    );
+
+
+/* =========================================================
+   PLAYER
+   ========================================================= */
+
+let speler =
+    sessionStorage.getItem(
+        "globalConquestPlayer"
+    );
+
+
+if (!speler) {
+
+    window.location.href =
+        "./index.html";
+
+}
+
+
+const playerName =
+    document.getElementById("playerName");
+
+const welcomeName =
+    document.getElementById("welcomeName");
+
+const points =
+    document.getElementById("points");
+
+
+playerName.textContent =
+    speler;
+
+welcomeName.textContent =
+    speler;
 
 
 
-        /* =====================================================
-           CONTROLEREN OF ER IS INGELOGD
-           ===================================================== */
+/* =========================================================
+   POINTS
+   ========================================================= */
 
-        if (!speler) {
+function parsePunten(waarde) {
 
-            window.location.href =
-                "index.html";
+    if (
+        waarde === null ||
+        waarde === undefined ||
+        waarde === ""
+    ) {
+        return 0;
+    }
 
-        }
+    if (typeof waarde === "number") {
+        return waarde;
+    }
 
-        else {
+    let tekst =
+        String(waarde)
+            .trim()
+            .toUpperCase()
+            .replace(",", ".");
 
-            document
-                .getElementById("playerName")
-                .textContent =
-                "COMMANDER: " + speler;
+    let multiplier = 1;
 
+    if (tekst.endsWith("K")) {
+
+        multiplier = 1000;
+        tekst = tekst.slice(0, -1);
+
+    }
+
+    if (tekst.endsWith("M")) {
+
+        multiplier = 1000000;
+        tekst = tekst.slice(0, -1);
+
+    }
+
+    const nummer =
+        Number(tekst);
+
+    return Number.isFinite(nummer)
+        ? nummer * multiplier
+        : 0;
+}
+
+
+function formatPunten(waarde) {
+
+    const nummer =
+        Math.round(waarde);
+
+    if (nummer >= 1000000) {
+
+        return (
+            (nummer / 1000000)
+                .toFixed(1)
+                .replace(".0", "")
+            + "M"
+        );
+
+    }
+
+    if (nummer >= 1000) {
+
+        return (
+            (nummer / 1000)
+                .toFixed(1)
+                .replace(".0", "")
+            + "K"
+        );
+
+    }
+
+    return nummer.toLocaleString("nl-NL");
+}
+
+
+function berekenTotaal(spelerData) {
+
+    const plus =
+        parsePunten(spelerData.plus);
+
+    const min =
+        Math.abs(
+            parsePunten(spelerData.min)
+        );
+
+    return plus - min;
+}
+
+
+async function laadSpeler() {
+
+    const { data, error } =
+        await database
+            .from("players")
+            .select("naam, plus, min")
+            .eq("naam", speler)
+            .maybeSingle();
+
+
+    if (error) {
+
+        console.error(
+            "Player error:",
+            error
+        );
+
+        return;
+
+    }
+
+
+    if (!data) {
+
+        points.textContent = "0";
+
+        return;
+
+    }
+
+
+    const totaal =
+        berekenTotaal(data);
+
+    points.textContent =
+        formatPunten(totaal);
+
+
+    if (data.naam !== speler) {
+
+        speler =
+            data.naam;
+
+        sessionStorage.setItem(
+            "globalConquestPlayer",
+            speler
+        );
+
+        playerName.textContent =
+            speler;
+
+        welcomeName.textContent =
+            speler;
+
+        mapCommanderName.textContent =
+            speler;
+
+    }
+
+}
+
+
+laadSpeler();
+
+
+
+/* =========================================================
+   REALTIME POINTS
+   ========================================================= */
+
+database
+    .channel("global-conquest-players")
+    .on(
+        "postgres_changes",
+        {
+            event: "*",
+            schema: "public",
+            table: "players"
+        },
+        () => {
 
             laadSpeler();
 
         }
+    )
+    .subscribe();
 
 
 
-        /* =====================================================
-           PUNTEN PARSEN
+/* =========================================================
+   LOGOUT
+   ========================================================= */
 
-           Exact dezelfde logica als Puntenbank.
-
-           1000  = 1K
-           2500  = 2.5K
-           1000000 = 1M
-           2500000 = 2.5M
-           ===================================================== */
-
-        function parsePunten(waarde) {
-
-
-            if (
-                typeof waarde ===
-                "number"
-            ) {
-
-                return waarde;
-
-            }
-
-
-            let tekst =
-                String(waarde)
-                    .trim()
-                    .replace(
-                        /,/g,
-                        "."
-                    );
-
-
-            if (
-                tekst === ""
-            ) {
-
-                return NaN;
-
-            }
-
-
-            let vermenigvuldiger =
-                1;
-
-
-            if (
-                tekst
-                    .toUpperCase()
-                    .endsWith("K")
-            ) {
-
-                vermenigvuldiger =
-                    1000;
-
-
-                tekst =
-                    tekst.slice(
-                        0,
-                        -1
-                    );
-
-            }
-
-
-            else if (
-                tekst
-                    .toUpperCase()
-                    .endsWith("M")
-            ) {
-
-                vermenigvuldiger =
-                    1000000;
-
-
-                tekst =
-                    tekst.slice(
-                        0,
-                        -1
-                    );
-
-            }
-
-
-            const getal =
-                Number(tekst);
-
-
-            if (
-                !Number.isFinite(
-                    getal
-                )
-            ) {
-
-                return NaN;
-
-            }
-
-
-            return (
-                getal *
-                vermenigvuldiger
-            );
-
-        }
-
-
-
-        /* =====================================================
-           PUNTEN FORMATTEREN
-
-           Exact dezelfde stijl als Puntenbank.
-           ===================================================== */
-
-        function formatPunten(
-            getal
-        ) {
-
-
-            if (
-                !Number.isFinite(
-                    getal
-                )
-            ) {
-
-                return "Onbepaald";
-
-            }
-
-
-            const negatief =
-                getal < 0;
-
-
-            const absoluut =
-                Math.abs(
-                    getal
-                );
-
-
-            let resultaat;
-
-
-            if (
-                absoluut >= 1000000
-            ) {
-
-                resultaat =
-                    (
-                        absoluut /
-                        1000000
-                    )
-                    .toFixed(2)
-                    .replace(
-                        /\.?0+$/,
-                        ""
-                    ) +
-                    "M";
-
-            }
-
-
-            else if (
-                absoluut >= 1000
-            ) {
-
-                resultaat =
-                    (
-                        absoluut /
-                        1000
-                    )
-                    .toFixed(2)
-                    .replace(
-                        /\.?0+$/,
-                        ""
-                    ) +
-                    "K";
-
-            }
-
-
-            else {
-
-                resultaat =
-                    absoluut
-                        .toFixed(2)
-                        .replace(
-                            /\.?0+$/,
-                            ""
-                        );
-
-            }
-
-
-            return negatief
-                ? "-" + resultaat
-                : resultaat;
-
-        }
-
-
-
-        /* =====================================================
-           TOTAAL BEREKENEN
-
-           Exact dezelfde berekening als Puntenbank:
-
-           plus - abs(min)
-           ===================================================== */
-
-        function berekenTotaal(
-            spelerData
-        ) {
-
-
-            const pluspunten =
-                parsePunten(
-                    spelerData.plus
-                );
-
-
-            const minpunten =
-                parsePunten(
-                    spelerData.min
-                );
-
-
-            if (
-                Number.isFinite(
-                    pluspunten
-                ) &&
-                Number.isFinite(
-                    minpunten
-                )
-            ) {
-
-                return (
-                    pluspunten -
-                    Math.abs(
-                        minpunten
-                    )
-                );
-
-            }
-
-
-            return NaN;
-
-        }
-
-
-
-        /* =====================================================
-           SPELER OPHALEN
-           ===================================================== */
-
-        async function laadSpeler() {
-
-
-            try {
-
-
-                const {
-                    data,
-                    error
-                } =
-                    await database
-
-                        .from(
-                            "players"
-                        )
-
-                        .select(
-                            "naam, plus, min"
-                        )
-
-                        .eq(
-                            "naam",
-                            speler
-                        )
-
-                        .maybeSingle();
-
-
-
-                /* ==============================
-                   FOUT
-                   ============================== */
-
-                if (error) {
-
-                    console.error(
-                        "Speler laden:",
-                        error
-                    );
-
-
-                    document
-                        .getElementById(
-                            "points"
-                        )
-                        .textContent =
-                        "?";
-
-
-                    return;
-
-                }
-
-
-
-                /* ==============================
-                   ACCOUNT NIET GEVONDEN
-                   ============================== */
-
-                if (!data) {
-
-                    console.warn(
-                        "Account niet gevonden:",
-                        speler
-                    );
-
-
-                    document
-                        .getElementById(
-                            "points"
-                        )
-                        .textContent =
-                        "?";
-
-
-                    return;
-
-                }
-
-
-
-                /* ==============================
-                   PUNTEN BEREKENEN
-                   ============================== */
-
-                const totaal =
-                    berekenTotaal(
-                        data
-                    );
-
-
-
-                /* ==============================
-                   PUNTEN OP SCHERM
-                   ============================== */
-
-                document
-                    .getElementById(
-                        "points"
-                    )
-                    .textContent =
-                    formatPunten(
-                        totaal
-                    );
-
-
-
-                console.log(
-                    "Global Conquest:",
-                    data.naam,
-                    "plus:",
-                    data.plus,
-                    "min:",
-                    data.min,
-                    "totaal:",
-                    totaal
-                );
-
-
-            }
-
-            catch (fout) {
-
-                console.error(
-                    "Onverwachte fout:",
-                    fout
-                );
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           REALTIME PUNTENBANK
-
-           Zodra de players-tabel verandert,
-           wordt Global Conquest opnieuw bijgewerkt.
-
-           Dus:
-
-           Overheid verandert punten
-                    ↓
-           players verandert
-                    ↓
-           Supabase realtime
-                    ↓
-           Global Conquest ontvangt update
-                    ↓
-           punten worden opnieuw berekend
-           ===================================================== */
-
-        database
-
-            .channel(
-                "global-conquest-players"
-            )
-
-            .on(
-                "postgres_changes",
-                {
-                    event: "*",
-                    schema: "public",
-                    table: "players"
-                },
-
-                async function(payload) {
-
-
-                    console.log(
-                        "Puntenbank gewijzigd:",
-                        payload
-                    );
-
-
-
-                    /* ==============================
-                       ACCOUNT IS HERNOEMD
-                       ============================== */
-
-                    if (
-                        payload.eventType ===
-                        "UPDATE"
-                    ) {
-
-                        if (
-                            payload.old &&
-                            payload.old.naam ===
-                            speler
-                        ) {
-
-                            speler =
-                                payload.new.naam;
-
-
-                            sessionStorage.setItem(
-                                "globalConquestPlayer",
-                                speler
-                            );
-
-
-                            document
-                                .getElementById(
-                                    "playerName"
-                                )
-                                .textContent =
-                                "COMMANDER: " +
-                                speler;
-
-                        }
-
-                    }
-
-
-
-                    /* ==============================
-                       PUNTEN OPNIEUW LADEN
-                       ============================== */
-
-                    await laadSpeler();
-
-                }
-            )
-
-            .subscribe();
-
-
-
-        /* =====================================================
-           UITLOGGEN
-           ===================================================== */
-
-        function logout() {
-
+document
+    .getElementById("logoutBtn")
+    .addEventListener(
+        "click",
+        () => {
 
             sessionStorage.removeItem(
                 "globalConquestPlayer"
             );
 
-
             window.location.href =
-                "index.html";
+                "./index.html";
+
+        }
+    );
+
+
+
+/* =========================================================
+   WORLD MAP ELEMENTS
+   ========================================================= */
+
+const worldEntry =
+    document.getElementById(
+        "worldEntry"
+    );
+
+const worldMapScreen =
+    document.getElementById(
+        "worldMapScreen"
+    );
+
+const enterWorldBtn =
+    document.getElementById(
+        "enterWorldBtn"
+    );
+
+const closeWorldBtn =
+    document.getElementById(
+        "closeWorldBtn"
+    );
+
+const worldMap =
+    document.getElementById(
+        "worldMap"
+    );
+
+const mapCommanderName =
+    document.getElementById(
+        "mapCommanderName"
+    );
+
+const provinceCount =
+    document.getElementById(
+        "provinceCount"
+    );
+
+const provinceInfo =
+    document.getElementById(
+        "provinceInfo"
+    );
+
+const selectedProvince =
+    document.getElementById(
+        "selectedProvince"
+    );
+
+const selectedOwner =
+    document.getElementById(
+        "selectedOwner"
+    );
+
+const closeProvinceInfo =
+    document.getElementById(
+        "closeProvinceInfo"
+    );
+
+
+mapCommanderName.textContent =
+    speler;
+
+
+
+/* =========================================================
+   ENTER WORLD
+   ========================================================= */
+
+enterWorldBtn.addEventListener(
+    "click",
+    async () => {
+
+        worldEntry.style.display =
+            "none";
+
+        worldMapScreen.hidden =
+            false;
+
+        await laadWereldkaart();
+
+    }
+);
+
+
+
+closeWorldBtn.addEventListener(
+    "click",
+    () => {
+
+        worldMapScreen.hidden =
+            true;
+
+        worldEntry.style.display =
+            "";
+
+    }
+);
+
+
+
+closeProvinceInfo.addEventListener(
+    "click",
+    () => {
+
+        provinceInfo.hidden =
+            true;
+
+    }
+);
+
+
+
+/* =========================================================
+   FACTIONS
+   ========================================================= */
+
+const factions = {
+
+    polish: {
+
+        name:
+            "Pools-Zwitserse Samenwerking",
+
+        countries: [
+            "Poland",
+            "Switzerland",
+            "Estonia",
+            "Latvia",
+            "Lithuania",
+            "Finland",
+            "Belarus"
+        ],
+
+        ukraine: [
+            "Volyn",
+            "Lviv",
+            "Rivne",
+            "Zhytomyr",
+            "Kyiv",
+            "Kyiv City",
+            "Chernihiv",
+            "Sumy"
+        ],
+
+        russia: [
+            "Pskov",
+            "Leningrad",
+            "Karelia",
+            "Murmansk",
+            "Arkhangelsk",
+            "Nenets",
+            "Vologda",
+            "Kostroma",
+            "Nizhny Novgorod",
+            "Mordovia",
+            "Penza",
+            "Tambov",
+            "Lipetsk",
+            "Voronezh",
+            "Oryol",
+            "Kursk",
+            "Bryansk",
+            "Smolensk",
+            "Tver",
+            "Novgorod",
+            "Kaluga",
+            "Tula",
+            "Ryazan",
+            "Moscow Oblast",
+            "Moscow",
+            "Yaroslavl",
+            "Ivanovo",
+            "Vladimir"
+        ]
+
+    },
+
+
+    morocco: {
+
+        name:
+            "Marokkaanse Rijk",
+
+        countries: [
+            "Morocco",
+            "Western Sahara",
+            "Algeria",
+            "Mali",
+            "Mauritania"
+        ]
+
+    },
+
+
+    japan: {
+
+        name:
+            "Japans-Koreaanse Unie",
+
+        countries: [
+            "Japan",
+            "South Korea",
+            "Denmark"
+        ],
+
+        norway: [
+            "Agder",
+            "Vestland",
+            "Rogaland",
+            "Telemark",
+            "Buskerud",
+            "Ostfold",
+            "Akershus",
+            "Innlandet",
+            "More og Romsdal",
+            "Svalbard"
+        ]
+
+    },
+
+
+    tajik: {
+
+        name:
+            "Tajik-Noordische Samenwerking",
+
+        countries: [
+            "Tajikistan",
+            "Iceland"
+        ]
+
+    }
+
+};
+
+
+
+/* =========================================================
+   MICROSTATEN
+   ========================================================= */
+
+const microStateOwners = {
+
+    "San Marino": "Italy",
+
+    "Vatican":
+        "Italy",
+
+    "Vatican City":
+        "Italy",
+
+    "Monaco":
+        "France"
+
+};
+
+
+
+/* =========================================================
+   NORMALISE NAAM
+   ========================================================= */
+
+function normalizeName(value) {
+
+    return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /['’`]/g,
+            ""
+        )
+        .replace(
+            /[^a-z0-9]+/g,
+            " "
+        )
+        .trim();
+
+}
+
+
+function naamMatch(
+    actual,
+    target
+) {
+
+    const a =
+        normalizeName(actual);
+
+    const b =
+        normalizeName(target);
+
+    return (
+        a === b ||
+        a.includes(b) ||
+        b.includes(a)
+    );
+
+}
+
+
+
+/* =========================================================
+   FACTION BEPALEN
+   ========================================================= */
+
+function bepaalFaction(
+    properties
+) {
+
+    const naam =
+        properties?.shapeName ||
+        properties?.shapeName_1 ||
+        properties?.name ||
+        properties?.NAME_1 ||
+        properties?.NAME_2 ||
+        properties?.name_1 ||
+        properties?.name_2 ||
+        "";
+
+    const land =
+        properties?.shapeGroup ||
+        properties?.shapeISO ||
+        properties?.ISO ||
+        properties?.country ||
+        properties?.boundaryISO ||
+        "";
+
+
+    /* POOLS-ZWITSERS */
+
+    for (
+        const country
+        of factions.polish.countries
+    ) {
+
+        if (
+            naamMatch(land, country) ||
+            naamMatch(naam, country)
+        ) {
+
+            return "polish";
+
+        }
+
+    }
+
+
+    for (
+        const region
+        of factions.polish.ukraine
+    ) {
+
+        if (
+            naamMatch(naam, region)
+        ) {
+
+            return "polish";
+
+        }
+
+    }
+
+
+    for (
+        const region
+        of factions.polish.russia
+    ) {
+
+        if (
+            naamMatch(naam, region)
+        ) {
+
+            return "polish";
+
+        }
+
+    }
+
+
+
+    /* MAROKKO */
+
+    for (
+        const country
+        of factions.morocco.countries
+    ) {
+
+        if (
+            naamMatch(land, country) ||
+            naamMatch(naam, country)
+        ) {
+
+            return "morocco";
+
+        }
+
+    }
+
+
+
+    /* JAPAN-KOREA */
+
+    for (
+        const country
+        of factions.japan.countries
+    ) {
+
+        if (
+            naamMatch(land, country) ||
+            naamMatch(naam, country)
+        ) {
+
+            return "japan";
+
+        }
+
+    }
+
+
+    for (
+        const region
+        of factions.japan.norway
+    ) {
+
+        if (
+            naamMatch(naam, region)
+        ) {
+
+            return "japan";
+
+        }
+
+    }
+
+
+
+    /* TAJIK-NOORDISCH */
+
+    for (
+        const country
+        of factions.tajik.countries
+    ) {
+
+        if (
+            naamMatch(land, country) ||
+            naamMatch(naam, country)
+        ) {
+
+            return "tajik";
+
+        }
+
+    }
+
+
+
+    return "neutral";
+
+}
+
+
+
+/* =========================================================
+   GEOBOUNDARIES
+   ========================================================= */
+
+async function laadWereldkaart() {
+
+    worldMap.innerHTML = `
+
+        <div class="map-loading">
+
+            <div class="loading-spinner"></div>
+
+            <span>
+                LOADING WORLD MAP...
+            </span>
+
+        </div>
+
+    `;
+
+
+    try {
+
+        /*
+         * Wereldwijde ADM1-dataset.
+         * geoBoundaries ondersteunt ALL als wildcard
+         * voor de wereldwijde dataset.
+         */
+
+        const metadataUrl =
+            "https://www.geoboundaries.org/api/current/gbOpen/ALL/ADM1/";
+
+
+        const response =
+            await fetch(metadataUrl);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Kaartgegevens konden niet worden geladen."
+            );
 
         }
 
 
-    </script>
+        const metadata =
+            await response.json();
 
+
+        let urls = [];
+
+
+        /*
+         * Verschillende API-versies kunnen
+         * een array of object teruggeven.
+         */
+
+        if (Array.isArray(metadata)) {
+
+            metadata.forEach(item => {
+
+                if (
+                    item.simplifiedGeometryGeoJSON
+                ) {
+
+                    urls.push(
+                        item.simplifiedGeometryGeoJSON
+                    );
+
+                }
+
+                else if (
+                    item.gjDownloadURL
+                ) {
+
+                    urls.push(
+                        item.gjDownloadURL
+                    );
+
+                }
+
+            });
+
+        }
+
+        else {
+
+            Object.values(metadata)
+                .forEach(item => {
+
+                    if (
+                        item &&
+                        item.simplifiedGeometryGeoJSON
+                    ) {
+
+                        urls.push(
+                            item.simplifiedGeometryGeoJSON
+                        );
+
+                    }
+
+                    else if (
+                        item &&
+                        item.gjDownloadURL
+                    ) {
+
+                        urls.push(
+                            item.gjDownloadURL
+                        );
+
+                    }
+
+                });
+
+        }
+
+
+        urls =
+            [...new Set(urls)];
+
+
+        if (!urls.length) {
+
+            throw new Error(
+                "Geen ADM1-kaartbestanden gevonden."
+            );
+
+        }
+
+
+        /*
+         * We laden de bestanden in batches,
+         * zodat de browser niet alles tegelijk
+         * probeert te downloaden.
+         */
+
+        const features = [];
+
+
+        const batchSize = 20;
+
+
+        for (
+            let i = 0;
+            i < urls.length;
+            i += batchSize
+        ) {
+
+            const batch =
+                urls.slice(
+                    i,
+                    i + batchSize
+                );
+
+
+            const results =
+                await Promise.all(
+                    batch.map(
+                        async url => {
+
+                            try {
+
+                                const r =
+                                    await fetch(url);
+
+                                if (!r.ok) {
+                                    return null;
+                                }
+
+                                return await r.json();
+
+                            }
+                            catch {
+                                return null;
+                            }
+
+                        }
+                    )
+                );
+
+
+            results.forEach(
+                geojson => {
+
+                    if (!geojson) {
+                        return;
+                    }
+
+                    if (
+                        geojson.type ===
+                        "FeatureCollection"
+                    ) {
+
+                        features.push(
+                            ...geojson.features
+                        );
+
+                    }
+
+                    else if (
+                        geojson.type ===
+                        "Feature"
+                    ) {
+
+                        features.push(
+                            geojson
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        if (!features.length) {
+
+            throw new Error(
+                "Geen provincies gevonden."
+            );
+
+        }
+
+
+        tekenWereldkaart(
+            features
+        );
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+
+        worldMap.innerHTML = `
+
+            <div class="map-loading">
+
+                <span>
+                    WORLD MAP ERROR
+                </span>
+
+                <small>
+                    ${error.message}
+                </small>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   TEKEN WERELDKAART
+   ========================================================= */
+
+function tekenWereldkaart(
+    features
+) {
+
+    worldMap.innerHTML = "";
+
+
+    const width =
+        Math.max(
+            worldMap.clientWidth,
+            1000
+        );
+
+
+    const height =
+        Math.max(
+            worldMap.clientHeight,
+            600
+        );
+
+
+    const svg =
+        d3.select("#worldMap")
+            .append("svg")
+            .attr(
+                "viewBox",
+                `0 0 ${width} ${height}`
+            )
+            .attr(
+                "preserveAspectRatio",
+                "xMidYMid meet"
+            );
+
+
+    const collection = {
+
+        type:
+            "FeatureCollection",
+
+        features
+
+    };
+
+
+    const projection =
+        d3.geoNaturalEarth1()
+            .fitExtent(
+                [
+                    [20, 20],
+                    [width - 20, height - 20]
+                ],
+                collection
+            );
+
+
+    const path =
+        d3.geoPath()
+            .projection(projection);
+
+
+    const group =
+        svg.append("g");
+
+
+
+    group
+        .selectAll("path")
+        .data(features)
+        .enter()
+        .append("path")
+        .attr(
+            "class",
+            feature => {
+
+                const faction =
+                    bepaalFaction(
+                        feature.properties
+                    );
+
+
+                if (
+                    faction === "polish"
+                ) {
+
+                    return "map-province polish";
+
+                }
+
+
+                if (
+                    faction === "morocco"
+                ) {
+
+                    return "map-province morocco";
+
+                }
+
+
+                if (
+                    faction === "japan"
+                ) {
+
+                    return "map-province japan";
+
+                }
+
+
+                if (
+                    faction === "tajik"
+                ) {
+
+                    return "map-province tajik";
+
+                }
+
+
+                return "map-province neutral";
+
+            }
+        )
+        .attr(
+            "d",
+            path
+        )
+        .on(
+            "click",
+            function(event, feature) {
+
+                const properties =
+                    feature.properties || {};
+
+
+                const naam =
+                    properties.shapeName ||
+                    properties.shapeName_1 ||
+                    properties.name ||
+                    properties.NAME_1 ||
+                    properties.NAME_2 ||
+                    properties.name_1 ||
+                    "Onbekend gebied";
+
+
+                const faction =
+                    bepaalFaction(
+                        properties
+                    );
+
+
+                let owner =
+                    "Normaal land";
+
+
+                if (
+                    faction === "polish"
+                ) {
+
+                    owner =
+                        factions.polish.name;
+
+                }
+
+
+                if (
+                    faction === "morocco"
+                ) {
+
+                    owner =
+                        factions.morocco.name;
+
+                }
+
+
+                if (
+                    faction === "japan"
+                ) {
+
+                    owner =
+                        factions.japan.name;
+
+                }
+
+
+                if (
+                    faction === "tajik"
+                ) {
+
+                    owner =
+                        factions.tajik.name;
+
+                }
+
+
+                selectedProvince.textContent =
+                    naam;
+
+
+                selectedOwner.textContent =
+                    owner;
+
+
+                provinceInfo.hidden =
+                    false;
+
+            }
+        );
+
+
+    provinceCount.textContent =
+        features.length.toLocaleString(
+            "nl-NL"
+        );
+
+}
+
+</script>
 
 </body>
-
 </html>
-```
