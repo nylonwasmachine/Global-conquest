@@ -1,46 +1,81 @@
 ```html
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Global Conquest</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
+
 
 <body>
 
+
     <div class="game-screen">
+
+
+        <!-- ==============================
+             HEADER
+             ============================== -->
 
         <header class="game-header">
 
             <div>
-                <h1>GLOBAL CONQUEST</h1>
+
+                <h1>
+                    GLOBAL CONQUEST
+                </h1>
 
                 <p id="playerName">
                     LOADING...
                 </p>
+
             </div>
+
 
             <button
                 class="logout-button"
-                onclick="logout()">
+                onclick="logout()"
+            >
                 LOG OUT
             </button>
 
         </header>
 
 
+
+        <!-- ==============================
+             GAME CONTENT
+             ============================== -->
+
         <main class="game-content">
+
+
+            <!-- ==============================
+                 SPELER
+                 ============================== -->
 
             <section class="welcome-panel">
 
-                <h2>WELCOME, COMMANDER</h2>
+                <h2>
+                    WELCOME, COMMANDER
+                </h2>
 
                 <p>
                     Je bent succesvol ingelogd.
@@ -49,25 +84,55 @@
 
                 <div class="stats">
 
-                    <div class="stat">
-                        <span>POINTS</span>
-                        <strong id="points">0</strong>
-                    </div>
 
                     <div class="stat">
-                        <span>MANPOWER</span>
-                        <strong id="manpower">0</strong>
+
+                        <span>
+                            POINTS
+                        </span>
+
+                        <strong id="points">
+                            0
+                        </strong>
+
                     </div>
 
+
                     <div class="stat">
-                        <span>FACTORIES</span>
-                        <strong id="factories">0</strong>
+
+                        <span>
+                            MANPOWER
+                        </span>
+
+                        <strong id="manpower">
+                            0
+                        </strong>
+
                     </div>
+
+
+                    <div class="stat">
+
+                        <span>
+                            FACTORIES
+                        </span>
+
+                        <strong id="factories">
+                            0
+                        </strong>
+
+                    </div>
+
 
                 </div>
 
             </section>
 
+
+
+            <!-- ==============================
+                 WORLD MAP
+                 ============================== -->
 
             <section class="map-placeholder">
 
@@ -75,34 +140,44 @@
                     🌍
                 </div>
 
-                <h2>WORLD MAP</h2>
+                <h2>
+                    WORLD MAP
+                </h2>
 
                 <p>
                     De wereldkaart wordt hier gebouwd.
                 </p>
 
-                <button class="start-map-button">
+
+                <button
+                    class="start-map-button"
+                >
                     ENTER WORLD
                 </button>
 
             </section>
+
 
         </main>
 
     </div>
 
 
+
     <script>
 
-        // ==============================
-        // SUPABASE
-        // ==============================
+
+        /* =====================================================
+           SUPABASE
+           ===================================================== */
 
         const supabaseUrl =
             "https://qelqaiczgibxyxfqtapg.supabase.co";
 
+
         const supabaseKey =
             "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
+
 
         const database =
             window.supabase.createClient(
@@ -111,139 +186,425 @@
             );
 
 
-        // ==============================
-        // INGelogde speler
-        // ==============================
 
-        const speler =
+        /* =====================================================
+           INGelogde SPELER
+           ===================================================== */
+
+        let speler =
             sessionStorage.getItem(
                 "globalConquestPlayer"
             );
 
 
+
+        /* =====================================================
+           CONTROLEREN OF ER IS INGELOGD
+           ===================================================== */
+
         if (!speler) {
 
-            window.location.href = "index.html";
+            window.location.href =
+                "index.html";
 
-        } else {
+        }
 
-            document.getElementById("playerName")
+        else {
+
+            document
+                .getElementById("playerName")
                 .textContent =
                 "COMMANDER: " + speler;
+
 
             laadSpeler();
 
         }
 
 
-        // ==============================
-        // PUNTEN FORMATTEREN
-        // ==============================
 
-        function formatPoints(points) {
+        /* =====================================================
+           PUNTEN PARSEN
 
-            points = Number(points) || 0;
+           Exact dezelfde logica als Puntenbank.
 
-            const absoluut = Math.abs(points);
+           1000  = 1K
+           2500  = 2.5K
+           1000000 = 1M
+           2500000 = 2.5M
+           ===================================================== */
 
-            // Miljard
-            if (absoluut >= 1000000000) {
+        function parsePunten(waarde) {
 
-                return (points / 1000000000)
-                    .toFixed(1)
-                    .replace(".0", "") + "B";
+
+            if (
+                typeof waarde ===
+                "number"
+            ) {
+
+                return waarde;
+
             }
 
-            // Miljoen
-            if (absoluut >= 1000000) {
 
-                return (points / 1000000)
-                    .toFixed(1)
-                    .replace(".0", "") + "M";
+            let tekst =
+                String(waarde)
+                    .trim()
+                    .replace(
+                        /,/g,
+                        "."
+                    );
+
+
+            if (
+                tekst === ""
+            ) {
+
+                return NaN;
+
             }
 
-            // Duizend
-            if (absoluut >= 1000) {
 
-                return (points / 1000)
-                    .toFixed(1)
-                    .replace(".0", "") + "K";
+            let vermenigvuldiger =
+                1;
+
+
+            if (
+                tekst
+                    .toUpperCase()
+                    .endsWith("K")
+            ) {
+
+                vermenigvuldiger =
+                    1000;
+
+
+                tekst =
+                    tekst.slice(
+                        0,
+                        -1
+                    );
+
             }
 
-            return Math.round(points).toString();
+
+            else if (
+                tekst
+                    .toUpperCase()
+                    .endsWith("M")
+            ) {
+
+                vermenigvuldiger =
+                    1000000;
+
+
+                tekst =
+                    tekst.slice(
+                        0,
+                        -1
+                    );
+
+            }
+
+
+            const getal =
+                Number(tekst);
+
+
+            if (
+                !Number.isFinite(
+                    getal
+                )
+            ) {
+
+                return NaN;
+
+            }
+
+
+            return (
+                getal *
+                vermenigvuldiger
+            );
+
         }
 
 
-        // ==============================
-        // SPELER LADEN
-        // ==============================
+
+        /* =====================================================
+           PUNTEN FORMATTEREN
+
+           Exact dezelfde stijl als Puntenbank.
+           ===================================================== */
+
+        function formatPunten(
+            getal
+        ) {
+
+
+            if (
+                !Number.isFinite(
+                    getal
+                )
+            ) {
+
+                return "Onbepaald";
+
+            }
+
+
+            const negatief =
+                getal < 0;
+
+
+            const absoluut =
+                Math.abs(
+                    getal
+                );
+
+
+            let resultaat;
+
+
+            if (
+                absoluut >= 1000000
+            ) {
+
+                resultaat =
+                    (
+                        absoluut /
+                        1000000
+                    )
+                    .toFixed(2)
+                    .replace(
+                        /\.?0+$/,
+                        ""
+                    ) +
+                    "M";
+
+            }
+
+
+            else if (
+                absoluut >= 1000
+            ) {
+
+                resultaat =
+                    (
+                        absoluut /
+                        1000
+                    )
+                    .toFixed(2)
+                    .replace(
+                        /\.?0+$/,
+                        ""
+                    ) +
+                    "K";
+
+            }
+
+
+            else {
+
+                resultaat =
+                    absoluut
+                        .toFixed(2)
+                        .replace(
+                            /\.?0+$/,
+                            ""
+                        );
+
+            }
+
+
+            return negatief
+                ? "-" + resultaat
+                : resultaat;
+
+        }
+
+
+
+        /* =====================================================
+           TOTAAL BEREKENEN
+
+           Exact dezelfde berekening als Puntenbank:
+
+           plus - abs(min)
+           ===================================================== */
+
+        function berekenTotaal(
+            spelerData
+        ) {
+
+
+            const pluspunten =
+                parsePunten(
+                    spelerData.plus
+                );
+
+
+            const minpunten =
+                parsePunten(
+                    spelerData.min
+                );
+
+
+            if (
+                Number.isFinite(
+                    pluspunten
+                ) &&
+                Number.isFinite(
+                    minpunten
+                )
+            ) {
+
+                return (
+                    pluspunten -
+                    Math.abs(
+                        minpunten
+                    )
+                );
+
+            }
+
+
+            return NaN;
+
+        }
+
+
+
+        /* =====================================================
+           SPELER OPHALEN
+           ===================================================== */
 
         async function laadSpeler() {
 
+
             try {
 
-                const { data, error } =
-                    await database
-                        .from("players")
-                        .select("naam, plus, min")
-                        .eq("naam", speler)
-                        .single();
 
+                const {
+                    data,
+                    error
+                } =
+                    await database
+
+                        .from(
+                            "players"
+                        )
+
+                        .select(
+                            "naam, plus, min"
+                        )
+
+                        .eq(
+                            "naam",
+                            speler
+                        )
+
+                        .maybeSingle();
+
+
+
+                /* ==============================
+                   FOUT
+                   ============================== */
 
                 if (error) {
 
                     console.error(
-                        "Fout bij ophalen speler:",
+                        "Speler laden:",
                         error
                     );
 
-                    document.getElementById("points")
-                        .textContent = "?";
+
+                    document
+                        .getElementById(
+                            "points"
+                        )
+                        .textContent =
+                        "?";
+
 
                     return;
+
                 }
 
+
+
+                /* ==============================
+                   ACCOUNT NIET GEVONDEN
+                   ============================== */
 
                 if (!data) {
 
-                    document.getElementById("points")
-                        .textContent = "?";
+                    console.warn(
+                        "Account niet gevonden:",
+                        speler
+                    );
+
+
+                    document
+                        .getElementById(
+                            "points"
+                        )
+                        .textContent =
+                        "?";
+
 
                     return;
+
                 }
 
 
-                // ==============================
-                // ZELFDE PUNTENBEREKENING
-                // ALS DE PUNTENBANK
-                // ==============================
 
-                const plus =
-                    Number(data.plus) || 0;
+                /* ==============================
+                   PUNTEN BEREKENEN
+                   ============================== */
 
-                const min =
-                    Number(data.min) || 0;
-
-                const punten =
-                    plus - Math.abs(min);
+                const totaal =
+                    berekenTotaal(
+                        data
+                    );
 
 
-                // Punten tonen
-                document.getElementById("points")
+
+                /* ==============================
+                   PUNTEN OP SCHERM
+                   ============================== */
+
+                document
+                    .getElementById(
+                        "points"
+                    )
                     .textContent =
-                    formatPoints(punten);
+                    formatPunten(
+                        totaal
+                    );
+
 
 
                 console.log(
-                    "Global Conquest punten:",
-                    punten
+                    "Global Conquest:",
+                    data.naam,
+                    "plus:",
+                    data.plus,
+                    "min:",
+                    data.min,
+                    "totaal:",
+                    totaal
                 );
 
-            } catch (error) {
+
+            }
+
+            catch (fout) {
 
                 console.error(
                     "Onverwachte fout:",
-                    error
+                    fout
                 );
 
             }
@@ -251,12 +612,32 @@
         }
 
 
-        // ==============================
-        // AUTOMATISCH UPDATEN
-        // ==============================
+
+        /* =====================================================
+           REALTIME PUNTENBANK
+
+           Zodra de players-tabel verandert,
+           wordt Global Conquest opnieuw bijgewerkt.
+
+           Dus:
+
+           Overheid verandert punten
+                    ↓
+           players verandert
+                    ↓
+           Supabase realtime
+                    ↓
+           Global Conquest ontvangt update
+                    ↓
+           punten worden opnieuw berekend
+           ===================================================== */
 
         database
-            .channel("global-conquest-points")
+
+            .channel(
+                "global-conquest-players"
+            )
+
             .on(
                 "postgres_changes",
                 {
@@ -264,45 +645,91 @@
                     schema: "public",
                     table: "players"
                 },
-                function(payload) {
 
-                    // Alleen opnieuw laden als de
-                    // ingelogde speler veranderd is.
+                async function(payload) {
+
+
+                    console.log(
+                        "Puntenbank gewijzigd:",
+                        payload
+                    );
+
+
+
+                    /* ==============================
+                       ACCOUNT IS HERNOEMD
+                       ============================== */
+
                     if (
-                        payload.new &&
-                        payload.new.naam === speler
+                        payload.eventType ===
+                        "UPDATE"
                     ) {
-                        laadSpeler();
+
+                        if (
+                            payload.old &&
+                            payload.old.naam ===
+                            speler
+                        ) {
+
+                            speler =
+                                payload.new.naam;
+
+
+                            sessionStorage.setItem(
+                                "globalConquestPlayer",
+                                speler
+                            );
+
+
+                            document
+                                .getElementById(
+                                    "playerName"
+                                )
+                                .textContent =
+                                "COMMANDER: " +
+                                speler;
+
+                        }
+
                     }
 
-                    if (
-                        payload.old &&
-                        payload.old.naam === speler
-                    ) {
-                        laadSpeler();
-                    }
+
+
+                    /* ==============================
+                       PUNTEN OPNIEUW LADEN
+                       ============================== */
+
+                    await laadSpeler();
 
                 }
             )
+
             .subscribe();
 
 
-        // ==============================
-        // UITLOGGEN
-        // ==============================
+
+        /* =====================================================
+           UITLOGGEN
+           ===================================================== */
 
         function logout() {
+
 
             sessionStorage.removeItem(
                 "globalConquestPlayer"
             );
 
+
             window.location.href =
                 "index.html";
+
         }
+
 
     </script>
 
+
 </body>
+
 </html>
 ```
