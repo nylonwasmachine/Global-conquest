@@ -8,6 +8,9 @@
     <title>Global Conquest</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -92,7 +95,24 @@
     <script>
 
         // ==============================
-        // INGelogde speler ophalen
+        // SUPABASE
+        // ==============================
+
+        const supabaseUrl =
+            "https://qelqaiczgibxyxfqtapg.supabase.co";
+
+        const supabaseKey =
+            "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
+
+        const database =
+            window.supabase.createClient(
+                supabaseUrl,
+                supabaseKey
+            );
+
+
+        // ==============================
+        // INGelogde speler
         // ==============================
 
         const speler =
@@ -100,10 +120,6 @@
                 "globalConquestPlayer"
             );
 
-
-        // ==============================
-        // Controleren of iemand is ingelogd
-        // ==============================
 
         if (!speler) {
 
@@ -115,7 +131,160 @@
                 .textContent =
                 "COMMANDER: " + speler;
 
+            laadSpeler();
+
         }
+
+
+        // ==============================
+        // PUNTEN FORMATTEREN
+        // ==============================
+
+        function formatPoints(points) {
+
+            points = Number(points) || 0;
+
+            const absoluut = Math.abs(points);
+
+            // Miljard
+            if (absoluut >= 1000000000) {
+
+                return (points / 1000000000)
+                    .toFixed(1)
+                    .replace(".0", "") + "B";
+            }
+
+            // Miljoen
+            if (absoluut >= 1000000) {
+
+                return (points / 1000000)
+                    .toFixed(1)
+                    .replace(".0", "") + "M";
+            }
+
+            // Duizend
+            if (absoluut >= 1000) {
+
+                return (points / 1000)
+                    .toFixed(1)
+                    .replace(".0", "") + "K";
+            }
+
+            return Math.round(points).toString();
+        }
+
+
+        // ==============================
+        // SPELER LADEN
+        // ==============================
+
+        async function laadSpeler() {
+
+            try {
+
+                const { data, error } =
+                    await database
+                        .from("players")
+                        .select("naam, plus, min")
+                        .eq("naam", speler)
+                        .single();
+
+
+                if (error) {
+
+                    console.error(
+                        "Fout bij ophalen speler:",
+                        error
+                    );
+
+                    document.getElementById("points")
+                        .textContent = "?";
+
+                    return;
+                }
+
+
+                if (!data) {
+
+                    document.getElementById("points")
+                        .textContent = "?";
+
+                    return;
+                }
+
+
+                // ==============================
+                // ZELFDE PUNTENBEREKENING
+                // ALS DE PUNTENBANK
+                // ==============================
+
+                const plus =
+                    Number(data.plus) || 0;
+
+                const min =
+                    Number(data.min) || 0;
+
+                const punten =
+                    plus - Math.abs(min);
+
+
+                // Punten tonen
+                document.getElementById("points")
+                    .textContent =
+                    formatPoints(punten);
+
+
+                console.log(
+                    "Global Conquest punten:",
+                    punten
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Onverwachte fout:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        // ==============================
+        // AUTOMATISCH UPDATEN
+        // ==============================
+
+        database
+            .channel("global-conquest-points")
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "players"
+                },
+                function(payload) {
+
+                    // Alleen opnieuw laden als de
+                    // ingelogde speler veranderd is.
+                    if (
+                        payload.new &&
+                        payload.new.naam === speler
+                    ) {
+                        laadSpeler();
+                    }
+
+                    if (
+                        payload.old &&
+                        payload.old.naam === speler
+                    ) {
+                        laadSpeler();
+                    }
+
+                }
+            )
+            .subscribe();
 
 
         // ==============================
