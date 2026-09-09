@@ -1,25 +1,40 @@
 ```css
+/* ==============================
+   BASIS
+   ============================== */
+
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 body {
-    width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
 
     background:
-        radial-gradient(circle at center, #18351f 0%, #08120b 55%, #030705 100%);
+        radial-gradient(
+            circle at center,
+            #173d2b 0%,
+            #0b2017 45%,
+            #050d09 100%
+        );
 
-    font-family: "Courier New", monospace;
-    color: #d7f5dc;
+    font-family:
+        "Courier New",
+        monospace;
+
+    color: #eaffdf;
 }
 
-.menu {
-    width: 100%;
-    height: 100vh;
+
+/* ==============================
+   STARTSCHERM
+   ============================== */
+
+.start-screen {
+    min-height: 100vh;
 
     display: flex;
     flex-direction: column;
@@ -27,126 +42,378 @@ body {
     justify-content: center;
 
     text-align: center;
+
+    position: relative;
 }
 
-/* Titel */
 
-h1 {
-    font-size: clamp(40px, 7vw, 90px);
-    letter-spacing: 6px;
-    color: #a9e8b2;
+/* ==============================
+   TITEL
+   ============================== */
+
+.game-title h1 {
+    font-size: clamp(42px, 8vw, 90px);
+
+    line-height: 0.9;
+
+    letter-spacing: 5px;
+
+    color: #8cff72;
 
     text-shadow:
-        4px 4px 0 #071009,
-        8px 8px 0 #020503;
-
-    margin-bottom: 8px;
-
-    image-rendering: pixelated;
+        4px 4px 0 #173d25,
+        8px 8px 0 #06110b;
 }
 
-.subtitle {
+
+.game-title p {
+    margin-top: 20px;
+
     font-size: 14px;
-    letter-spacing: 5px;
-    color: #648b6c;
 
-    margin-bottom: 55px;
+    letter-spacing: 4px;
+
+    color: #a8c9a0;
 }
 
-/* PLAY BUTTON */
+
+/* ==============================
+   PLAY KNOP
+   ============================== */
 
 .play-button {
-    width: 170px;
-    height: 170px;
+    width: 150px;
+    height: 150px;
+
+    margin-top: 70px;
 
     border-radius: 50%;
 
-    border: 8px solid #6fb879;
+    border: 6px solid #07150d;
 
-    background: #183d21;
+    background: #4cae55;
 
     cursor: pointer;
 
     position: relative;
 
     box-shadow:
-        0 0 0 8px #07130a,
-        10px 10px 0 #020503;
+        0 10px 0 #173d25,
+        0 16px 20px rgba(0, 0, 0, 0.5);
 
     transition:
-        transform 0.12s,
-        background 0.12s,
-        box-shadow 0.12s;
+        transform 0.12s ease,
+        background 0.12s ease,
+        box-shadow 0.12s ease;
 }
 
-/* Pixelachtige buitenrand */
 
-.play-button::before {
-    content: "";
+.play-button:hover {
+    background: #63c96a;
 
-    position: absolute;
+    transform: translateY(-4px);
 
-    inset: -15px;
-
-    border-radius: 50%;
-
-    border: 4px solid #294d30;
-
-    pointer-events: none;
+    box-shadow:
+        0 14px 0 #173d25,
+        0 20px 25px rgba(0, 0, 0, 0.5);
 }
 
-/* Driehoek */
+
+.play-button:active {
+    transform: translateY(7px);
+
+    box-shadow:
+        0 3px 0 #173d25,
+        0 7px 10px rgba(0, 0, 0, 0.5);
+}
+
+
+/* ==============================
+   PLAY DRIEHOEK
+   ============================== */
 
 .play-icon {
     position: absolute;
 
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-40%, -50%);
+    left: 58px;
+    top: 43px;
 
     width: 0;
     height: 0;
 
-    border-top: 32px solid transparent;
-    border-bottom: 32px solid transparent;
-    border-left: 48px solid #b8f5c0;
-
-    filter: drop-shadow(5px 5px 0 #071009);
+    border-top: 28px solid transparent;
+    border-bottom: 28px solid transparent;
+    border-left: 42px solid #07150d;
 }
 
-/* Hover */
 
-.play-button:hover {
-    background: #245a30;
-
-    transform: translateY(-5px);
-
-    box-shadow:
-        0 0 0 8px #07130a,
-        10px 15px 0 #020503;
-}
-
-/* Klik */
-
-.play-button:active {
-    transform: translateY(4px);
-
-    box-shadow:
-        0 0 0 8px #07130a,
-        5px 5px 0 #020503;
-}
+/* ==============================
+   PLAY TEKST
+   ============================== */
 
 .play-text {
-    margin-top: 28px;
+    margin-top: 35px;
 
-    font-size: 20px;
+    font-size: 22px;
+
     font-weight: bold;
 
-    letter-spacing: 8px;
+    letter-spacing: 7px;
 
-    color: #8fca99;
+    color: #8cff72;
 
-    text-shadow: 3px 3px 0 #050a06;
+    text-shadow:
+        3px 3px 0 #07150d;
+}
+
+
+/* ==============================
+   LOGIN OVERLAY
+   ============================== */
+
+.login-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.78);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+
+    z-index: 100;
+}
+
+
+.login-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* ==============================
+   LOGIN BOX
+   ============================== */
+
+.login-box {
+    width: min(90%, 420px);
+
+    padding: 38px;
+
+    position: relative;
+
+    background: #10271b;
+
+    border: 4px solid #4cae55;
+
+    box-shadow:
+        10px 10px 0 #050d09,
+        0 20px 50px rgba(0, 0, 0, 0.6);
+
+    text-align: center;
+}
+
+
+.login-box h2 {
+    color: #8cff72;
+
+    font-size: 28px;
+
+    letter-spacing: 3px;
+
+    text-shadow:
+        3px 3px 0 #07150d;
+}
+
+
+.login-subtitle {
+    margin-top: 10px;
+    margin-bottom: 30px;
+
+    color: #91aa94;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+}
+
+
+/* ==============================
+   SLUITKNOP
+   ============================== */
+
+.close-button {
+    position: absolute;
+
+    top: 8px;
+    right: 12px;
+
+    background: transparent;
+
+    border: none;
+
+    color: #7f9b83;
+
+    font-size: 30px;
+
+    cursor: pointer;
+}
+
+
+.close-button:hover {
+    color: #8cff72;
+}
+
+
+/* ==============================
+   INPUTS
+   ============================== */
+
+.login-box input {
+    width: 100%;
+
+    padding: 15px;
+
+    margin-bottom: 14px;
+
+    background: #07150d;
+
+    border: 3px solid #285f36;
+
+    color: #eaffdf;
+
+    outline: none;
+
+    font-family: "Courier New", monospace;
+
+    font-size: 15px;
+}
+
+
+.login-box input:focus {
+    border-color: #63c96a;
+}
+
+
+.login-box input::placeholder {
+    color: #66806b;
+}
+
+
+/* ==============================
+   LOGIN BUTTON
+   ============================== */
+
+.login-button {
+    width: 100%;
+
+    padding: 15px;
+
+    margin-top: 8px;
+
+    background: #4cae55;
+
+    border: 3px solid #07150d;
+
+    color: #07150d;
+
+    font-family: "Courier New", monospace;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+    cursor: pointer;
+
+    box-shadow:
+        4px 4px 0 #07150d;
+}
+
+
+.login-button:hover {
+    background: #63c96a;
+}
+
+
+.login-button:active {
+    transform: translate(3px, 3px);
+
+    box-shadow: 1px 1px 0 #07150d;
+}
+
+
+/* ==============================
+   STATUS
+   ============================== */
+
+.login-status {
+    min-height: 20px;
+
+    margin-top: 18px;
+
+    font-size: 13px;
+
+    color: #a8c9a0;
+}
+
+
+.login-status.error {
+    color: #ff7777;
+}
+
+
+.login-status.success {
+    color: #8cff72;
+}
+
+
+/* ==============================
+   MOBIEL
+   ============================== */
+
+@media (max-width: 600px) {
+
+    .game-title h1 {
+        font-size: 42px;
+
+        letter-spacing: 3px;
+    }
+
+    .game-title p {
+        font-size: 10px;
+
+        letter-spacing: 2px;
+    }
+
+    .play-button {
+        width: 125px;
+        height: 125px;
+
+        margin-top: 50px;
+    }
+
+    .play-icon {
+        left: 48px;
+        top: 35px;
+
+        border-top-width: 24px;
+        border-bottom-width: 24px;
+        border-left-width: 36px;
+    }
+
+    .login-box {
+        padding: 28px 22px;
+    }
 }
 ```
