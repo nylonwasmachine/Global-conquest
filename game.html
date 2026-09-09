@@ -1,178 +1,74 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Global Conquest - Command Center</title>
+    <title>Global Conquest — Command Center</title>
 
     <link rel="stylesheet" href="./style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-
 </head>
 
 <body class="game-body">
 
+<div class="game-shell">
 
-<!-- COMMAND CENTER -->
-
-<div class="game-screen">
-
+    <!-- HEADER -->
     <header class="game-header">
-
-        <div class="game-logo">
-            GLOBAL <span>CONQUEST</span>
+        <div>
+            <div class="game-logo">GLOBAL CONQUEST</div>
+            <div class="game-subtitle">COMMAND CENTER</div>
         </div>
 
-        <div class="commander-display">
-            COMMANDER:
-            <strong id="playerName">---</strong>
+        <div class="commander-box">
+            <span>COMMANDER</span>
+            <strong id="commanderName">---</strong>
         </div>
 
-        <button id="logoutBtn" class="logout-button">
+        <button class="logout-btn" id="logoutBtn">
             LOGOUT
         </button>
-
     </header>
 
 
-    <main class="game-content">
+    <!-- COMMAND CENTER -->
+    <main class="command-center">
 
         <section class="welcome-panel">
+            <div class="panel-tag">SYSTEM ONLINE</div>
 
-            <div class="panel-status">
-                COMMAND CENTER ONLINE
-            </div>
-
-            <h1>
-                WELCOME,
-                <span id="welcomeName">COMMANDER</span>
-            </h1>
+            <h1>WELCOME, COMMANDER</h1>
 
             <p>
-                YOUR STRATEGIC COMMAND CENTER IS READY.
+                Je commandocentrum is gereed.
+                Bekijk de wereldkaart en inspecteer de gebieden.
             </p>
 
-
-            <div class="stats">
-
-                <div class="stat-box">
-
-                    <div class="stat-label">
-                        POINTS
-                    </div>
-
-                    <div
-                        id="points"
-                        class="stat-value"
-                    >
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="stat-box">
-
-                    <div class="stat-label">
-                        MANPOWER
-                    </div>
-
-                    <div
-                        id="manpower"
-                        class="stat-value"
-                    >
-                        0
-                    </div>
-
-                </div>
-
-
-                <div class="stat-box">
-
-                    <div class="stat-label">
-                        FACTORIES
-                    </div>
-
-                    <div
-                        id="factories"
-                        class="stat-value"
-                    >
-                        0
-                    </div>
-
-                </div>
-
-            </div>
-
+            <button class="world-btn" id="openWorldBtn">
+                🌍 ENTER WORLD
+            </button>
         </section>
 
 
-        <!-- WORLD ENTRY -->
+        <!-- STATS -->
+        <section class="stats-grid">
 
-        <section
-            id="worldEntry"
-            class="world-entry"
-        >
+            <div class="stat-card">
+                <span>POINTS</span>
+                <strong id="points">0</strong>
+            </div>
 
-            <div class="world-entry-grid"></div>
-            <div class="world-entry-scan"></div>
+            <div class="stat-card">
+                <span>MANPOWER</span>
+                <strong>0</strong>
+            </div>
 
-            <div class="world-entry-content">
-
-                <div class="world-entry-status">
-                    <span class="status-dot"></span>
-                    CARTOGRAPHY SYSTEM ONLINE
-                </div>
-
-                <div class="world-globe">
-                    🌍
-                </div>
-
-                <h2>
-                    GLOBAL THEATER
-                </h2>
-
-                <p>
-                    WORLD MAP // PROVINCES // TERRITORIES
-                </p>
-
-                <div class="world-entry-info">
-
-                    <span>
-                        ADM-1 DATABASE
-                    </span>
-
-                    <span>
-                        POLITICAL MAP
-                    </span>
-
-                    <span>
-                        STRATEGIC VIEW
-                    </span>
-
-                </div>
-
-                <button
-                    id="enterWorldBtn"
-                    class="enter-world-btn"
-                >
-                    <span>ENTER WORLD</span>
-                    <span class="enter-arrow">→</span>
-                </button>
-
-                <div class="world-entry-warning">
-                    MAP VIEW ONLY // MILITARY ACTIONS DISABLED
-                </div>
-
+            <div class="stat-card">
+                <span>FACTORIES</span>
+                <strong>0</strong>
             </div>
 
         </section>
@@ -182,113 +78,103 @@
 </div>
 
 
-
+<!-- ========================================================= -->
 <!-- WORLD MAP -->
+<!-- ========================================================= -->
 
-<div
-    id="worldMapScreen"
-    class="world-map-screen"
-    hidden
->
+<div id="worldOverlay" class="world-overlay">
 
-    <header class="map-topbar">
+    <div class="world-header">
 
         <div>
-
-            <div class="map-title">
-                GLOBAL CONQUEST
+            <div class="world-title">WORLD MAP</div>
+            <div class="world-status" id="mapStatus">
+                LOADING MAP DATA...
             </div>
-
-            <div class="map-subtitle">
-                WORLD THEATER // POLITICAL CONTROL
-            </div>
-
         </div>
 
-
-        <div class="map-commander">
-
-            COMMANDER:
-
-            <strong id="mapCommanderName">
-                ---
-            </strong>
-
-        </div>
-
-
-        <button
-            id="closeWorldBtn"
-            class="map-close-btn"
-        >
-            ← COMMAND CENTER
+        <button id="closeWorldBtn" class="close-world-btn">
+            ✕ CLOSE
         </button>
 
-    </header>
+    </div>
 
 
+    <div class="world-content">
 
-    <div class="map-layout">
+        <!-- MAP -->
+        <div id="mapContainer">
+
+            <div id="mapLoading">
+                <div class="loader"></div>
+                <div>LOADING PROVINCES...</div>
+            </div>
+
+            <svg id="worldMap"></svg>
+
+            <div id="provinceInfo" class="province-info">
+                <div class="province-info-title">
+                    SELECT A PROVINCE
+                </div>
+
+                <div id="provinceInfoText">
+                    Klik op een gebied op de kaart.
+                </div>
+            </div>
+
+        </div>
 
 
         <!-- SIDEBAR -->
-
         <aside class="map-sidebar">
 
             <div class="sidebar-title">
-                CONTROLLED POWERS
+                FACTIONS
             </div>
 
 
-            <div class="faction-item">
-
-                <span
-                    class="faction-color polish"
-                ></span>
-
-                <span>
-                    Pools-Zwitserse Samenwerking
-                </span>
-
+            <div class="legend-item">
+                <span class="legend-color faction-poland"></span>
+                <div>
+                    <strong>🇵🇱🇨🇭 Pools-Zwitserse Samenwerking</strong>
+                    <small>Poland / Switzerland / Baltics / Finland / Belarus / selected Russian & Ukrainian regions</small>
+                </div>
             </div>
 
 
-            <div class="faction-item">
-
-                <span
-                    class="faction-color morocco"
-                ></span>
-
-                <span>
-                    Marokkaanse Rijk
-                </span>
-
+            <div class="legend-item">
+                <span class="legend-color faction-morocco"></span>
+                <div>
+                    <strong>🇲🇦 Marokkaanse Rijk</strong>
+                    <small>Morocco / Western Sahara / Algeria / Mali / Mauritania</small>
+                </div>
             </div>
 
 
-            <div class="faction-item">
-
-                <span
-                    class="faction-color japan"
-                ></span>
-
-                <span>
-                    Japans-Koreaanse Unie
-                </span>
-
+            <div class="legend-item">
+                <span class="legend-color faction-japan"></span>
+                <div>
+                    <strong>🇯🇵🇰🇷 Japans-Koreaanse Unie</strong>
+                    <small>Japan / South Korea / Denmark / selected Norway</small>
+                </div>
             </div>
 
 
-            <div class="faction-item">
+            <div class="legend-item">
+                <span class="legend-color faction-tajik"></span>
+                <div>
+                    <strong>🇹🇯🇳🇴🇮🇸 Tajik-Noordische Samenwerking</strong>
+                    <small>Tajikistan / Iceland / remaining Norway</small>
+                </div>
+            </div>
 
-                <span
-                    class="faction-color tajik"
-                ></span>
 
-                <span>
-                    Tajik-Noordische Samenwerking
-                </span>
-
+            <div class="legend-item">
+                <span class="legend-color faction-neutral"></span>
+                <div>
+                    <strong>NEUTRAL</strong>
+                    <small>Other countries and territories</small>
+                </div>
             </div>
 
 
@@ -299,132 +185,37 @@
                 MAP STATUS
             </div>
 
-
-            <div class="map-stat">
-
-                <span>
-                    MODE
-                </span>
-
-                <strong>
-                    POLITICAL
-                </strong>
-
+            <div class="map-status-box">
+                <div>PROVINCES: <strong id="provinceCount">0</strong></div>
+                <div>COUNTRIES: <strong id="countryCount">0</strong></div>
+                <div>GAME ACTIONS: <strong>DISABLED</strong></div>
             </div>
 
 
-            <div class="map-stat">
-
-                <span>
-                    PROVINCES
-                </span>
-
-                <strong id="provinceCount">
-                    —
-                </strong>
-
+            <div class="sidebar-note">
+                Microstates zoals San Marino en Vatican City
+                worden bij Italië gerekend.
+                Monaco wordt bij Frankrijk gerekend.
             </div>
-
-
-            <div class="map-stat">
-
-                <span>
-                    ACTIONS
-                </span>
-
-                <strong>
-                    DISABLED
-                </strong>
-
-            </div>
-
-
-            <div class="sidebar-divider"></div>
-
-
-            <div class="sidebar-title">
-                MICROSTATES
-            </div>
-
-            <p class="sidebar-note">
-                San Marino → Italië<br>
-                Vaticaanstad → Italië<br>
-                Monaco → Frankrijk
-            </p>
 
         </aside>
-
-
-
-        <!-- MAP -->
-
-        <main class="map-container">
-
-            <div id="worldMap">
-
-                <div class="map-loading">
-
-                    <div class="loading-spinner"></div>
-
-                    <span>
-                        LOADING WORLD MAP...
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="map-hint">
-                KLIK OP EEN PROVINCIE VOOR INFORMATIE
-            </div>
-
-
-            <div
-                id="provinceInfo"
-                class="province-info"
-                hidden
-            >
-
-                <button
-                    id="closeProvinceInfo"
-                >
-                    ×
-                </button>
-
-                <div class="province-info-label">
-                    TERRITORY
-                </div>
-
-                <h3 id="selectedProvince">
-                    —
-                </h3>
-
-                <div id="selectedOwner">
-                    —
-                </div>
-
-            </div>
-
-        </main>
 
     </div>
 
 </div>
 
 
-
 <script>
 
 /* =========================================================
    SUPABASE
-   ========================================================= */
+========================================================= */
 
 const supabaseUrl =
     "https://qelqaiczgibxyxfqtapg.supabase.co";
 
 const supabaseKey =
-    "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
+    "sb_publishable_aZSOOfRnROvePvZ2WWOf8g_ZhfZTCes";
 
 const database =
     window.supabase.createClient(
@@ -435,135 +226,66 @@ const database =
 
 /* =========================================================
    PLAYER
-   ========================================================= */
+========================================================= */
 
 let speler =
-    sessionStorage.getItem(
-        "globalConquestPlayer"
-    );
+    sessionStorage.getItem("globalConquestPlayer");
 
 
 if (!speler) {
-
-    window.location.href =
-        "./index.html";
-
+    window.location.href = "./index.html";
 }
 
 
-const playerName =
-    document.getElementById("playerName");
-
-const welcomeName =
-    document.getElementById("welcomeName");
-
-const points =
-    document.getElementById("points");
-
-
-playerName.textContent =
-    speler;
-
-welcomeName.textContent =
-    speler;
-
+document.getElementById("commanderName").textContent =
+    speler || "---";
 
 
 /* =========================================================
    POINTS
-   ========================================================= */
+========================================================= */
 
-function parsePunten(waarde) {
+function parsePunten(value) {
 
-    if (
-        waarde === null ||
-        waarde === undefined ||
-        waarde === ""
-    ) {
+    if (value === null || value === undefined) {
         return 0;
     }
 
-    if (typeof waarde === "number") {
-        return waarde;
-    }
+    let text = String(value)
+        .trim()
+        .toUpperCase()
+        .replace(",", ".");
 
-    let tekst =
-        String(waarde)
-            .trim()
-            .toUpperCase()
-            .replace(",", ".");
+    if (!text) {
+        return 0;
+    }
 
     let multiplier = 1;
 
-    if (tekst.endsWith("K")) {
-
+    if (text.endsWith("K")) {
         multiplier = 1000;
-        tekst = tekst.slice(0, -1);
-
+        text = text.slice(0, -1);
     }
 
-    if (tekst.endsWith("M")) {
-
+    if (text.endsWith("M")) {
         multiplier = 1000000;
-        tekst = tekst.slice(0, -1);
-
+        text = text.slice(0, -1);
     }
 
-    const nummer =
-        Number(tekst);
+    const number =
+        parseFloat(text.replace(/[^0-9.-]/g, ""));
 
-    return Number.isFinite(nummer)
-        ? nummer * multiplier
-        : 0;
-}
-
-
-function formatPunten(waarde) {
-
-    const nummer =
-        Math.round(waarde);
-
-    if (nummer >= 1000000) {
-
-        return (
-            (nummer / 1000000)
-                .toFixed(1)
-                .replace(".0", "")
-            + "M"
-        );
-
+    if (Number.isNaN(number)) {
+        return 0;
     }
 
-    if (nummer >= 1000) {
-
-        return (
-            (nummer / 1000)
-                .toFixed(1)
-                .replace(".0", "")
-            + "K"
-        );
-
-    }
-
-    return nummer.toLocaleString("nl-NL");
-}
-
-
-function berekenTotaal(spelerData) {
-
-    const plus =
-        parsePunten(spelerData.plus);
-
-    const min =
-        Math.abs(
-            parsePunten(spelerData.min)
-        );
-
-    return plus - min;
+    return number * multiplier;
 }
 
 
 async function laadSpeler() {
+
+    if (!speler) return;
 
     const { data, error } =
         await database
@@ -572,66 +294,46 @@ async function laadSpeler() {
             .eq("naam", speler)
             .maybeSingle();
 
-
     if (error) {
-
-        console.error(
-            "Player error:",
-            error
-        );
-
+        console.error("Player error:", error);
         return;
-
     }
-
 
     if (!data) {
-
-        points.textContent = "0";
-
+        document.getElementById("points").textContent = "0";
         return;
-
     }
 
+    speler = data.naam;
 
-    const totaal =
-        berekenTotaal(data);
+    sessionStorage.setItem(
+        "globalConquestPlayer",
+        speler
+    );
 
-    points.textContent =
-        formatPunten(totaal);
+    document.getElementById("commanderName").textContent =
+        speler;
 
+    const plus =
+        parsePunten(data.plus);
 
-    if (data.naam !== speler) {
+    const min =
+        Math.abs(parsePunten(data.min));
 
-        speler =
-            data.naam;
+    const total =
+        plus - min;
 
-        sessionStorage.setItem(
-            "globalConquestPlayer",
-            speler
-        );
-
-        playerName.textContent =
-            speler;
-
-        welcomeName.textContent =
-            speler;
-
-        mapCommanderName.textContent =
-            speler;
-
-    }
-
+    document.getElementById("points").textContent =
+        Math.round(total).toLocaleString("nl-NL");
 }
 
 
 laadSpeler();
 
 
-
 /* =========================================================
-   REALTIME POINTS
-   ========================================================= */
+   REALTIME PLAYER UPDATES
+========================================================= */
 
 database
     .channel("global-conquest-players")
@@ -642,548 +344,129 @@ database
             schema: "public",
             table: "players"
         },
-        () => {
-
+        function () {
             laadSpeler();
-
         }
     )
     .subscribe();
 
 
-
 /* =========================================================
    LOGOUT
-   ========================================================= */
+========================================================= */
 
 document
     .getElementById("logoutBtn")
-    .addEventListener(
-        "click",
-        () => {
+    .addEventListener("click", function () {
 
-            sessionStorage.removeItem(
-                "globalConquestPlayer"
-            );
+        sessionStorage.removeItem(
+            "globalConquestPlayer"
+        );
 
-            window.location.href =
-                "./index.html";
-
-        }
-    );
-
+        window.location.href =
+            "./index.html";
+    });
 
 
 /* =========================================================
-   WORLD MAP ELEMENTS
-   ========================================================= */
+   MAP OPEN / CLOSE
+========================================================= */
 
-const worldEntry =
-    document.getElementById(
-        "worldEntry"
-    );
+const worldOverlay =
+    document.getElementById("worldOverlay");
 
-const worldMapScreen =
-    document.getElementById(
-        "worldMapScreen"
-    );
-
-const enterWorldBtn =
-    document.getElementById(
-        "enterWorldBtn"
-    );
+const openWorldBtn =
+    document.getElementById("openWorldBtn");
 
 const closeWorldBtn =
-    document.getElementById(
-        "closeWorldBtn"
-    );
-
-const worldMap =
-    document.getElementById(
-        "worldMap"
-    );
-
-const mapCommanderName =
-    document.getElementById(
-        "mapCommanderName"
-    );
-
-const provinceCount =
-    document.getElementById(
-        "provinceCount"
-    );
-
-const provinceInfo =
-    document.getElementById(
-        "provinceInfo"
-    );
-
-const selectedProvince =
-    document.getElementById(
-        "selectedProvince"
-    );
-
-const selectedOwner =
-    document.getElementById(
-        "selectedOwner"
-    );
-
-const closeProvinceInfo =
-    document.getElementById(
-        "closeProvinceInfo"
-    );
+    document.getElementById("closeWorldBtn");
 
 
-mapCommanderName.textContent =
-    speler;
-
-
-
-/* =========================================================
-   ENTER WORLD
-   ========================================================= */
-
-enterWorldBtn.addEventListener(
+openWorldBtn.addEventListener(
     "click",
-    async () => {
+    function () {
 
-        worldEntry.style.display =
-            "none";
+        worldOverlay.classList.add("active");
 
-        worldMapScreen.hidden =
-            false;
-
-        await laadWereldkaart();
-
+        if (!mapLoaded) {
+            laadWereldkaart();
+        }
     }
 );
-
 
 
 closeWorldBtn.addEventListener(
     "click",
-    () => {
+    function () {
 
-        worldMapScreen.hidden =
-            true;
-
-        worldEntry.style.display =
-            "";
-
+        worldOverlay.classList.remove("active");
     }
 );
 
 
+document.addEventListener(
+    "keydown",
+    function (event) {
 
-closeProvinceInfo.addEventListener(
-    "click",
-    () => {
-
-        provinceInfo.hidden =
-            true;
-
+        if (
+            event.key === "Escape" &&
+            worldOverlay.classList.contains("active")
+        ) {
+            worldOverlay.classList.remove("active");
+        }
     }
 );
 
 
-
 /* =========================================================
-   FACTIONS
-   ========================================================= */
+   MAP DATA
+========================================================= */
 
-const factions = {
+let mapLoaded = false;
+let mapFeatures = [];
 
-    polish: {
 
-        name:
-            "Pools-Zwitserse Samenwerking",
+/*
+    We gebruiken de officiële geoBoundaries API.
 
-        countries: [
-            "Poland",
-            "Switzerland",
-            "Estonia",
-            "Latvia",
-            "Lithuania",
-            "Finland",
-            "Belarus"
-        ],
-
-        ukraine: [
-            "Volyn",
-            "Lviv",
-            "Rivne",
-            "Zhytomyr",
-            "Kyiv",
-            "Kyiv City",
-            "Chernihiv",
-            "Sumy"
-        ],
-
-        russia: [
-            "Pskov",
-            "Leningrad",
-            "Karelia",
-            "Murmansk",
-            "Arkhangelsk",
-            "Nenets",
-            "Vologda",
-            "Kostroma",
-            "Nizhny Novgorod",
-            "Mordovia",
-            "Penza",
-            "Tambov",
-            "Lipetsk",
-            "Voronezh",
-            "Oryol",
-            "Kursk",
-            "Bryansk",
-            "Smolensk",
-            "Tver",
-            "Novgorod",
-            "Kaluga",
-            "Tula",
-            "Ryazan",
-            "Moscow Oblast",
-            "Moscow",
-            "Yaroslavl",
-            "Ivanovo",
-            "Vladimir"
-        ]
-
-    },
-
-
-    morocco: {
-
-        name:
-            "Marokkaanse Rijk",
-
-        countries: [
-            "Morocco",
-            "Western Sahara",
-            "Algeria",
-            "Mali",
-            "Mauritania"
-        ]
-
-    },
-
-
-    japan: {
-
-        name:
-            "Japans-Koreaanse Unie",
-
-        countries: [
-            "Japan",
-            "South Korea",
-            "Denmark"
-        ],
-
-        norway: [
-            "Agder",
-            "Vestland",
-            "Rogaland",
-            "Telemark",
-            "Buskerud",
-            "Ostfold",
-            "Akershus",
-            "Innlandet",
-            "More og Romsdal",
-            "Svalbard"
-        ]
-
-    },
-
-
-    tajik: {
-
-        name:
-            "Tajik-Noordische Samenwerking",
-
-        countries: [
-            "Tajikistan",
-            "Iceland"
-        ]
-
-    }
-
-};
-
-
-
-/* =========================================================
-   MICROSTATEN
-   ========================================================= */
-
-const microStateOwners = {
-
-    "San Marino": "Italy",
-
-    "Vatican":
-        "Italy",
-
-    "Vatican City":
-        "Italy",
-
-    "Monaco":
-        "France"
-
-};
-
-
-
-/* =========================================================
-   NORMALISE NAAM
-   ========================================================= */
-
-function normalizeName(value) {
-
-    return String(value || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        )
-        .replace(
-            /['’`]/g,
-            ""
-        )
-        .replace(
-            /[^a-z0-9]+/g,
-            " "
-        )
-        .trim();
-
-}
-
-
-function naamMatch(
-    actual,
-    target
-) {
-
-    const a =
-        normalizeName(actual);
-
-    const b =
-        normalizeName(target);
-
-    return (
-        a === b ||
-        a.includes(b) ||
-        b.includes(a)
-    );
-
-}
-
-
-
-/* =========================================================
-   FACTION BEPALEN
-   ========================================================= */
-
-function bepaalFaction(
-    properties
-) {
-
-    const naam =
-        properties?.shapeName ||
-        properties?.shapeName_1 ||
-        properties?.name ||
-        properties?.NAME_1 ||
-        properties?.NAME_2 ||
-        properties?.name_1 ||
-        properties?.name_2 ||
-        "";
-
-    const land =
-        properties?.shapeGroup ||
-        properties?.shapeISO ||
-        properties?.ISO ||
-        properties?.country ||
-        properties?.boundaryISO ||
-        "";
-
-
-    /* POOLS-ZWITSERS */
-
-    for (
-        const country
-        of factions.polish.countries
-    ) {
-
-        if (
-            naamMatch(land, country) ||
-            naamMatch(naam, country)
-        ) {
-
-            return "polish";
-
-        }
-
-    }
-
-
-    for (
-        const region
-        of factions.polish.ukraine
-    ) {
-
-        if (
-            naamMatch(naam, region)
-        ) {
-
-            return "polish";
-
-        }
-
-    }
-
-
-    for (
-        const region
-        of factions.polish.russia
-    ) {
-
-        if (
-            naamMatch(naam, region)
-        ) {
-
-            return "polish";
-
-        }
-
-    }
-
-
-
-    /* MAROKKO */
-
-    for (
-        const country
-        of factions.morocco.countries
-    ) {
-
-        if (
-            naamMatch(land, country) ||
-            naamMatch(naam, country)
-        ) {
-
-            return "morocco";
-
-        }
-
-    }
-
-
-
-    /* JAPAN-KOREA */
-
-    for (
-        const country
-        of factions.japan.countries
-    ) {
-
-        if (
-            naamMatch(land, country) ||
-            naamMatch(naam, country)
-        ) {
-
-            return "japan";
-
-        }
-
-    }
-
-
-    for (
-        const region
-        of factions.japan.norway
-    ) {
-
-        if (
-            naamMatch(naam, region)
-        ) {
-
-            return "japan";
-
-        }
-
-    }
-
-
-
-    /* TAJIK-NOORDISCH */
-
-    for (
-        const country
-        of factions.tajik.countries
-    ) {
-
-        if (
-            naamMatch(land, country) ||
-            naamMatch(naam, country)
-        ) {
-
-            return "tajik";
-
-        }
-
-    }
-
-
-
-    return "neutral";
-
-}
-
-
-
-/* =========================================================
-   GEOBOUNDARIES
-   ========================================================= */
+    ADM1 = eerste administratieve laag.
+    Daardoor krijgen we provincies / deelstaten / regio's.
+*/
 
 async function laadWereldkaart() {
 
-    worldMap.innerHTML = `
+    const status =
+        document.getElementById("mapStatus");
 
-        <div class="map-loading">
+    const loading =
+        document.getElementById("mapLoading");
 
-            <div class="loading-spinner"></div>
+    status.textContent =
+        "LOADING GLOBAL PROVINCES...";
 
-            <span>
-                LOADING WORLD MAP...
-            </span>
-
-        </div>
-
-    `;
+    loading.style.display =
+        "flex";
 
 
     try {
 
         /*
-         * Wereldwijde ADM1-dataset.
-         * geoBoundaries ondersteunt ALL als wildcard
-         * voor de wereldwijde dataset.
-         */
+            Eerst halen we de lijst met landen op.
+        */
 
-        const metadataUrl =
+        const countriesUrl =
             "https://www.geoboundaries.org/api/current/gbOpen/ALL/ADM1/";
 
 
         const response =
-            await fetch(metadataUrl);
+            await fetch(countriesUrl);
 
 
         if (!response.ok) {
-
             throw new Error(
-                "Kaartgegevens konden niet worden geladen."
+                "GeoBoundaries API error: " +
+                response.status
             );
-
         }
 
 
@@ -1191,271 +474,810 @@ async function laadWereldkaart() {
             await response.json();
 
 
-        let urls = [];
-
-
         /*
-         * Verschillende API-versies kunnen
-         * een array of object teruggeven.
-         */
+            De API kan de resultaten op verschillende
+            manieren teruggeven.
+        */
+
+        let entries = [];
+
 
         if (Array.isArray(metadata)) {
 
-            metadata.forEach(item => {
+            entries = metadata;
 
-                if (
-                    item.simplifiedGeometryGeoJSON
-                ) {
+        } else if (
+            metadata &&
+            Array.isArray(metadata.data)
+        ) {
 
-                    urls.push(
-                        item.simplifiedGeometryGeoJSON
-                    );
+            entries = metadata.data;
 
-                }
+        } else if (
+            metadata &&
+            typeof metadata === "object"
+        ) {
 
-                else if (
-                    item.gjDownloadURL
-                ) {
+            entries =
+                Object.values(metadata)
+                    .filter(function (item) {
 
-                    urls.push(
-                        item.gjDownloadURL
-                    );
-
-                }
-
-            });
-
-        }
-
-        else {
-
-            Object.values(metadata)
-                .forEach(item => {
-
-                    if (
-                        item &&
-                        item.simplifiedGeometryGeoJSON
-                    ) {
-
-                        urls.push(
-                            item.simplifiedGeometryGeoJSON
+                        return (
+                            item &&
+                            typeof item === "object"
                         );
 
-                    }
-
-                    else if (
-                        item &&
-                        item.gjDownloadURL
-                    ) {
-
-                        urls.push(
-                            item.gjDownloadURL
-                        );
-
-                    }
-
-                });
-
-        }
-
-
-        urls =
-            [...new Set(urls)];
-
-
-        if (!urls.length) {
-
-            throw new Error(
-                "Geen ADM1-kaartbestanden gevonden."
-            );
+                    });
 
         }
 
 
         /*
-         * We laden de bestanden in batches,
-         * zodat de browser niet alles tegelijk
-         * probeert te downloaden.
-         */
+            Zoek alle landen waarvoor een ADM1
+            downloadbestand bestaat.
+        */
 
-        const features = [];
+        const urls = [];
 
 
-        const batchSize = 20;
+        for (const item of entries) {
+
+            if (!item || typeof item !== "object") {
+                continue;
+            }
+
+
+            const possibleUrls = [
+
+                item.simplifiedGeometryGeoJSON,
+
+                item.geoJSON,
+
+                item.gjDownloadURL,
+
+                item.downloadURL,
+
+                item.simplifiedGeometryGeoJson
+
+            ];
+
+
+            for (const url of possibleUrls) {
+
+                if (
+                    typeof url === "string" &&
+                    url.includes("http")
+                ) {
+
+                    urls.push(url);
+                    break;
+                }
+            }
+        }
+
+
+        /*
+            Verwijder dubbele URLs.
+        */
+
+        const uniqueUrls =
+            [...new Set(urls)];
+
+
+        /*
+            Als de API geen URLs gaf, proberen we
+            de officiële country-index opnieuw.
+        */
+
+        if (uniqueUrls.length === 0) {
+
+            throw new Error(
+                "Geen ADM1 bestanden gevonden."
+            );
+        }
+
+
+        status.textContent =
+            "DOWNLOADING " +
+            uniqueUrls.length +
+            " COUNTRY DATASETS...";
+
+
+        /*
+            We downloaden meerdere bestanden tegelijk,
+            maar niet alles in één keer.
+        */
+
+        const allFeatures = [];
+
+
+        const batchSize = 15;
 
 
         for (
             let i = 0;
-            i < urls.length;
+            i < uniqueUrls.length;
             i += batchSize
         ) {
 
             const batch =
-                urls.slice(
+                uniqueUrls.slice(
                     i,
                     i + batchSize
                 );
 
 
             const results =
-                await Promise.all(
-                    batch.map(
-                        async url => {
+                await Promise.allSettled(
 
-                            try {
+                    batch.map(function (url) {
 
-                                const r =
-                                    await fetch(url);
+                        return fetch(url)
+                            .then(function (r) {
 
                                 if (!r.ok) {
-                                    return null;
+                                    throw new Error(
+                                        "GeoJSON error"
+                                    );
                                 }
 
-                                return await r.json();
+                                return r.json();
 
-                            }
-                            catch {
-                                return null;
-                            }
+                            });
 
-                        }
-                    )
+                    })
                 );
 
 
-            results.forEach(
-                geojson => {
+            for (const result of results) {
 
-                    if (!geojson) {
-                        return;
-                    }
+                if (
+                    result.status === "fulfilled" &&
+                    result.value
+                ) {
+
+                    const geo =
+                        result.value;
+
 
                     if (
-                        geojson.type ===
-                        "FeatureCollection"
+                        geo.type === "FeatureCollection" &&
+                        Array.isArray(geo.features)
                     ) {
 
-                        features.push(
-                            ...geojson.features
-                        );
-
-                    }
-
-                    else if (
-                        geojson.type ===
-                        "Feature"
-                    ) {
-
-                        features.push(
-                            geojson
+                        allFeatures.push(
+                            ...geo.features
                         );
 
                     }
 
                 }
-            );
+            }
 
+
+            status.textContent =
+                "LOADING PROVINCES " +
+                Math.min(
+                    i + batchSize,
+                    uniqueUrls.length
+                ) +
+                " / " +
+                uniqueUrls.length;
         }
 
 
-        if (!features.length) {
+        if (allFeatures.length === 0) {
 
             throw new Error(
-                "Geen provincies gevonden."
+                "Geen provincies ontvangen."
             );
-
         }
 
 
-        tekenWereldkaart(
-            features
+        mapFeatures =
+            allFeatures;
+
+
+        mapLoaded = true;
+
+
+        renderMap(
+            mapFeatures
         );
 
-    }
-    catch (error) {
 
-        console.error(error);
+        loading.style.display =
+            "none";
 
 
-        worldMap.innerHTML = `
+        status.textContent =
+            "MAP ONLINE • " +
+            mapFeatures.length +
+            " PROVINCES";
 
-            <div class="map-loading">
 
-                <span>
-                    WORLD MAP ERROR
-                </span>
+    } catch (error) {
 
-                <small>
-                    ${error.message}
-                </small>
+        console.error(
+            "WORLD MAP ERROR:",
+            error
+        );
 
-            </div>
 
+        status.textContent =
+            "MAP DATA ERROR";
+
+
+        loading.innerHTML = `
+            <div style="font-size:42px">⚠</div>
+            <div>MAP DATA COULD NOT BE LOADED</div>
+            <small style="opacity:.7">
+                ${error.message}
+            </small>
         `;
-
     }
-
 }
 
 
+/* =========================================================
+   NORMALIZATION
+========================================================= */
+
+function normalizeName(value) {
+
+    return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/['’`]/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+}
+
+
+function naamMatch(actual, target) {
+
+    const a =
+        normalizeName(actual);
+
+    const b =
+        normalizeName(target);
+
+
+    return (
+        a === b ||
+        a.includes(b) ||
+        b.includes(a)
+    );
+}
+
 
 /* =========================================================
-   TEKEN WERELDKAART
-   ========================================================= */
+   PROPERTY HELPERS
+========================================================= */
 
-function tekenWereldkaart(
-    features
-) {
+function getProperties(feature) {
 
-    worldMap.innerHTML = "";
+    return feature &&
+        feature.properties
+        ? feature.properties
+        : {};
+}
+
+
+function getCountryCode(feature) {
+
+    const p =
+        getProperties(feature);
+
+
+    const values = [
+
+        p.shapeISO,
+
+        p.shapeGroup,
+
+        p.ISO,
+
+        p.ISO3,
+
+        p.iso3,
+
+        p.boundaryISO,
+
+        p.countryISO,
+
+        p.adm0_a3,
+
+        p.ADM0_A3
+
+    ];
+
+
+    for (const value of values) {
+
+        if (!value) continue;
+
+
+        const code =
+            String(value)
+                .trim()
+                .toUpperCase();
+
+
+        /*
+            Alleen echte ISO-achtige codes.
+        */
+
+        if (
+            /^[A-Z]{3}$/.test(code)
+        ) {
+            return code;
+        }
+    }
+
+
+    return "";
+}
+
+
+function getRegionName(feature) {
+
+    const p =
+        getProperties(feature);
+
+
+    const values = [
+
+        p.shapeName,
+
+        p.shapeName_1,
+
+        p.shapeName_2,
+
+        p.name,
+
+        p.name_1,
+
+        p.name_2,
+
+        p.NAME_1,
+
+        p.NAME_2,
+
+        p.NAME,
+
+        p.region,
+
+        p.province,
+
+        p.admin1
+
+    ];
+
+
+    for (const value of values) {
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ) {
+
+            return String(value);
+        }
+    }
+
+
+    return "Unknown";
+}
+
+
+/* =========================================================
+   FACTIONS
+========================================================= */
+
+
+/* WHOLE COUNTRIES */
+
+const poolsCountries = new Set([
+
+    "POL",
+    "CHE",
+    "EST",
+    "LVA",
+    "LTU",
+    "FIN",
+    "BLR"
+
+]);
+
+
+const moroccoCountries = new Set([
+
+    "MAR",
+    "DZA",
+    "MLI",
+    "MRT"
+
+]);
+
+
+const japanCountries = new Set([
+
+    "JPN",
+    "KOR",
+    "DNK"
+
+]);
+
+
+const tajikCountries = new Set([
+
+    "TJK",
+    "ISL"
+
+]);
+
+
+/* =========================================================
+   UKRAINE PROVINCES
+========================================================= */
+
+const poolsUkraineRegions = [
+
+    "Volyn",
+    "Lviv",
+    "Rivne",
+    "Zhytomyr",
+    "Kyiv",
+    "Kyiv City",
+    "Chernihiv",
+    "Sumy"
+
+];
+
+
+/* =========================================================
+   RUSSIA PROVINCES
+========================================================= */
+
+const poolsRussiaRegions = [
+
+    "Pskov",
+    "Leningrad",
+    "Karelia",
+    "Murmansk",
+    "Arkhangelsk",
+    "Nenets",
+    "Vologda",
+    "Kostroma",
+    "Nizhny Novgorod",
+    "Mordovia",
+    "Penza",
+    "Tambov",
+    "Lipetsk",
+    "Voronezh",
+    "Oryol",
+    "Kursk",
+    "Bryansk",
+    "Smolensk",
+    "Tver",
+    "Novgorod",
+    "Kaluga",
+    "Tula",
+    "Ryazan",
+    "Moscow Oblast",
+    "Moscow",
+    "Yaroslavl",
+    "Ivanovo",
+    "Vladimir"
+
+];
+
+
+/* =========================================================
+   NORWAY
+========================================================= */
+
+const japanNorwayRegions = [
+
+    "Agder",
+    "Vestland",
+    "Rogaland",
+    "Telemark",
+    "Buskerud",
+    "Ostfold",
+    "Østfold",
+    "Akershus",
+    "Innlandet",
+    "More og Romsdal",
+    "Møre og Romsdal",
+    "Svalbard"
+
+];
+
+
+/* =========================================================
+   MICROSTATES
+========================================================= */
+
+const franceMicrostates = [
+
+    "Monaco"
+
+];
+
+
+const italyMicrostates = [
+
+    "San Marino",
+    "Vatican City",
+    "Vatican"
+
+];
+
+
+/* =========================================================
+   FACTION DETECTION
+========================================================= */
+
+function getFaction(feature) {
+
+    const countryCode =
+        getCountryCode(feature);
+
+
+    const region =
+        getRegionName(feature);
+
+
+    /* -------------------------
+       WHOLE COUNTRIES
+    ------------------------- */
+
+    if (
+        poolsCountries.has(countryCode)
+    ) {
+
+        return "pools";
+    }
+
+
+    if (
+        moroccoCountries.has(countryCode)
+    ) {
+
+        return "morocco";
+    }
+
+
+    if (
+        japanCountries.has(countryCode)
+    ) {
+
+        return "japan";
+    }
+
+
+    if (
+        tajikCountries.has(countryCode)
+    ) {
+
+        return "tajik";
+    }
+
+
+    /* -------------------------
+       UKRAINE
+    ------------------------- */
+
+    if (
+        countryCode === "UKR"
+    ) {
+
+        for (
+            const target of poolsUkraineRegions
+        ) {
+
+            if (
+                naamMatch(
+                    region,
+                    target
+                )
+            ) {
+
+                return "pools";
+            }
+        }
+    }
+
+
+    /* -------------------------
+       RUSSIA
+    ------------------------- */
+
+    if (
+        countryCode === "RUS"
+    ) {
+
+        for (
+            const target of poolsRussiaRegions
+        ) {
+
+            if (
+                naamMatch(
+                    region,
+                    target
+                )
+            ) {
+
+                return "pools";
+            }
+        }
+    }
+
+
+    /* -------------------------
+       NORWAY
+    ------------------------- */
+
+    if (
+        countryCode === "NOR"
+    ) {
+
+        /*
+            Specifieke Japan-Korea regio's
+        */
+
+        for (
+            const target of japanNorwayRegions
+        ) {
+
+            if (
+                naamMatch(
+                    region,
+                    target
+                )
+            ) {
+
+                return "japan";
+            }
+        }
+
+
+        /*
+            Alle overige Noorwegen =
+            Tajik-Noordische Samenwerking
+        */
+
+        return "tajik";
+    }
+
+
+    /* -------------------------
+       MICROSTATES
+    ------------------------- */
+
+    for (
+        const target of franceMicrostates
+    ) {
+
+        if (
+            naamMatch(
+                region,
+                target
+            )
+        ) {
+
+            return "neutral";
+        }
+    }
+
+
+    for (
+        const target of italyMicrostates
+    ) {
+
+        if (
+            naamMatch(
+                region,
+                target
+            )
+        ) {
+
+            return "neutral";
+        }
+    }
+
+
+    return "neutral";
+}
+
+
+/* =========================================================
+   FACTION COLORS
+========================================================= */
+
+function factionColor(faction) {
+
+    switch (faction) {
+
+        case "pools":
+            return "#3f69d8";
+
+        case "morocco":
+            return "#b54b45";
+
+        case "japan":
+            return "#a74e9c";
+
+        case "tajik":
+            return "#bd8d35";
+
+        default:
+            return "#26352f";
+    }
+}
+
+
+/* =========================================================
+   RENDER MAP
+========================================================= */
+
+function renderMap(features) {
+
+    const svg =
+        d3.select("#worldMap");
+
+
+    const container =
+        document.getElementById(
+            "mapContainer"
+        );
 
 
     const width =
-        Math.max(
-            worldMap.clientWidth,
-            1000
-        );
+        container.clientWidth;
 
 
     const height =
-        Math.max(
-            worldMap.clientHeight,
-            600
+        container.clientHeight;
+
+
+    svg
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox",
+            `0 0 ${width} ${height}`
         );
 
 
-    const svg =
-        d3.select("#worldMap")
-            .append("svg")
-            .attr(
-                "viewBox",
-                `0 0 ${width} ${height}`
-            )
-            .attr(
-                "preserveAspectRatio",
-                "xMidYMid meet"
-            );
+    svg.selectAll("*")
+        .remove();
 
 
-    const collection = {
-
-        type:
-            "FeatureCollection",
-
-        features
-
-    };
-
+    /*
+        Natural Earth projection.
+    */
 
     const projection =
-        d3.geoNaturalEarth1()
-            .fitExtent(
-                [
-                    [20, 20],
-                    [width - 20, height - 20]
-                ],
-                collection
-            );
+        d3.geoNaturalEarth1();
+
+
+    projection.fitExtent(
+
+        [
+            [20, 20],
+            [width - 20, height - 20]
+        ],
+
+        {
+            type: "FeatureCollection",
+            features: features
+        }
+
+    );
 
 
     const path =
@@ -1463,159 +1285,251 @@ function tekenWereldkaart(
             .projection(projection);
 
 
-    const group =
-        svg.append("g");
+    /*
+        Country/province shapes.
+    */
 
-
-
-    group
+    svg
+        .append("g")
+        .attr("class", "map-layer")
         .selectAll("path")
         .data(features)
         .enter()
         .append("path")
-        .attr(
-            "class",
-            feature => {
 
-                const faction =
-                    bepaalFaction(
-                        feature.properties
-                    );
+        .attr("class", "province")
 
-
-                if (
-                    faction === "polish"
-                ) {
-
-                    return "map-province polish";
-
-                }
-
-
-                if (
-                    faction === "morocco"
-                ) {
-
-                    return "map-province morocco";
-
-                }
-
-
-                if (
-                    faction === "japan"
-                ) {
-
-                    return "map-province japan";
-
-                }
-
-
-                if (
-                    faction === "tajik"
-                ) {
-
-                    return "map-province tajik";
-
-                }
-
-
-                return "map-province neutral";
-
-            }
-        )
         .attr(
             "d",
             path
         )
+
+        .attr(
+            "fill",
+            function(feature) {
+
+                return factionColor(
+                    getFaction(feature)
+                );
+
+            }
+        )
+
+        .attr(
+            "stroke",
+            "#101814"
+        )
+
+        .attr(
+            "stroke-width",
+            0.65
+        )
+
+        .on(
+            "mouseenter",
+            function() {
+
+                d3.select(this)
+                    .raise()
+                    .attr(
+                        "stroke",
+                        "#ffffff"
+                    )
+                    .attr(
+                        "stroke-width",
+                        1.5
+                    );
+
+            }
+        )
+
+        .on(
+            "mouseleave",
+            function() {
+
+                d3.select(this)
+                    .attr(
+                        "stroke",
+                        "#101814"
+                    )
+                    .attr(
+                        "stroke-width",
+                        0.65
+                    );
+
+            }
+        )
+
         .on(
             "click",
             function(event, feature) {
 
-                const properties =
-                    feature.properties || {};
-
-
-                const naam =
-                    properties.shapeName ||
-                    properties.shapeName_1 ||
-                    properties.name ||
-                    properties.NAME_1 ||
-                    properties.NAME_2 ||
-                    properties.name_1 ||
-                    "Onbekend gebied";
-
-
-                const faction =
-                    bepaalFaction(
-                        properties
-                    );
-
-
-                let owner =
-                    "Normaal land";
-
-
-                if (
-                    faction === "polish"
-                ) {
-
-                    owner =
-                        factions.polish.name;
-
-                }
-
-
-                if (
-                    faction === "morocco"
-                ) {
-
-                    owner =
-                        factions.morocco.name;
-
-                }
-
-
-                if (
-                    faction === "japan"
-                ) {
-
-                    owner =
-                        factions.japan.name;
-
-                }
-
-
-                if (
-                    faction === "tajik"
-                ) {
-
-                    owner =
-                        factions.tajik.name;
-
-                }
-
-
-                selectedProvince.textContent =
-                    naam;
-
-
-                selectedOwner.textContent =
-                    owner;
-
-
-                provinceInfo.hidden =
-                    false;
+                toonProvincieInfo(
+                    feature
+                );
 
             }
         );
 
 
-    provinceCount.textContent =
-        features.length.toLocaleString(
-            "nl-NL"
+    /*
+        Statistieken.
+    */
+
+    document.getElementById(
+        "provinceCount"
+    ).textContent =
+        features.length;
+
+
+    const countries =
+        new Set();
+
+
+    features.forEach(
+        function(feature) {
+
+            const code =
+                getCountryCode(feature);
+
+
+            if (code) {
+                countries.add(code);
+            }
+
+        }
+    );
+
+
+    document.getElementById(
+        "countryCount"
+    ).textContent =
+        countries.size;
+
+
+    /*
+        Resize support.
+    */
+
+    window.addEventListener(
+        "resize",
+        function() {
+
+            if (
+                worldOverlay.classList.contains(
+                    "active"
+                ) &&
+                mapLoaded
+            ) {
+
+                renderMap(
+                    mapFeatures
+                );
+
+            }
+
+        }
+    );
+}
+
+
+/* =========================================================
+   PROVINCE INFO
+========================================================= */
+
+function toonProvincieInfo(feature) {
+
+    const info =
+        document.getElementById(
+            "provinceInfo"
         );
 
+
+    const infoText =
+        document.getElementById(
+            "provinceInfoText"
+        );
+
+
+    const countryCode =
+        getCountryCode(feature);
+
+
+    const region =
+        getRegionName(feature);
+
+
+    const faction =
+        getFaction(feature);
+
+
+    let factionName =
+        "NEUTRAL";
+
+
+    if (faction === "pools") {
+
+        factionName =
+            "🇵🇱🇨🇭 POOLS-ZWITSERSE SAMENWERKING";
+
+    }
+
+    if (faction === "morocco") {
+
+        factionName =
+            "🇲🇦 MAROKKAANSE RIJK";
+
+    }
+
+    if (faction === "japan") {
+
+        factionName =
+            "🇯🇵🇰🇷 JAPANS-KOREAANSE UNIE";
+
+    }
+
+    if (faction === "tajik") {
+
+        factionName =
+            "🇹🇯🇳🇴🇮🇸 TAJIK-NOORDISCHE SAMENWERKING";
+
+    }
+
+
+    infoText.innerHTML = `
+        <div class="selected-province">
+            <strong>${region}</strong>
+        </div>
+
+        <div class="selected-country">
+            COUNTRY CODE:
+            ${countryCode || "UNKNOWN"}
+        </div>
+
+        <div class="selected-faction">
+            CONTROL:
+            <strong>${factionName}</strong>
+        </div>
+
+        <div class="selected-status">
+            ACTIONS DISABLED
+        </div>
+    `;
+
+
+    info.classList.add("visible");
 }
+
+
+/* =========================================================
+   INITIAL STATUS
+========================================================= */
+
+document.getElementById(
+    "mapStatus"
+).textContent =
+    "READY • ENTER WORLD TO LOAD MAP";
+
 
 </script>
 
