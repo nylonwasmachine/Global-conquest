@@ -8,8 +8,14 @@
 
     <link rel="stylesheet" href="./style.css">
 
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- D3 -->
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+    <!-- TopoJSON -->
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 </head>
 
 <body class="game-body">
@@ -18,9 +24,15 @@
 
     <!-- HEADER -->
     <header class="game-header">
+
         <div>
-            <div class="game-logo">GLOBAL CONQUEST</div>
-            <div class="game-subtitle">COMMAND CENTER</div>
+            <div class="game-logo">
+                GLOBAL CONQUEST
+            </div>
+
+            <div class="game-subtitle">
+                COMMAND CENTER
+            </div>
         </div>
 
         <div class="commander-box">
@@ -31,6 +43,7 @@
         <button class="logout-btn" id="logoutBtn">
             LOGOUT
         </button>
+
     </header>
 
 
@@ -38,22 +51,28 @@
     <main class="command-center">
 
         <section class="welcome-panel">
-            <div class="panel-tag">SYSTEM ONLINE</div>
 
-            <h1>WELCOME, COMMANDER</h1>
+            <div class="panel-tag">
+                SYSTEM ONLINE
+            </div>
+
+            <h1>
+                WELCOME, COMMANDER
+            </h1>
 
             <p>
-                Je commandocentrum is gereed.
-                Bekijk de wereldkaart en inspecteer de gebieden.
+                Bekijk de strategische wereldkaart.
+                Elk gebied wordt bestuurd vanuit een
+                belangrijke stad of plek.
             </p>
 
             <button class="world-btn" id="openWorldBtn">
                 🌍 ENTER WORLD
             </button>
+
         </section>
 
 
-        <!-- STATS -->
         <section class="stats-grid">
 
             <div class="stat-card">
@@ -78,22 +97,31 @@
 </div>
 
 
-<!-- ========================================================= -->
+<!-- ===================================================== -->
 <!-- WORLD MAP -->
-<!-- ========================================================= -->
+<!-- ===================================================== -->
 
 <div id="worldOverlay" class="world-overlay">
 
     <div class="world-header">
 
         <div>
-            <div class="world-title">WORLD MAP</div>
-            <div class="world-status" id="mapStatus">
-                LOADING MAP DATA...
+            <div class="world-title">
+                WORLD MAP
+            </div>
+
+            <div
+                class="world-status"
+                id="mapStatus"
+            >
+                READY
             </div>
         </div>
 
-        <button id="closeWorldBtn" class="close-world-btn">
+        <button
+            id="closeWorldBtn"
+            class="close-world-btn"
+        >
             ✕ CLOSE
         </button>
 
@@ -102,24 +130,35 @@
 
     <div class="world-content">
 
-        <!-- MAP -->
         <div id="mapContainer">
 
             <div id="mapLoading">
+
                 <div class="loader"></div>
-                <div>LOADING PROVINCES...</div>
+
+                <div>
+                    BUILDING STRATEGIC WORLD...
+                </div>
+
             </div>
 
             <svg id="worldMap"></svg>
 
-            <div id="provinceInfo" class="province-info">
+
+            <!-- CITY INFO -->
+            <div
+                id="provinceInfo"
+                class="province-info"
+            >
+
                 <div class="province-info-title">
-                    SELECT A PROVINCE
+                    SELECT A STRATEGIC AREA
                 </div>
 
                 <div id="provinceInfoText">
-                    Klik op een gebied op de kaart.
+                    Klik op een gebied of stad.
                 </div>
+
             </div>
 
         </div>
@@ -134,47 +173,106 @@
 
 
             <div class="legend-item">
-                <span class="legend-color faction-poland"></span>
+
+                <span
+                    class="legend-color"
+                    style="background:#3f69d8"
+                ></span>
+
                 <div>
-                    <strong>🇵🇱🇨🇭 Pools-Zwitserse Samenwerking</strong>
-                    <small>Poland / Switzerland / Baltics / Finland / Belarus / selected Russian & Ukrainian regions</small>
+                    <strong>
+                        🇵🇱🇨🇭 Pools-Zwitserse Samenwerking
+                    </strong>
+
+                    <small>
+                        Warschau + Moskou + Bern + Minsk +
+                        Tallinn + Vilnius + Riga
+                    </small>
                 </div>
+
             </div>
 
 
             <div class="legend-item">
-                <span class="legend-color faction-morocco"></span>
+
+                <span
+                    class="legend-color"
+                    style="background:#b54b45"
+                ></span>
+
                 <div>
-                    <strong>🇲🇦 Marokkaanse Rijk</strong>
-                    <small>Morocco / Western Sahara / Algeria / Mali / Mauritania</small>
+                    <strong>
+                        🇲🇦 Marokkaanse Rijk
+                    </strong>
+
+                    <small>
+                        Rabat + Algiers + Nouakchott +
+                        Bamako + Tunis + Marrakech + Laayoune
+                    </small>
                 </div>
+
             </div>
 
 
             <div class="legend-item">
-                <span class="legend-color faction-japan"></span>
+
+                <span
+                    class="legend-color"
+                    style="background:#a74e9c"
+                ></span>
+
                 <div>
-                    <strong>🇯🇵🇰🇷 Japans-Koreaanse Unie</strong>
-                    <small>Japan / South Korea / Denmark / selected Norway</small>
+                    <strong>
+                        🇯🇵🇰🇷 Japans-Koreaanse Unie
+                    </strong>
+
+                    <small>
+                        Tokyo + Seoul + Pyongyang + Oslo +
+                        Kyoto + Osaka + Nagasaki
+                    </small>
                 </div>
+
             </div>
 
 
             <div class="legend-item">
-                <span class="legend-color faction-tajik"></span>
+
+                <span
+                    class="legend-color"
+                    style="background:#bd8d35"
+                ></span>
+
                 <div>
-                    <strong>🇹🇯🇳🇴🇮🇸 Tajik-Noordische Samenwerking</strong>
-                    <small>Tajikistan / Iceland / remaining Norway</small>
+                    <strong>
+                        🇹🇯🇳🇴🇮🇸 Tajik-Noordische Samenwerking
+                    </strong>
+
+                    <small>
+                        Doesjanbe + Vardø + Bodø + Narvik +
+                        Harstad + Tromsø + Langar
+                    </small>
                 </div>
+
             </div>
 
 
             <div class="legend-item">
-                <span class="legend-color faction-neutral"></span>
+
+                <span
+                    class="legend-color"
+                    style="background:#26352f"
+                ></span>
+
                 <div>
-                    <strong>NEUTRAL</strong>
-                    <small>Other countries and territories</small>
+                    <strong>
+                        OVERIGE LANDEN
+                    </strong>
+
+                    <small>
+                        Strategische gebieden
+                    </small>
                 </div>
+
             </div>
 
 
@@ -185,17 +283,55 @@
                 MAP STATUS
             </div>
 
+
             <div class="map-status-box">
-                <div>PROVINCES: <strong id="provinceCount">0</strong></div>
-                <div>COUNTRIES: <strong id="countryCount">0</strong></div>
-                <div>GAME ACTIONS: <strong>DISABLED</strong></div>
+
+                <div>
+                    STRATEGIC AREAS:
+                    <strong id="provinceCount">0</strong>
+                </div>
+
+                <div>
+                    COUNTRIES:
+                    <strong id="countryCount">0</strong>
+                </div>
+
+                <div>
+                    CITY TARGETS:
+                    <strong id="cityCount">0</strong>
+                </div>
+
+                <div>
+                    GAME ACTIONS:
+                    <strong>DISABLED</strong>
+                </div>
+
             </div>
 
 
+            <div class="sidebar-divider"></div>
+
+
+            <div class="sidebar-title">
+                RULE
+            </div>
+
             <div class="sidebar-note">
-                Microstates zoals San Marino en Vatican City
-                worden bij Italië gerekend.
-                Monaco wordt bij Frankrijk gerekend.
+
+                🏙️ Iedere strategische regio heeft
+                één leidende stad.
+
+                <br><br>
+
+                ⚔️ Om een gebied te veroveren,
+                moet de leidende stad van dat
+                gebied worden veroverd.
+
+                <br><br>
+
+                🏛️ Hoofdsteden zijn extra belangrijke
+                strategische gebieden.
+
             </div>
 
         </aside>
@@ -229,15 +365,21 @@ const database =
 ========================================================= */
 
 let speler =
-    sessionStorage.getItem("globalConquestPlayer");
+    sessionStorage.getItem(
+        "globalConquestPlayer"
+    );
 
 
 if (!speler) {
-    window.location.href = "./index.html";
+
+    window.location.href =
+        "./index.html";
 }
 
 
-document.getElementById("commanderName").textContent =
+document.getElementById(
+    "commanderName"
+).textContent =
     speler || "---";
 
 
@@ -247,37 +389,59 @@ document.getElementById("commanderName").textContent =
 
 function parsePunten(value) {
 
-    if (value === null || value === undefined) {
+    if (
+        value === null ||
+        value === undefined
+    ) {
         return 0;
     }
 
-    let text = String(value)
-        .trim()
-        .toUpperCase()
-        .replace(",", ".");
+    let text =
+        String(value)
+            .trim()
+            .toUpperCase()
+            .replace(",", ".");
+
 
     if (!text) {
         return 0;
     }
 
+
     let multiplier = 1;
 
+
     if (text.endsWith("K")) {
+
         multiplier = 1000;
         text = text.slice(0, -1);
+
     }
+
 
     if (text.endsWith("M")) {
+
         multiplier = 1000000;
         text = text.slice(0, -1);
+
     }
+
 
     const number =
-        parseFloat(text.replace(/[^0-9.-]/g, ""));
+        parseFloat(
+            text.replace(
+                /[^0-9.-]/g,
+                ""
+            )
+        );
 
-    if (Number.isNaN(number)) {
+
+    if (
+        Number.isNaN(number)
+    ) {
         return 0;
     }
+
 
     return number * multiplier;
 }
@@ -287,44 +451,86 @@ async function laadSpeler() {
 
     if (!speler) return;
 
-    const { data, error } =
+
+    const {
+        data,
+        error
+    } =
         await database
             .from("players")
-            .select("naam, plus, min")
-            .eq("naam", speler)
+            .select(
+                "naam, plus, min"
+            )
+            .eq(
+                "naam",
+                speler
+            )
             .maybeSingle();
 
+
     if (error) {
-        console.error("Player error:", error);
+
+        console.error(
+            "Player error:",
+            error
+        );
+
         return;
     }
+
 
     if (!data) {
-        document.getElementById("points").textContent = "0";
+
+        document.getElementById(
+            "points"
+        ).textContent = "0";
+
         return;
     }
 
-    speler = data.naam;
+
+    speler =
+        data.naam;
+
 
     sessionStorage.setItem(
         "globalConquestPlayer",
         speler
     );
 
-    document.getElementById("commanderName").textContent =
+
+    document.getElementById(
+        "commanderName"
+    ).textContent =
         speler;
 
+
     const plus =
-        parsePunten(data.plus);
+        parsePunten(
+            data.plus
+        );
+
 
     const min =
-        Math.abs(parsePunten(data.min));
+        Math.abs(
+            parsePunten(
+                data.min
+            )
+        );
+
 
     const total =
         plus - min;
 
-    document.getElementById("points").textContent =
-        Math.round(total).toLocaleString("nl-NL");
+
+    document.getElementById(
+        "points"
+    ).textContent =
+        Math.round(
+            total
+        ).toLocaleString(
+            "nl-NL"
+        );
 }
 
 
@@ -332,11 +538,13 @@ laadSpeler();
 
 
 /* =========================================================
-   REALTIME PLAYER UPDATES
+   REALTIME POINTS
 ========================================================= */
 
 database
-    .channel("global-conquest-players")
+    .channel(
+        "global-conquest-players"
+    )
     .on(
         "postgres_changes",
         {
@@ -345,7 +553,9 @@ database
             table: "players"
         },
         function () {
+
             laadSpeler();
+
         }
     )
     .subscribe();
@@ -356,334 +566,583 @@ database
 ========================================================= */
 
 document
-    .getElementById("logoutBtn")
-    .addEventListener("click", function () {
+    .getElementById(
+        "logoutBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        sessionStorage.removeItem(
-            "globalConquestPlayer"
-        );
+            sessionStorage.removeItem(
+                "globalConquestPlayer"
+            );
 
-        window.location.href =
-            "./index.html";
-    });
+            window.location.href =
+                "./index.html";
+
+        }
+    );
 
 
 /* =========================================================
-   MAP OPEN / CLOSE
+   WORLD OPEN/CLOSE
 ========================================================= */
 
 const worldOverlay =
-    document.getElementById("worldOverlay");
-
-const openWorldBtn =
-    document.getElementById("openWorldBtn");
-
-const closeWorldBtn =
-    document.getElementById("closeWorldBtn");
+    document.getElementById(
+        "worldOverlay"
+    );
 
 
-openWorldBtn.addEventListener(
-    "click",
-    function () {
+document
+    .getElementById(
+        "openWorldBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        worldOverlay.classList.add("active");
+            worldOverlay.classList.add(
+                "active"
+            );
 
-        if (!mapLoaded) {
-            laadWereldkaart();
+
+            if (!mapLoaded) {
+
+                loadWorld();
+
+            }
+
         }
-    }
-);
+    );
 
 
-closeWorldBtn.addEventListener(
-    "click",
-    function () {
+document
+    .getElementById(
+        "closeWorldBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        worldOverlay.classList.remove("active");
-    }
-);
+            worldOverlay.classList.remove(
+                "active"
+            );
+
+        }
+    );
 
 
 document.addEventListener(
     "keydown",
-    function (event) {
+    function(event) {
 
         if (
             event.key === "Escape" &&
-            worldOverlay.classList.contains("active")
+            worldOverlay.classList.contains(
+                "active"
+            )
         ) {
-            worldOverlay.classList.remove("active");
+
+            worldOverlay.classList.remove(
+                "active"
+            );
+
         }
+
     }
 );
 
 
 /* =========================================================
-   MAP DATA
+   COLORS
+========================================================= */
+
+const COLORS = {
+
+    pools:
+        "#3f69d8",
+
+    morocco:
+        "#b54b45",
+
+    japan:
+        "#a74e9c",
+
+    tajik:
+        "#bd8d35",
+
+    neutral:
+        "#26352f"
+
+};
+
+
+/* =========================================================
+   SPECIAL FACTIONS
+========================================================= */
+
+/*
+    Landen die bij de speciale facties horen.
+*/
+
+const factionCountries = {
+
+    pools: [
+        "Poland",
+        "Switzerland",
+        "Estonia",
+        "Latvia",
+        "Lithuania",
+        "Finland",
+        "Belarus",
+        "Ukraine",
+        "Russia"
+    ],
+
+    morocco: [
+        "Morocco",
+        "Western Sahara",
+        "Algeria",
+        "Mali",
+        "Mauritania",
+        "Tunisia"
+    ],
+
+    japan: [
+        "Japan",
+        "South Korea",
+        "North Korea",
+        "Denmark",
+        "Norway"
+    ],
+
+    tajik: [
+        "Tajikistan",
+        "Iceland"
+    ]
+
+};
+
+
+/* =========================================================
+   SPECIAL CITY LISTS
+========================================================= */
+
+const specialRegions = {
+
+    pools: {
+
+        faction:
+            "pools",
+
+        capital:
+            "Warschau",
+
+        cities: [
+            {
+                name: "Warschau",
+                lon: 21.0122,
+                lat: 52.2297,
+                capital: true
+            },
+            {
+                name: "Moskou",
+                lon: 37.6173,
+                lat: 55.7558
+            },
+            {
+                name: "Bern",
+                lon: 7.4474,
+                lat: 46.9480
+            },
+            {
+                name: "Minsk",
+                lon: 27.5615,
+                lat: 53.9006
+            },
+            {
+                name: "Tallinn",
+                lon: 24.7536,
+                lat: 59.4370
+            },
+            {
+                name: "Vilnius",
+                lon: 25.2797,
+                lat: 54.6872
+            },
+            {
+                name: "Riga",
+                lon: 24.1052,
+                lat: 56.9496
+            }
+        ]
+
+    },
+
+
+    morocco: {
+
+        faction:
+            "morocco",
+
+        capital:
+            "Rabat",
+
+        cities: [
+            {
+                name: "Rabat",
+                lon: -6.8498,
+                lat: 34.0209,
+                capital: true
+            },
+            {
+                name: "Algiers",
+                lon: 3.0588,
+                lat: 36.7538
+            },
+            {
+                name: "Nouakchott",
+                lon: -15.9785,
+                lat: 18.0735
+            },
+            {
+                name: "Bamako",
+                lon: -8.0029,
+                lat: 12.6392
+            },
+            {
+                name: "Tunis",
+                lon: 10.1815,
+                lat: 36.8065
+            },
+            {
+                name: "Marrakech",
+                lon: -8.0083,
+                lat: 31.6295
+            },
+            {
+                name: "Laayoune",
+                lon: -13.2033,
+                lat: 27.1536
+            }
+        ]
+
+    },
+
+
+    japan: {
+
+        faction:
+            "japan",
+
+        capital:
+            "Tokyo",
+
+        cities: [
+            {
+                name: "Tokyo",
+                lon: 139.6917,
+                lat: 35.6895,
+                capital: true
+            },
+            {
+                name: "Seoul",
+                lon: 126.9780,
+                lat: 37.5665
+            },
+            {
+                name: "Pyongyang",
+                lon: 125.7625,
+                lat: 39.0392
+            },
+            {
+                name: "Oslo",
+                lon: 10.7522,
+                lat: 59.9139
+            },
+            {
+                name: "Kyoto",
+                lon: 135.7681,
+                lat: 35.0116
+            },
+            {
+                name: "Osaka",
+                lon: 135.5023,
+                lat: 34.6937
+            },
+            {
+                name: "Nagasaki",
+                lon: 129.8737,
+                lat: 32.7503
+            }
+        ]
+
+    },
+
+
+    tajik: {
+
+        faction:
+            "tajik",
+
+        capital:
+            "Doesjanbe",
+
+        cities: [
+            {
+                name: "Doesjanbe",
+                lon: 68.7870,
+                lat: 38.5598,
+                capital: true
+            },
+            {
+                name: "Vardø",
+                lon: 31.1107,
+                lat: 70.3705
+            },
+            {
+                name: "Bodø",
+                lon: 14.4049,
+                lat: 67.2804
+            },
+            {
+                name: "Narvik",
+                lon: 17.4272,
+                lat: 68.4385
+            },
+            {
+                name: "Harstad",
+                lon: 16.5417,
+                lat: 68.7983
+            },
+            {
+                name: "Tromsø",
+                lon: 18.9553,
+                lat: 69.6492
+            },
+            {
+                name: "Langar",
+                lon: 71.5167,
+                lat: 37.0500
+            }
+        ]
+
+    }
+
+};
+
+
+/* =========================================================
+   GENERAL MACRO REGIONS
+========================================================= */
+
+/*
+    Kleine landen worden niet ieder zeven keer
+    opgesplitst.
+
+    Ze worden in grotere strategische wereldregio's
+    gecombineerd.
+*/
+
+
+const macroRegions = [
+
+    {
+        id: "central-america",
+
+        name:
+            "Midden-Amerikaanse Unie",
+
+        countries: [
+            "Belize",
+            "Guatemala",
+            "Honduras",
+            "El Salvador",
+            "Nicaragua",
+            "Costa Rica",
+            "Panama"
+        ],
+
+        cities: [
+            ["Guatemala-Stad",-90.5069,14.6349],
+            ["Panama-Stad",-79.5199,8.9824],
+            ["San José",-84.0907,9.9281],
+            ["Managua",-86.2514,12.1140],
+            ["Tegucigalpa",-87.1921,14.0723],
+            ["San Salvador",-89.2182,13.6929],
+            ["Belize City",-88.1888,17.5046]
+        ]
+
+    },
+
+
+    {
+        id: "caribbean",
+
+        name:
+            "Caribische Federatie",
+
+        countries: [
+            "Bahamas",
+            "Barbados",
+            "Trinidad and Tobago",
+            "Dominica",
+            "Dominican Republic",
+            "Haiti",
+            "Saint Lucia",
+            "Grenada",
+            "Saint Vincent and the Grenadines",
+            "Antigua and Barbuda",
+            "Saint Kitts and Nevis"
+        ],
+
+        cities: [
+            ["Bridgetown",-59.6167,13.1000],
+            ["Port of Spain",-61.5167,10.6667],
+            ["Nassau",-77.3500,25.0667],
+            ["Santo Domingo",-69.9312,18.4861],
+            ["Port-au-Prince",-72.3074,18.5944],
+            ["Castries",-60.9875,14.0101],
+            ["St. George's",-61.7488,12.0561]
+        ]
+
+    },
+
+
+    {
+        id: "balkans",
+
+        name:
+            "Balkanregio",
+
+        countries: [
+            "Albania",
+            "Bosnia and Herzegovina",
+            "Bulgaria",
+            "Croatia",
+            "Kosovo",
+            "Montenegro",
+            "North Macedonia",
+            "Serbia",
+            "Slovenia"
+        ],
+
+        cities: [
+            ["Belgrado",20.4489,44.7866],
+            ["Sofia",23.3219,42.6977],
+            ["Zagreb",15.9819,45.8150],
+            ["Ljubljana",14.5058,46.0569],
+            ["Sarajevo",18.4131,43.8563],
+            ["Skopje",21.4280,41.9981],
+            ["Tirana",19.8187,41.3275]
+        ]
+
+    }
+
+];
+
+
+/* =========================================================
+   MAP STATE
 ========================================================= */
 
 let mapLoaded = false;
-let mapFeatures = [];
+
+let worldCountries = [];
+
+let strategicAreas = [];
+
+let cityTargets = [];
 
 
-/*
-    We gebruiken de officiële geoBoundaries API.
+/* =========================================================
+   WORLD DATA
+========================================================= */
 
-    ADM1 = eerste administratieve laag.
-    Daardoor krijgen we provincies / deelstaten / regio's.
-*/
-
-async function laadWereldkaart() {
+async function loadWorld() {
 
     const status =
-        document.getElementById("mapStatus");
+        document.getElementById(
+            "mapStatus"
+        );
+
 
     const loading =
-        document.getElementById("mapLoading");
+        document.getElementById(
+            "mapLoading"
+        );
 
-    status.textContent =
-        "LOADING GLOBAL PROVINCES...";
 
     loading.style.display =
         "flex";
 
 
+    status.textContent =
+        "LOADING WORLD...";
+
+
     try {
 
         /*
-            Eerst halen we de lijst met landen op.
+            Compact Natural Earth country dataset.
+
+            Dit bestand bevat landen, geen provincies.
+            Dat is precies wat we nu willen.
         */
 
-        const countriesUrl =
-            "https://www.geoboundaries.org/api/current/gbOpen/ALL/ADM1/";
+        const url =
+            "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json";
 
 
         const response =
-            await fetch(countriesUrl);
+            await fetch(url);
 
 
         if (!response.ok) {
+
             throw new Error(
-                "GeoBoundaries API error: " +
+                "World map download failed: " +
                 response.status
             );
+
         }
 
 
-        const metadata =
+        const topology =
             await response.json();
 
 
-        /*
-            De API kan de resultaten op verschillende
-            manieren teruggeven.
-        */
+        worldCountries =
+            topojson.feature(
+                topology,
+                topology.objects.countries
+            ).features;
 
-        let entries = [];
 
-
-        if (Array.isArray(metadata)) {
-
-            entries = metadata;
-
-        } else if (
-            metadata &&
-            Array.isArray(metadata.data)
+        if (
+            !worldCountries.length
         ) {
-
-            entries = metadata.data;
-
-        } else if (
-            metadata &&
-            typeof metadata === "object"
-        ) {
-
-            entries =
-                Object.values(metadata)
-                    .filter(function (item) {
-
-                        return (
-                            item &&
-                            typeof item === "object"
-                        );
-
-                    });
-
-        }
-
-
-        /*
-            Zoek alle landen waarvoor een ADM1
-            downloadbestand bestaat.
-        */
-
-        const urls = [];
-
-
-        for (const item of entries) {
-
-            if (!item || typeof item !== "object") {
-                continue;
-            }
-
-
-            const possibleUrls = [
-
-                item.simplifiedGeometryGeoJSON,
-
-                item.geoJSON,
-
-                item.gjDownloadURL,
-
-                item.downloadURL,
-
-                item.simplifiedGeometryGeoJson
-
-            ];
-
-
-            for (const url of possibleUrls) {
-
-                if (
-                    typeof url === "string" &&
-                    url.includes("http")
-                ) {
-
-                    urls.push(url);
-                    break;
-                }
-            }
-        }
-
-
-        /*
-            Verwijder dubbele URLs.
-        */
-
-        const uniqueUrls =
-            [...new Set(urls)];
-
-
-        /*
-            Als de API geen URLs gaf, proberen we
-            de officiële country-index opnieuw.
-        */
-
-        if (uniqueUrls.length === 0) {
 
             throw new Error(
-                "Geen ADM1 bestanden gevonden."
+                "Geen landen gevonden."
             );
+
         }
 
 
         status.textContent =
-            "DOWNLOADING " +
-            uniqueUrls.length +
-            " COUNTRY DATASETS...";
+            "BUILDING STRATEGIC REGIONS...";
 
 
-        /*
-            We downloaden meerdere bestanden tegelijk,
-            maar niet alles in één keer.
-        */
-
-        const allFeatures = [];
+        buildStrategicWorld();
 
 
-        const batchSize = 15;
+        renderWorld();
 
 
-        for (
-            let i = 0;
-            i < uniqueUrls.length;
-            i += batchSize
-        ) {
-
-            const batch =
-                uniqueUrls.slice(
-                    i,
-                    i + batchSize
-                );
-
-
-            const results =
-                await Promise.allSettled(
-
-                    batch.map(function (url) {
-
-                        return fetch(url)
-                            .then(function (r) {
-
-                                if (!r.ok) {
-                                    throw new Error(
-                                        "GeoJSON error"
-                                    );
-                                }
-
-                                return r.json();
-
-                            });
-
-                    })
-                );
-
-
-            for (const result of results) {
-
-                if (
-                    result.status === "fulfilled" &&
-                    result.value
-                ) {
-
-                    const geo =
-                        result.value;
-
-
-                    if (
-                        geo.type === "FeatureCollection" &&
-                        Array.isArray(geo.features)
-                    ) {
-
-                        allFeatures.push(
-                            ...geo.features
-                        );
-
-                    }
-
-                }
-            }
-
-
-            status.textContent =
-                "LOADING PROVINCES " +
-                Math.min(
-                    i + batchSize,
-                    uniqueUrls.length
-                ) +
-                " / " +
-                uniqueUrls.length;
-        }
-
-
-        if (allFeatures.length === 0) {
-
-            throw new Error(
-                "Geen provincies ontvangen."
-            );
-        }
-
-
-        mapFeatures =
-            allFeatures;
-
-
-        mapLoaded = true;
-
-
-        renderMap(
-            mapFeatures
-        );
+        mapLoaded =
+            true;
 
 
         loading.style.display =
@@ -691,549 +1150,672 @@ async function laadWereldkaart() {
 
 
         status.textContent =
-            "MAP ONLINE • " +
-            mapFeatures.length +
-            " PROVINCES";
+            "WORLD ONLINE • " +
+            strategicAreas.length +
+            " STRATEGIC AREAS";
 
 
     } catch (error) {
 
         console.error(
-            "WORLD MAP ERROR:",
+            "WORLD ERROR:",
             error
         );
 
 
-        status.textContent =
-            "MAP DATA ERROR";
-
-
         loading.innerHTML = `
             <div style="font-size:42px">⚠</div>
-            <div>MAP DATA COULD NOT BE LOADED</div>
+            <div>WORLD MAP ERROR</div>
             <small style="opacity:.7">
                 ${error.message}
             </small>
         `;
+
+
+        status.textContent =
+            "MAP ERROR";
+
     }
+
 }
 
 
 /* =========================================================
-   NORMALIZATION
+   COUNTRY HELPERS
 ========================================================= */
 
-function normalizeName(value) {
-
-    return String(value || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/['’`]/g, "")
-        .replace(/[^a-z0-9]+/g, " ")
-        .trim();
-}
-
-
-function naamMatch(actual, target) {
-
-    const a =
-        normalizeName(actual);
-
-    const b =
-        normalizeName(target);
-
+function countryName(feature) {
 
     return (
-        a === b ||
-        a.includes(b) ||
-        b.includes(a)
+        feature &&
+        feature.properties &&
+        feature.properties.name
+    ) || "Unknown";
+
+}
+
+
+function normalized(value) {
+
+    return String(value)
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .trim();
+
+}
+
+
+function findCountry(name) {
+
+    const target =
+        normalized(name);
+
+
+    return worldCountries.find(
+        function(feature) {
+
+            return normalized(
+                countryName(feature)
+            ) === target;
+
+        }
     );
+
 }
 
 
 /* =========================================================
-   PROPERTY HELPERS
+   FACTION LOOKUP
 ========================================================= */
 
-function getProperties(feature) {
+function factionForCountry(name) {
 
-    return feature &&
-        feature.properties
-        ? feature.properties
-        : {};
-}
-
-
-function getCountryCode(feature) {
-
-    const p =
-        getProperties(feature);
-
-
-    const values = [
-
-        p.shapeISO,
-
-        p.shapeGroup,
-
-        p.ISO,
-
-        p.ISO3,
-
-        p.iso3,
-
-        p.boundaryISO,
-
-        p.countryISO,
-
-        p.adm0_a3,
-
-        p.ADM0_A3
-
-    ];
-
-
-    for (const value of values) {
-
-        if (!value) continue;
-
-
-        const code =
-            String(value)
-                .trim()
-                .toUpperCase();
-
-
-        /*
-            Alleen echte ISO-achtige codes.
-        */
-
-        if (
-            /^[A-Z]{3}$/.test(code)
-        ) {
-            return code;
-        }
-    }
-
-
-    return "";
-}
-
-
-function getRegionName(feature) {
-
-    const p =
-        getProperties(feature);
-
-
-    const values = [
-
-        p.shapeName,
-
-        p.shapeName_1,
-
-        p.shapeName_2,
-
-        p.name,
-
-        p.name_1,
-
-        p.name_2,
-
-        p.NAME_1,
-
-        p.NAME_2,
-
-        p.NAME,
-
-        p.region,
-
-        p.province,
-
-        p.admin1
-
-    ];
-
-
-    for (const value of values) {
-
-        if (
-            value !== undefined &&
-            value !== null &&
-            String(value).trim() !== ""
-        ) {
-
-            return String(value);
-        }
-    }
-
-
-    return "Unknown";
-}
-
-
-/* =========================================================
-   FACTIONS
-========================================================= */
-
-
-/* WHOLE COUNTRIES */
-
-const poolsCountries = new Set([
-
-    "POL",
-    "CHE",
-    "EST",
-    "LVA",
-    "LTU",
-    "FIN",
-    "BLR"
-
-]);
-
-
-const moroccoCountries = new Set([
-
-    "MAR",
-    "DZA",
-    "MLI",
-    "MRT"
-
-]);
-
-
-const japanCountries = new Set([
-
-    "JPN",
-    "KOR",
-    "DNK"
-
-]);
-
-
-const tajikCountries = new Set([
-
-    "TJK",
-    "ISL"
-
-]);
-
-
-/* =========================================================
-   UKRAINE PROVINCES
-========================================================= */
-
-const poolsUkraineRegions = [
-
-    "Volyn",
-    "Lviv",
-    "Rivne",
-    "Zhytomyr",
-    "Kyiv",
-    "Kyiv City",
-    "Chernihiv",
-    "Sumy"
-
-];
-
-
-/* =========================================================
-   RUSSIA PROVINCES
-========================================================= */
-
-const poolsRussiaRegions = [
-
-    "Pskov",
-    "Leningrad",
-    "Karelia",
-    "Murmansk",
-    "Arkhangelsk",
-    "Nenets",
-    "Vologda",
-    "Kostroma",
-    "Nizhny Novgorod",
-    "Mordovia",
-    "Penza",
-    "Tambov",
-    "Lipetsk",
-    "Voronezh",
-    "Oryol",
-    "Kursk",
-    "Bryansk",
-    "Smolensk",
-    "Tver",
-    "Novgorod",
-    "Kaluga",
-    "Tula",
-    "Ryazan",
-    "Moscow Oblast",
-    "Moscow",
-    "Yaroslavl",
-    "Ivanovo",
-    "Vladimir"
-
-];
-
-
-/* =========================================================
-   NORWAY
-========================================================= */
-
-const japanNorwayRegions = [
-
-    "Agder",
-    "Vestland",
-    "Rogaland",
-    "Telemark",
-    "Buskerud",
-    "Ostfold",
-    "Østfold",
-    "Akershus",
-    "Innlandet",
-    "More og Romsdal",
-    "Møre og Romsdal",
-    "Svalbard"
-
-];
-
-
-/* =========================================================
-   MICROSTATES
-========================================================= */
-
-const franceMicrostates = [
-
-    "Monaco"
-
-];
-
-
-const italyMicrostates = [
-
-    "San Marino",
-    "Vatican City",
-    "Vatican"
-
-];
-
-
-/* =========================================================
-   FACTION DETECTION
-========================================================= */
-
-function getFaction(feature) {
-
-    const countryCode =
-        getCountryCode(feature);
-
-
-    const region =
-        getRegionName(feature);
-
-
-    /* -------------------------
-       WHOLE COUNTRIES
-    ------------------------- */
-
-    if (
-        poolsCountries.has(countryCode)
-    ) {
-
-        return "pools";
-    }
-
-
-    if (
-        moroccoCountries.has(countryCode)
-    ) {
-
-        return "morocco";
-    }
-
-
-    if (
-        japanCountries.has(countryCode)
-    ) {
-
-        return "japan";
-    }
-
-
-    if (
-        tajikCountries.has(countryCode)
-    ) {
-
-        return "tajik";
-    }
-
-
-    /* -------------------------
-       UKRAINE
-    ------------------------- */
-
-    if (
-        countryCode === "UKR"
-    ) {
-
-        for (
-            const target of poolsUkraineRegions
-        ) {
-
-            if (
-                naamMatch(
-                    region,
-                    target
-                )
-            ) {
-
-                return "pools";
-            }
-        }
-    }
-
-
-    /* -------------------------
-       RUSSIA
-    ------------------------- */
-
-    if (
-        countryCode === "RUS"
-    ) {
-
-        for (
-            const target of poolsRussiaRegions
-        ) {
-
-            if (
-                naamMatch(
-                    region,
-                    target
-                )
-            ) {
-
-                return "pools";
-            }
-        }
-    }
-
-
-    /* -------------------------
-       NORWAY
-    ------------------------- */
-
-    if (
-        countryCode === "NOR"
-    ) {
-
-        /*
-            Specifieke Japan-Korea regio's
-        */
-
-        for (
-            const target of japanNorwayRegions
-        ) {
-
-            if (
-                naamMatch(
-                    region,
-                    target
-                )
-            ) {
-
-                return "japan";
-            }
-        }
-
-
-        /*
-            Alle overige Noorwegen =
-            Tajik-Noordische Samenwerking
-        */
-
-        return "tajik";
-    }
-
-
-    /* -------------------------
-       MICROSTATES
-    ------------------------- */
-
-    for (
-        const target of franceMicrostates
-    ) {
-
-        if (
-            naamMatch(
-                region,
-                target
-            )
-        ) {
-
-            return "neutral";
-        }
-    }
+    const n =
+        normalized(name);
 
 
     for (
-        const target of italyMicrostates
+        const faction in factionCountries
     ) {
 
-        if (
-            naamMatch(
-                region,
-                target
-            )
+        for (
+            const country of
+            factionCountries[faction]
         ) {
 
-            return "neutral";
+            if (
+                normalized(country) === n
+            ) {
+
+                return faction;
+
+            }
+
         }
+
     }
 
 
     return "neutral";
+
 }
 
 
 /* =========================================================
-   FACTION COLORS
+   BUILD STRATEGIC WORLD
 ========================================================= */
 
-function factionColor(faction) {
+function buildStrategicWorld() {
 
-    switch (faction) {
+    strategicAreas = [];
 
-        case "pools":
-            return "#3f69d8";
+    cityTargets = [];
 
-        case "morocco":
-            return "#b54b45";
 
-        case "japan":
-            return "#a74e9c";
+    /*
+        -----------------------------------------
+        1. SPECIAL FACTIONS
+        -----------------------------------------
+    */
 
-        case "tajik":
-            return "#bd8d35";
+    for (
+        const factionKey in specialRegions
+    ) {
 
-        default:
-            return "#26352f";
+        const faction =
+            specialRegions[
+                factionKey
+            ];
+
+
+        const countries =
+            worldCountries.filter(
+                function(feature) {
+
+                    const name =
+                        countryName(feature);
+
+
+                    return (
+                        factionCountries[
+                            factionKey
+                        ].some(
+                            function(c) {
+
+                                return normalized(c) ===
+                                    normalized(name);
+
+                            }
+                        )
+                    );
+
+                }
+            );
+
+
+        /*
+            Alle landen van de factie
+            vormen samen één groot strategisch
+            gebied dat door 7 steden wordt
+            verdeeld.
+        */
+
+        createAreasForGroup(
+
+            factionKey,
+
+            factionKey === "pools"
+                ? "Pools-Zwitserse Samenwerking"
+                : factionKey === "morocco"
+                ? "Marokkaanse Rijk"
+                : factionKey === "japan"
+                ? "Japans-Koreaanse Unie"
+                : "Tajik-Noordische Samenwerking",
+
+            countries,
+
+            faction.cities.map(
+                function(city) {
+
+                    return {
+                        name: city.name,
+                        lon: city.lon,
+                        lat: city.lat,
+                        capital:
+                            city.capital === true
+                    };
+
+                }
+            ),
+
+            factionKey
+
+        );
+
     }
+
+
+    /*
+        -----------------------------------------
+        2. MACRO REGIONS
+        -----------------------------------------
+    */
+
+    for (
+        const region of macroRegions
+    ) {
+
+        const countries =
+            worldCountries.filter(
+                function(feature) {
+
+                    const name =
+                        countryName(feature);
+
+
+                    return region.countries.some(
+                        function(country) {
+
+                            return normalized(
+                                country
+                            ) === normalized(
+                                name
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        if (
+            countries.length
+        ) {
+
+            createAreasForGroup(
+
+                region.id,
+
+                region.name,
+
+                countries,
+
+                region.cities.map(
+                    function(city, index) {
+
+                        return {
+                            name: city[0],
+                            lon: city[1],
+                            lat: city[2],
+                            capital:
+                                index === 0
+                        };
+
+                    }
+                ),
+
+                "neutral"
+
+            );
+
+        }
+
+    }
+
+
+    /*
+        -----------------------------------------
+        3. ALLE ANDERE LANDEN
+        -----------------------------------------
+    */
+
+    const handled =
+        new Set();
+
+
+    strategicAreas.forEach(
+        function(area) {
+
+            area.countryFeatures.forEach(
+                function(feature) {
+
+                    handled.add(
+                        countryName(feature)
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+        Elk overgebleven land wordt
+        een strategische groep.
+
+        We maken 7 fictieve plekken
+        binnen het land op basis van
+        de geografische ligging.
+    */
+
+    for (
+        const country of worldCountries
+    ) {
+
+        const name =
+            countryName(country);
+
+
+        if (
+            handled.has(name)
+        ) {
+
+            continue;
+
+        }
+
+
+        /*
+            Kleine microstaten worden
+            niet als eigen zeven gebieden
+            behandeld.
+        */
+
+        if (
+            isTinyCountry(name)
+        ) {
+
+            continue;
+
+        }
+
+
+        createAutomaticCountry(
+            country
+        );
+
+    }
+
+
+    /*
+        Microstaten worden visueel
+        bij hun omgeving gehouden.
+    */
+
+
+    document.getElementById(
+        "provinceCount"
+    ).textContent =
+        strategicAreas.length;
+
+
+    document.getElementById(
+        "countryCount"
+    ).textContent =
+        worldCountries.length;
+
+
+    document.getElementById(
+        "cityCount"
+    ).textContent =
+        cityTargets.length;
+
 }
 
 
 /* =========================================================
-   RENDER MAP
+   TINY COUNTRIES
 ========================================================= */
 
-function renderMap(features) {
+function isTinyCountry(name) {
 
-    const svg =
-        d3.select("#worldMap");
+    const tiny = [
 
+        "Andorra",
+        "Liechtenstein",
+        "Luxembourg",
+        "Malta",
+        "Monaco",
+        "San Marino",
+        "Vatican",
+        "Vatican City",
+        "Singapore",
+        "Brunei",
+        "Maldives",
+        "Seychelles",
+        "Mauritius",
+        "Comoros",
+        "Palau",
+        "Nauru",
+        "Tuvalu",
+        "Marshall Islands",
+        "Micronesia",
+        "Kiribati",
+        "Tonga",
+        "Samoa",
+        "Grenada",
+        "Dominica",
+        "Saint Lucia",
+        "Antigua and Barbuda",
+        "Saint Kitts and Nevis",
+        "Saint Vincent and the Grenadines"
+
+    ];
+
+
+    return tiny.some(
+        function(country) {
+
+            return normalized(country) ===
+                normalized(name);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   AUTOMATIC COUNTRY
+========================================================= */
+
+function createAutomaticCountry(
+    country
+) {
+
+    const name =
+        countryName(country);
+
+
+    const center =
+        d3.geoCentroid(
+            country
+        );
+
+
+    const lon =
+        center[0];
+
+
+    const lat =
+        center[1];
+
+
+    /*
+        Hoofdstad/centrum als eerste plek.
+
+        De overige 6 plekken worden
+        geografisch rond het centrum
+        geplaatst.
+    */
+
+    const generatedCities = [
+
+        {
+            name:
+                name + " — Hoofdstad",
+
+            lon:
+                lon,
+
+            lat:
+                lat,
+
+            capital:
+                true
+        },
+
+        {
+            name:
+                name + " — Noord",
+
+            lon:
+                lon,
+
+            lat:
+                lat + 2.5
+        },
+
+        {
+            name:
+                name + " — Noordoost",
+
+            lon:
+                lon + 3,
+
+            lat:
+                lat + 1
+        },
+
+        {
+            name:
+                name + " — Zuidoost",
+
+            lon:
+                lon + 2,
+
+            lat:
+                lat - 2
+        },
+
+        {
+            name:
+                name + " — Zuid",
+
+            lon:
+                lon,
+
+            lat:
+                lat - 2.5
+        },
+
+        {
+            name:
+                name + " — Zuidwest",
+
+            lon:
+                lon - 2,
+
+            lat:
+                lat - 1.5
+        },
+
+        {
+            name:
+                name + " — Noordwest",
+
+            lon:
+                lon - 3,
+
+            lat:
+                lat + 1
+        }
+
+    ];
+
+
+    createAreasForGroup(
+
+        "country-" + name,
+
+        name,
+
+        [country],
+
+        generatedCities,
+
+        factionForCountry(name)
+
+    );
+
+}
+
+
+/* =========================================================
+   CREATE 7 AREAS
+========================================================= */
+
+function createAreasForGroup(
+    id,
+    groupName,
+    countries,
+    cities,
+    faction
+) {
+
+    if (
+        !countries.length ||
+        cities.length !== 7
+    ) {
+
+        return;
+
+    }
+
+
+    const area = {
+
+        id:
+            id,
+
+        name:
+            groupName,
+
+        countryFeatures:
+            countries,
+
+        cities:
+            cities,
+
+        faction:
+            faction
+
+    };
+
+
+    strategicAreas.push(
+        area
+    );
+
+
+    cities.forEach(
+        function(city, index) {
+
+            cityTargets.push({
+
+                id:
+                    id + "-city-" + index,
+
+                areaId:
+                    id,
+
+                name:
+                    city.name,
+
+                lon:
+                    city.lon,
+
+                lat:
+                    city.lat,
+
+                capital:
+                    city.capital === true,
+
+                faction:
+                    faction,
+
+                groupName:
+                    groupName
+
+            });
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderWorld() {
 
     const container =
         document.getElementById(
             "mapContainer"
+        );
+
+
+    const svg =
+        d3.select(
+            "#worldMap"
         );
 
 
@@ -1246,126 +1828,211 @@ function renderMap(features) {
 
 
     svg
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox",
+        .attr(
+            "width",
+            width
+        )
+        .attr(
+            "height",
+            height
+        )
+        .attr(
+            "viewBox",
             `0 0 ${width} ${height}`
         );
 
 
-    svg.selectAll("*")
+    svg
+        .selectAll("*")
         .remove();
 
 
     /*
-        Natural Earth projection.
+        Projection
     */
 
     const projection =
-        d3.geoNaturalEarth1();
+        d3.geoNaturalEarth1()
+            .fitExtent(
+                [
+                    [20,20],
+                    [
+                        width - 20,
+                        height - 20
+                    ]
+                ],
+                {
+                    type:
+                        "FeatureCollection",
 
-
-    projection.fitExtent(
-
-        [
-            [20, 20],
-            [width - 20, height - 20]
-        ],
-
-        {
-            type: "FeatureCollection",
-            features: features
-        }
-
-    );
+                    features:
+                        worldCountries
+                }
+            );
 
 
     const path =
         d3.geoPath()
-            .projection(projection);
+            .projection(
+                projection
+            );
 
 
     /*
-        Country/province shapes.
+        Background land.
     */
 
     svg
         .append("g")
-        .attr("class", "map-layer")
+        .attr(
+            "class",
+            "countries-base"
+        )
         .selectAll("path")
-        .data(features)
+        .data(worldCountries)
         .enter()
         .append("path")
-
-        .attr("class", "province")
-
         .attr(
             "d",
             path
         )
-
         .attr(
             "fill",
-            function(feature) {
-
-                return factionColor(
-                    getFaction(feature)
-                );
-
-            }
+            "#18241f"
         )
-
         .attr(
             "stroke",
-            "#101814"
+            "#07100c"
         )
-
         .attr(
             "stroke-width",
-            0.65
+            0.6
+        );
+
+
+    /*
+        Strategic areas.
+    */
+
+    strategicAreas.forEach(
+        function(area) {
+
+            renderStrategicArea(
+                svg,
+                path,
+                projection,
+                area
+            );
+
+        }
+    );
+
+
+    /*
+        Country borders opnieuw
+        bovenop de strategische gebieden.
+    */
+
+    svg
+        .append("g")
+        .attr(
+            "class",
+            "country-borders"
         )
+        .selectAll("path")
+        .data(worldCountries)
+        .enter()
+        .append("path")
+        .attr(
+            "d",
+            path
+        )
+        .attr(
+            "fill",
+            "none"
+        )
+        .attr(
+            "stroke",
+            "#0a120e"
+        )
+        .attr(
+            "stroke-width",
+            0.8
+        );
 
-        .on(
-            "mouseenter",
-            function() {
 
-                d3.select(this)
-                    .raise()
-                    .attr(
-                        "stroke",
-                        "#ffffff"
-                    )
-                    .attr(
-                        "stroke-width",
-                        1.5
-                    );
+    /*
+        Stadssymbolen.
+    */
+
+    const cities =
+        svg
+            .append("g")
+            .attr(
+                "class",
+                "city-layer"
+            );
+
+
+    cities
+        .selectAll("circle")
+        .data(cityTargets)
+        .enter()
+        .append("circle")
+        .attr(
+            "cx",
+            function(city) {
+
+                return projection([
+                    city.lon,
+                    city.lat
+                ])[0];
 
             }
         )
+        .attr(
+            "cy",
+            function(city) {
 
-        .on(
-            "mouseleave",
-            function() {
-
-                d3.select(this)
-                    .attr(
-                        "stroke",
-                        "#101814"
-                    )
-                    .attr(
-                        "stroke-width",
-                        0.65
-                    );
+                return projection([
+                    city.lon,
+                    city.lat
+                ])[1];
 
             }
         )
+        .attr(
+            "r",
+            function(city) {
 
+                return city.capital
+                    ? 7
+                    : 4;
+
+            }
+        )
+        .attr(
+            "fill",
+            "#ffffff"
+        )
+        .attr(
+            "stroke",
+            "#000000"
+        )
+        .attr(
+            "stroke-width",
+            1.5
+        )
+        .style(
+            "cursor",
+            "pointer"
+        )
         .on(
             "click",
-            function(event, feature) {
+            function(event, city) {
 
-                toonProvincieInfo(
-                    feature
+                showCityInfo(
+                    city
                 );
 
             }
@@ -1373,152 +2040,478 @@ function renderMap(features) {
 
 
     /*
-        Statistieken.
+        Labels.
     */
 
-    document.getElementById(
-        "provinceCount"
-    ).textContent =
-        features.length;
+    cities
+        .selectAll("text")
+        .data(cityTargets)
+        .enter()
+        .append("text")
+        .attr(
+            "x",
+            function(city) {
 
-
-    const countries =
-        new Set();
-
-
-    features.forEach(
-        function(feature) {
-
-            const code =
-                getCountryCode(feature);
-
-
-            if (code) {
-                countries.add(code);
-            }
-
-        }
-    );
-
-
-    document.getElementById(
-        "countryCount"
-    ).textContent =
-        countries.size;
-
-
-    /*
-        Resize support.
-    */
-
-    window.addEventListener(
-        "resize",
-        function() {
-
-            if (
-                worldOverlay.classList.contains(
-                    "active"
-                ) &&
-                mapLoaded
-            ) {
-
-                renderMap(
-                    mapFeatures
-                );
+                return projection([
+                    city.lon,
+                    city.lat
+                ])[0] + 8;
 
             }
+        )
+        .attr(
+            "y",
+            function(city) {
 
-        }
-    );
+                return projection([
+                    city.lon,
+                    city.lat
+                ])[1] + 4;
+
+            }
+        )
+        .attr(
+            "class",
+            function(city) {
+
+                return city.capital
+                    ? "city-label capital-label"
+                    : "city-label";
+
+            }
+        )
+        .text(
+            function(city) {
+
+                return city.name;
+
+            }
+        );
+
+
 }
 
 
 /* =========================================================
-   PROVINCE INFO
+   RENDER STRATEGIC AREA
 ========================================================= */
 
-function toonProvincieInfo(feature) {
+function renderStrategicArea(
+    svg,
+    path,
+    projection,
+    area
+) {
 
-    const info =
+    /*
+        Projecteer de 7 steden.
+    */
+
+    const points =
+        area.cities.map(
+            function(city, index) {
+
+                const p =
+                    projection([
+                        city.lon,
+                        city.lat
+                    ]);
+
+
+                return {
+
+                    x: p[0],
+
+                    y: p[1],
+
+                    cityIndex:
+                        index,
+
+                    city:
+                        city
+
+                };
+
+            }
+        );
+
+
+    /*
+        D3 Voronoi.
+
+        Hierdoor worden de gebieden automatisch
+        verdeeld rond de 7 steden.
+    */
+
+    const delaunay =
+        d3.Delaunay.from(
+            points,
+            function(d) {
+                return d.x;
+            },
+            function(d) {
+                return d.y;
+            }
+        );
+
+
+    const voronoi =
+        delaunay.voronoi([
+            0,
+            0,
+            document.getElementById(
+                "mapContainer"
+            ).clientWidth,
+            document.getElementById(
+                "mapContainer"
+            ).clientHeight
+        ]);
+
+
+    /*
+        Voor ieder land binnen deze groep
+        maken we een clip-path.
+
+        Daardoor kunnen de strategische
+        Voronoi-gebieden niet buiten het
+        eigen territorium komen.
+    */
+
+    const clipId =
+        "clip-" +
+        area.id
+            .replace(
+                /[^a-zA-Z0-9_-]/g,
+                ""
+            );
+
+
+    const defs =
+        svg.select(
+            "defs"
+        ).empty()
+            ? svg.append("defs")
+            : svg.select("defs");
+
+
+    const clip =
+        defs
+            .append("clipPath")
+            .attr(
+                "id",
+                clipId
+            );
+
+
+    area.countryFeatures.forEach(
+        function(feature) {
+
+            clip
+                .append("path")
+                .attr(
+                    "d",
+                    path(feature)
+                );
+
+        }
+    );
+
+
+    /*
+        De zeven gebieden.
+    */
+
+    const group =
+        svg
+            .append("g")
+            .attr(
+                "class",
+                "strategic-group"
+            )
+            .attr(
+                "clip-path",
+                "url(#" +
+                clipId +
+                ")"
+            );
+
+
+    points.forEach(
+        function(point, index) {
+
+            const cellPath =
+                voronoi.renderCell(
+                    index
+                );
+
+
+            if (!cellPath) {
+                return;
+            }
+
+
+            group
+                .append("path")
+                .attr(
+                    "class",
+                    "strategic-area"
+                )
+                .attr(
+                    "d",
+                    cellPath
+                )
+                .attr(
+                    "fill",
+                    area.faction === "neutral"
+                        ? "#26352f"
+                        : COLORS[
+                            area.faction
+                        ]
+                )
+                .attr(
+                    "fill-opacity",
+                    0.75
+                )
+                .attr(
+                    "stroke",
+                    "#0a120e"
+                )
+                .attr(
+                    "stroke-width",
+                    1
+                )
+                .style(
+                    "cursor",
+                    "pointer"
+                )
+                .on(
+                    "mouseenter",
+                    function() {
+
+                        d3.select(this)
+                            .attr(
+                                "fill-opacity",
+                                0.95
+                            );
+
+                    }
+                )
+                .on(
+                    "mouseleave",
+                    function() {
+
+                        d3.select(this)
+                            .attr(
+                                "fill-opacity",
+                                0.75
+                            );
+
+                    }
+                )
+                .on(
+                    "click",
+                    function() {
+
+                        showAreaInfo(
+                            area,
+                            point.city
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CITY INFO
+========================================================= */
+
+function showCityInfo(
+    city
+) {
+
+    const box =
         document.getElementById(
             "provinceInfo"
         );
 
 
-    const infoText =
+    const text =
         document.getElementById(
             "provinceInfoText"
         );
 
 
-    const countryCode =
-        getCountryCode(feature);
-
-
-    const region =
-        getRegionName(feature);
-
-
     const faction =
-        getFaction(feature);
+        city.faction;
 
 
-    let factionName =
-        "NEUTRAL";
+    const factionName =
+        getFactionName(
+            faction
+        );
 
 
-    if (faction === "pools") {
+    text.innerHTML = `
 
-        factionName =
-            "🇵🇱🇨🇭 POOLS-ZWITSERSE SAMENWERKING";
-
-    }
-
-    if (faction === "morocco") {
-
-        factionName =
-            "🇲🇦 MAROKKAANSE RIJK";
-
-    }
-
-    if (faction === "japan") {
-
-        factionName =
-            "🇯🇵🇰🇷 JAPANS-KOREAANSE UNIE";
-
-    }
-
-    if (faction === "tajik") {
-
-        factionName =
-            "🇹🇯🇳🇴🇮🇸 TAJIK-NOORDISCHE SAMENWERKING";
-
-    }
-
-
-    infoText.innerHTML = `
         <div class="selected-province">
-            <strong>${region}</strong>
+            <strong>
+                ${city.name}
+            </strong>
         </div>
 
         <div class="selected-country">
-            COUNTRY CODE:
-            ${countryCode || "UNKNOWN"}
+            ${city.groupName}
         </div>
 
         <div class="selected-faction">
             CONTROL:
-            <strong>${factionName}</strong>
+            <strong>
+                ${factionName}
+            </strong>
         </div>
 
         <div class="selected-status">
-            ACTIONS DISABLED
+            ${
+                city.capital
+                    ? "🏛️ CAPITAL CITY"
+                    : "🏙️ STRATEGIC CITY"
+            }
         </div>
+
+        <div class="selected-status">
+            TARGET REQUIRED TO CAPTURE AREA
+        </div>
+
     `;
 
 
-    info.classList.add("visible");
+    box.classList.add(
+        "visible"
+    );
+
 }
+
+
+/* =========================================================
+   AREA INFO
+========================================================= */
+
+function showAreaInfo(
+    area,
+    city
+) {
+
+    const box =
+        document.getElementById(
+            "provinceInfo"
+        );
+
+
+    const text =
+        document.getElementById(
+            "provinceInfoText"
+        );
+
+
+    text.innerHTML = `
+
+        <div class="selected-province">
+            <strong>
+                ${area.name}
+            </strong>
+        </div>
+
+        <div class="selected-country">
+            STRATEGIC AREA
+        </div>
+
+        <div class="selected-faction">
+            CONTROL:
+            <strong>
+                ${getFactionName(
+                    area.faction
+                )}
+            </strong>
+        </div>
+
+        <div class="selected-faction">
+            LEADING CITY:
+            <strong>
+                ${city.name}
+            </strong>
+        </div>
+
+        <div class="selected-status">
+            ⚔️ CITY MUST BE CAPTURED
+            TO TAKE THIS AREA
+        </div>
+
+    `;
+
+
+    box.classList.add(
+        "visible"
+    );
+
+}
+
+
+/* =========================================================
+   FACTION NAME
+========================================================= */
+
+function getFactionName(
+    faction
+) {
+
+    switch (faction) {
+
+        case "pools":
+            return "🇵🇱🇨🇭 Pools-Zwitserse Samenwerking";
+
+        case "morocco":
+            return "🇲🇦 Marokkaanse Rijk";
+
+        case "japan":
+            return "🇯🇵🇰🇷 Japans-Koreaanse Unie";
+
+        case "tajik":
+            return "🇹🇯🇳🇴🇮🇸 Tajik-Noordische Samenwerking";
+
+        default:
+            return "NEUTRAAL";
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE MAP
+========================================================= */
+
+window.addEventListener(
+    "resize",
+    function() {
+
+        if (
+            mapLoaded &&
+            worldOverlay.classList.contains(
+                "active"
+            )
+        ) {
+
+            renderWorld();
+
+        }
+
+    }
+);
 
 
 /* =========================================================
@@ -1528,7 +2521,7 @@ function toonProvincieInfo(feature) {
 document.getElementById(
     "mapStatus"
 ).textContent =
-    "READY • ENTER WORLD TO LOAD MAP";
+    "READY • ENTER WORLD";
 
 
 </script>
