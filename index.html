@@ -1,4 +1,4 @@
-\```html
+```html
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -6,255 +6,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Conquest</title>
     <link rel="stylesheet" href="style.css">
-
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
-    <main class="start-screen">
+    <div class="game-screen">
 
-        <div class="game-title">
-            <h1>GLOBAL<br>CONQUEST</h1>
-            <p>COMMAND • CONQUER • SURVIVE</p>
-        </div>
+        <header class="game-header">
+            <div>
+                <h1>GLOBAL CONQUEST</h1>
+                <p id="playerName">LOADING...</p>
+            </div>
 
-        <button class="play-button" onclick="openLogin()">
-            <span class="play-icon"></span>
-        </button>
-
-        <div class="play-text">PLAY</div>
-
-    </main>
-
-
-    <!-- LOGIN SCHERM -->
-    <div id="loginOverlay" class="login-overlay">
-
-        <div class="login-box">
-
-            <button class="close-button" onclick="closeLogin()">×</button>
-
-            <h2>GLOBAL CONQUEST</h2>
-            <p class="login-subtitle">LOG IN TO YOUR ACCOUNT</p>
-
-            <input
-                id="naam"
-                type="text"
-                placeholder="Accountnaam"
-                autocomplete="username"
-            >
-
-            <input
-                id="wachtwoord"
-                type="password"
-                placeholder="Wachtwoord"
-                autocomplete="current-password"
-            >
-
-            <button class="login-button" onclick="login()">
-                LOGIN
+            <button onclick="logout()" class="logout-button">
+                LOG OUT
             </button>
+        </header>
 
-            <p id="loginStatus" class="login-status"></p>
 
-        </div>
+        <main class="game-content">
+
+            <section class="welcome-panel">
+                <h2>WELCOME, COMMANDER</h2>
+
+                <p>
+                    Je bent succesvol ingelogd.
+                </p>
+
+                <div class="stats">
+                    <div class="stat">
+                        <span>POINTS</span>
+                        <strong id="points">0</strong>
+                    </div>
+
+                    <div class="stat">
+                        <span>MANPOWER</span>
+                        <strong id="manpower">0</strong>
+                    </div>
+
+                    <div class="stat">
+                        <span>FACTORIES</span>
+                        <strong id="factories">0</strong>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="map-placeholder">
+                <div class="map-icon">🌍</div>
+
+                <h2>WORLD MAP</h2>
+
+                <p>
+                    De wereldkaart wordt hier gebouwd.
+                </p>
+
+                <button class="start-map-button">
+                    ENTER WORLD
+                </button>
+            </section>
+
+        </main>
 
     </div>
 
 
     <script>
-        // ==============================
-        // SUPABASE
-        // ==============================
-
-        const supabaseUrl =
-            "https://qelqaiczgibxyxfqtapg.supabase.co";
-
-        const supabaseKey =
-            "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
-
-        const database = window.supabase.createClient(
-            supabaseUrl,
-            supabaseKey
-        );
-
 
         // ==============================
-        // LOGIN SCHERM
+        // ACCOUNT
         // ==============================
 
-        function openLogin() {
-            document.getElementById("loginOverlay").classList.add("active");
-
-            setTimeout(() => {
-                document.getElementById("naam").focus();
-            }, 100);
-        }
+        const speler =
+            sessionStorage.getItem(
+                "globalConquestPlayer"
+            );
 
 
-        function closeLogin() {
-            document.getElementById("loginOverlay").classList.remove("active");
+        // Als iemand rechtstreeks naar game.html
+        // gaat zonder in te loggen:
+        if (!speler) {
 
-            document.getElementById("loginStatus").textContent = "";
+            window.location.href = "index.html";
+
+        } else {
+
+            document.getElementById("playerName")
+                .textContent =
+                "COMMANDER: " + speler;
+
         }
 
 
         // ==============================
-        // LOGIN
+        // UITLOGGEN
         // ==============================
 
-        async function login() {
+        function logout() {
 
-            const naam =
-                document.getElementById("naam").value.trim();
+            sessionStorage.removeItem(
+                "globalConquestPlayer"
+            );
 
-            const wachtwoord =
-                document.getElementById("wachtwoord").value;
-
-            const status =
-                document.getElementById("loginStatus");
-
-
-            if (!naam || !wachtwoord) {
-                status.textContent =
-                    "Vul je accountnaam en wachtwoord in.";
-
-                status.className = "login-status error";
-                return;
-            }
-
-
-            status.textContent = "INLOGGEN...";
-            status.className = "login-status";
-
-
-            try {
-
-                const { data, error } =
-                    await database.functions.invoke("login", {
-                        body: {
-                            naam: naam,
-                            wachtwoord: wachtwoord
-                        }
-                    });
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (!data || !data.success) {
-
-                    status.textContent =
-                        "Onjuiste accountnaam of wachtwoord.";
-
-                    status.className =
-                        "login-status error";
-
-                    return;
-                }
-
-
-                // Login gelukt
-                const spelerNaam =
-                    data.speler_naam || naam;
-
-
-                status.textContent =
-                    "LOGIN GELUKT!";
-
-                status.className =
-                    "login-status success";
-
-
-                // Bewaar alleen de ingelogde spelernaam.
-                // Het wachtwoord wordt nergens opgeslagen.
-                sessionStorage.setItem(
-                    "globalConquestPlayer",
-                    spelerNaam
-                );
-
-
-                // Even de succesvolle melding laten zien
-                setTimeout(() => {
-
-                    startGame(spelerNaam);
-
-                }, 500);
-
-
-            } catch (error) {
-
-                console.error("Login error:", error);
-
-                status.textContent =
-                    "Er ging iets mis bij het inloggen.";
-
-                status.className =
-                    "login-status error";
-            }
-        }
-
-
-        // ==============================
-        // GAME STARTEN
-        // ==============================
-
-        function startGame(spelerNaam) {
-
-            // Voor nu gaan we naar de gamepagina.
-            // Later bouwen we hier direct de wereldkaart in.
             window.location.href =
-                "game.html";
+                "index.html";
         }
-
-
-        // ==============================
-        // ENTER = LOGIN
-        // ==============================
-
-        document.addEventListener("keydown", function(event) {
-
-            if (event.key === "Enter") {
-
-                const overlay =
-                    document.getElementById("loginOverlay");
-
-                if (overlay.classList.contains("active")) {
-                    login();
-                }
-            }
-
-            if (event.key === "Escape") {
-                closeLogin();
-            }
-        });
-
-
-        // ==============================
-        // AUTOMATISCH INGELOGDE SPELER
-        // ==============================
-
-        window.addEventListener("load", function() {
-
-            const speler =
-                sessionStorage.getItem(
-                    "globalConquestPlayer"
-                );
-
-            // Hier kunnen we later bijvoorbeeld
-            // "Welcome back, speler" tonen.
-            if (speler) {
-                console.log(
-                    "Ingelogde speler:",
-                    speler
-                );
-            }
-
-        });
 
     </script>
 
