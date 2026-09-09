@@ -1,243 +1,50 @@
 ```css
 /* ==============================
-   BASIS
+   GAME SCREEN
    ============================== */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
+.game-screen {
     min-height: 100vh;
-    overflow: hidden;
-
     background:
         radial-gradient(
             circle at center,
             #173d2b 0%,
-            #0b2017 45%,
+            #0b2017 50%,
             #050d09 100%
         );
-
-    font-family:
-        "Courier New",
-        monospace;
-
-    color: #eaffdf;
 }
 
 
 /* ==============================
-   STARTSCHERM
+   HEADER
    ============================== */
 
-.start-screen {
-    min-height: 100vh;
+.game-header {
+    height: 90px;
+
+    padding: 20px 30px;
 
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 
-    text-align: center;
+    background: #08160e;
 
-    position: relative;
+    border-bottom: 4px solid #285f36;
 }
 
 
-/* ==============================
-   TITEL
-   ============================== */
-
-.game-title h1 {
-    font-size: clamp(42px, 8vw, 90px);
-
-    line-height: 0.9;
-
-    letter-spacing: 5px;
-
-    color: #8cff72;
-
-    text-shadow:
-        4px 4px 0 #173d25,
-        8px 8px 0 #06110b;
-}
-
-
-.game-title p {
-    margin-top: 20px;
-
-    font-size: 14px;
-
-    letter-spacing: 4px;
-
-    color: #a8c9a0;
-}
-
-
-/* ==============================
-   PLAY KNOP
-   ============================== */
-
-.play-button {
-    width: 150px;
-    height: 150px;
-
-    margin-top: 70px;
-
-    border-radius: 50%;
-
-    border: 6px solid #07150d;
-
-    background: #4cae55;
-
-    cursor: pointer;
-
-    position: relative;
-
-    box-shadow:
-        0 10px 0 #173d25,
-        0 16px 20px rgba(0, 0, 0, 0.5);
-
-    transition:
-        transform 0.12s ease,
-        background 0.12s ease,
-        box-shadow 0.12s ease;
-}
-
-
-.play-button:hover {
-    background: #63c96a;
-
-    transform: translateY(-4px);
-
-    box-shadow:
-        0 14px 0 #173d25,
-        0 20px 25px rgba(0, 0, 0, 0.5);
-}
-
-
-.play-button:active {
-    transform: translateY(7px);
-
-    box-shadow:
-        0 3px 0 #173d25,
-        0 7px 10px rgba(0, 0, 0, 0.5);
-}
-
-
-/* ==============================
-   PLAY DRIEHOEK
-   ============================== */
-
-.play-icon {
-    position: absolute;
-
-    left: 58px;
-    top: 43px;
-
-    width: 0;
-    height: 0;
-
-    border-top: 28px solid transparent;
-    border-bottom: 28px solid transparent;
-    border-left: 42px solid #07150d;
-}
-
-
-/* ==============================
-   PLAY TEKST
-   ============================== */
-
-.play-text {
-    margin-top: 35px;
-
-    font-size: 22px;
-
-    font-weight: bold;
-
-    letter-spacing: 7px;
-
-    color: #8cff72;
-
-    text-shadow:
-        3px 3px 0 #07150d;
-}
-
-
-/* ==============================
-   LOGIN OVERLAY
-   ============================== */
-
-.login-overlay {
-    position: fixed;
-
-    inset: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: rgba(0, 0, 0, 0.78);
-
-    opacity: 0;
-    visibility: hidden;
-
-    transition:
-        opacity 0.2s ease,
-        visibility 0.2s ease;
-
-    z-index: 100;
-}
-
-
-.login-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-
-/* ==============================
-   LOGIN BOX
-   ============================== */
-
-.login-box {
-    width: min(90%, 420px);
-
-    padding: 38px;
-
-    position: relative;
-
-    background: #10271b;
-
-    border: 4px solid #4cae55;
-
-    box-shadow:
-        10px 10px 0 #050d09,
-        0 20px 50px rgba(0, 0, 0, 0.6);
-
-    text-align: center;
-}
-
-
-.login-box h2 {
-    color: #8cff72;
-
-    font-size: 28px;
+.game-header h1 {
+    font-size: 24px;
 
     letter-spacing: 3px;
 
-    text-shadow:
-        3px 3px 0 #07150d;
+    color: #8cff72;
 }
 
 
-.login-subtitle {
-    margin-top: 10px;
-    margin-bottom: 30px;
+.game-header p {
+    margin-top: 5px;
 
     color: #91aa94;
 
@@ -248,133 +55,178 @@ body {
 
 
 /* ==============================
-   SLUITKNOP
+   LOGOUT
    ============================== */
 
-.close-button {
-    position: absolute;
+.logout-button {
+    padding: 10px 18px;
 
-    top: 8px;
-    right: 12px;
+    background: #10271b;
 
-    background: transparent;
+    border: 2px solid #4cae55;
 
-    border: none;
-
-    color: #7f9b83;
-
-    font-size: 30px;
-
-    cursor: pointer;
-}
-
-
-.close-button:hover {
     color: #8cff72;
-}
-
-
-/* ==============================
-   INPUTS
-   ============================== */
-
-.login-box input {
-    width: 100%;
-
-    padding: 15px;
-
-    margin-bottom: 14px;
-
-    background: #07150d;
-
-    border: 3px solid #285f36;
-
-    color: #eaffdf;
-
-    outline: none;
 
     font-family: "Courier New", monospace;
-
-    font-size: 15px;
-}
-
-
-.login-box input:focus {
-    border-color: #63c96a;
-}
-
-
-.login-box input::placeholder {
-    color: #66806b;
-}
-
-
-/* ==============================
-   LOGIN BUTTON
-   ============================== */
-
-.login-button {
-    width: 100%;
-
-    padding: 15px;
-
-    margin-top: 8px;
-
-    background: #4cae55;
-
-    border: 3px solid #07150d;
-
-    color: #07150d;
-
-    font-family: "Courier New", monospace;
-
-    font-size: 17px;
 
     font-weight: bold;
 
-    letter-spacing: 3px;
-
     cursor: pointer;
-
-    box-shadow:
-        4px 4px 0 #07150d;
 }
 
 
-.login-button:hover {
-    background: #63c96a;
-}
-
-
-.login-button:active {
-    transform: translate(3px, 3px);
-
-    box-shadow: 1px 1px 0 #07150d;
+.logout-button:hover {
+    background: #173d2b;
 }
 
 
 /* ==============================
-   STATUS
+   CONTENT
    ============================== */
 
-.login-status {
-    min-height: 20px;
+.game-content {
+    width: min(1100px, 92%);
 
-    margin-top: 18px;
+    margin: 50px auto;
 
-    font-size: 13px;
+    display: grid;
+
+    grid-template-columns: 1fr 1.4fr;
+
+    gap: 30px;
+}
+
+
+/* ==============================
+   PANELS
+   ============================== */
+
+.welcome-panel,
+.map-placeholder {
+    padding: 30px;
+
+    background: #10271b;
+
+    border: 3px solid #285f36;
+
+    box-shadow:
+        7px 7px 0 #050d09;
+}
+
+
+.welcome-panel h2,
+.map-placeholder h2 {
+    color: #8cff72;
+
+    letter-spacing: 2px;
+}
+
+
+.welcome-panel > p,
+.map-placeholder > p {
+    margin-top: 12px;
 
     color: #a8c9a0;
 }
 
 
-.login-status.error {
-    color: #ff7777;
+/* ==============================
+   STATS
+   ============================== */
+
+.stats {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+
+    margin-top: 30px;
 }
 
 
-.login-status.success {
+.stat {
+    padding: 15px;
+
+    background: #07150d;
+
+    border: 2px solid #285f36;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+
+.stat span {
+    color: #91aa94;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+}
+
+
+.stat strong {
     color: #8cff72;
+
+    font-size: 20px;
+}
+
+
+/* ==============================
+   MAP
+   ============================== */
+
+.map-placeholder {
+    min-height: 450px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+}
+
+
+.map-icon {
+    font-size: 80px;
+
+    margin-bottom: 20px;
+}
+
+
+.start-map-button {
+    margin-top: 30px;
+
+    padding: 14px 25px;
+
+    background: #4cae55;
+
+    border: 3px solid #07150d;
+
+    box-shadow: 4px 4px 0 #07150d;
+
+    color: #07150d;
+
+    font-family: "Courier New", monospace;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+}
+
+
+.start-map-button:hover {
+    background: #63c96a;
 }
 
 
@@ -382,38 +234,26 @@ body {
    MOBIEL
    ============================== */
 
-@media (max-width: 600px) {
+@media (max-width: 750px) {
 
-    .game-title h1 {
-        font-size: 42px;
+    .game-content {
+        grid-template-columns: 1fr;
 
-        letter-spacing: 3px;
+        margin-top: 30px;
     }
 
-    .game-title p {
-        font-size: 10px;
-
-        letter-spacing: 2px;
+    .game-header h1 {
+        font-size: 17px;
     }
 
-    .play-button {
-        width: 125px;
-        height: 125px;
-
-        margin-top: 50px;
+    .game-header {
+        padding: 15px;
     }
 
-    .play-icon {
-        left: 48px;
-        top: 35px;
+    .logout-button {
+        padding: 8px 10px;
 
-        border-top-width: 24px;
-        border-bottom-width: 24px;
-        border-left-width: 36px;
-    }
-
-    .login-box {
-        padding: 28px 22px;
+        font-size: 11px;
     }
 }
 ```
