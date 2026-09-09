@@ -1,523 +1,239 @@
 <!DOCTYPE html>
 <html lang="nl">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Conquest</title>
+    <link rel="stylesheet" href="./style.css">
 
-    <link
-        rel="stylesheet"
-        href="./style.css"
-    >
-
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 </head>
-
 
 <body>
 
+<div class="start-screen">
 
-    <!-- =====================================================
-         STARTSCHERM
-         ===================================================== -->
+    <div class="background-grid"></div>
+    <div class="scanlines"></div>
 
-    <main class="start-screen">
+    <div class="system-status">
+        <span class="status-light"></span>
+        GLOBAL CONQUEST SYSTEM ONLINE
+    </div>
 
+    <div class="version">
+        BUILD 1.0.0 // COMMAND NETWORK
+    </div>
 
-        <!-- Achtergronddecoratie -->
+    <main class="start-content">
 
-        <div class="background-grid"></div>
+        <div class="title-small">WELCOME TO</div>
 
-        <div class="scanlines"></div>
+        <h1>GLOBAL<br><span>CONQUEST</span></h1>
 
+        <div class="title-line"></div>
 
-        <!-- Kleine systeeminformatie -->
+        <p class="tagline">
+            COMMAND • CONQUER • SURVIVE
+        </p>
 
-        <div class="system-status">
-
-            <span class="status-dot"></span>
-
-            SYSTEM ONLINE
-
-        </div>
-
-
-        <div class="version">
-            GLOBAL CONQUEST // COMMAND SYSTEM
-        </div>
-
-
-        <!-- =================================================
-             CENTRALE START CONTENT
-             ================================================= -->
-
-        <section class="start-content">
-
-
-            <div class="top-label">
-                STRATEGIC COMMAND NETWORK
-            </div>
-
-
-            <h1>
-                GLOBAL
-                <span>CONQUEST</span>
-            </h1>
-
-
-            <p class="tagline">
-                COMMAND • CONQUER • SURVIVE
-            </p>
-
-
-            <div class="start-line"></div>
-
-
-            <!-- PLAY -->
-
-            <button
-                class="play-button"
-                onclick="openLogin()"
-            >
-
-                <span class="play-icon">
-                    ▶
-                </span>
-
-                <span class="play-text">
-                    ENTER COMMAND
-                </span>
-
-            </button>
-
-
-            <p class="start-hint">
-                AUTHORIZED COMMANDERS ONLY
-            </p>
-
-
-        </section>
-
-
-        <!-- =================================================
-             ONDERSTE INFORMATIE
-             ================================================= -->
-
-        <div class="bottom-info">
-
-
-            <div>
-                SERVER
-                <strong>ONLINE</strong>
-            </div>
-
-
-            <div>
-                NETWORK
-                <strong>CONNECTED</strong>
-            </div>
-
-
-            <div>
-                DATABASE
-                <strong>SUPABASE</strong>
-            </div>
-
-
-        </div>
-
+        <button id="enterCommandBtn" class="main-button">
+            <span>ENTER COMMAND</span>
+            <span>→</span>
+        </button>
 
     </main>
 
+    <div class="bottom-info">
+        <span>STRATEGIC COMMAND NETWORK</span>
+        <span>•</span>
+        <span>ONLINE</span>
+    </div>
+
+</div>
 
 
-    <!-- =====================================================
-         FULLSCREEN LOGIN
-         ===================================================== -->
+<!-- LOGIN -->
 
-    <div
-        id="loginOverlay"
-        class="login-overlay"
-    >
+<div id="loginOverlay" class="login-overlay hidden">
 
+    <div class="login-grid"></div>
+    <div class="login-scanlines"></div>
 
-        <div class="login-box">
+    <div class="login-box">
 
+        <div class="login-corner tl"></div>
+        <div class="login-corner tr"></div>
+        <div class="login-corner bl"></div>
+        <div class="login-corner br"></div>
 
-            <div class="login-top">
-                GLOBAL CONQUEST
-            </div>
+        <div class="login-top">
+            <span class="status-light"></span>
+            SECURE COMMAND LOGIN
+        </div>
 
+        <h2>COMMAND ACCESS</h2>
 
-            <div class="login-status-line">
+        <p class="login-subtitle">
+            IDENTIFY YOURSELF, COMMANDER
+        </p>
 
-                <span class="status-dot"></span>
+        <form id="loginForm">
 
-                SECURE COMMAND LOGIN
-
-            </div>
-
-
-            <h2>
-                COMMANDER LOGIN
-            </h2>
-
-
-            <p class="login-subtitle">
-                ENTER YOUR COMMAND CREDENTIALS
-            </p>
-
-
-            <!-- ACCOUNT -->
-
-            <label for="naam">
-                ACCOUNT NAME
-            </label>
-
+            <label for="naam">COMMANDER NAME</label>
             <input
                 id="naam"
                 type="text"
-                placeholder="Enter account name"
                 autocomplete="username"
+                required
             >
 
-
-            <!-- PASSWORD -->
-
-            <label for="wachtwoord">
-                PASSWORD
-            </label>
-
+            <label for="wachtwoord">PASSWORD</label>
             <input
                 id="wachtwoord"
                 type="password"
-                placeholder="Enter password"
                 autocomplete="current-password"
+                required
             >
 
-
-            <!-- LOGIN -->
-
-            <button
-                onclick="login()"
-                class="login-button"
-            >
-                ENTER COMMAND
+            <button type="submit" class="login-button">
+                ACCESS COMMAND
             </button>
 
+        </form>
 
-            <!-- CANCEL -->
+        <button id="closeLoginBtn" class="close-login">
+            CANCEL
+        </button>
 
-            <button
-                onclick="closeLogin()"
-                class="close-login"
-            >
-                ← BACK TO MAIN MENU
-            </button>
-
-
-            <p id="loginStatus"></p>
-
-
-        </div>
-
+        <div id="loginStatus" class="login-status"></div>
 
     </div>
 
+</div>
 
 
-    <!-- =====================================================
-         JAVASCRIPT
-         ===================================================== -->
+<script>
+const supabaseUrl =
+    "https://qelqaiczgibxyxfqtapg.supabase.co";
 
-    <script>
+const supabaseKey =
+    "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
 
-
-        /* =====================================================
-           SUPABASE
-           ===================================================== */
-
-        const supabaseUrl =
-            "https://qelqaiczgibxyxfqtapg.supabase.co";
-
-
-        const supabaseKey =
-            "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
+const database =
+    window.supabase.createClient(
+        supabaseUrl,
+        supabaseKey
+    );
 
 
-        const database =
-            window.supabase.createClient(
-                supabaseUrl,
-                supabaseKey
+const enterCommandBtn =
+    document.getElementById("enterCommandBtn");
+
+const loginOverlay =
+    document.getElementById("loginOverlay");
+
+const closeLoginBtn =
+    document.getElementById("closeLoginBtn");
+
+const loginForm =
+    document.getElementById("loginForm");
+
+const loginStatus =
+    document.getElementById("loginStatus");
+
+
+enterCommandBtn.addEventListener("click", () => {
+    loginOverlay.classList.remove("hidden");
+
+    setTimeout(() => {
+        document.getElementById("naam").focus();
+    }, 100);
+});
+
+
+closeLoginBtn.addEventListener("click", () => {
+    loginOverlay.classList.add("hidden");
+    loginStatus.textContent = "";
+});
+
+
+loginForm.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+    const naam =
+        document.getElementById("naam").value.trim();
+
+    const wachtwoord =
+        document.getElementById("wachtwoord").value;
+
+    loginStatus.textContent =
+        "AUTHENTICATING COMMANDER...";
+
+    loginStatus.className =
+        "login-status loading";
+
+    try {
+
+        const { data, error } =
+            await database.functions.invoke(
+                "login",
+                {
+                    body: {
+                        naam,
+                        wachtwoord
+                    }
+                }
             );
 
-
-
-        /* =====================================================
-           LOGIN OPENEN
-           ===================================================== */
-
-        function openLogin() {
-
-            const overlay =
-                document.getElementById(
-                    "loginOverlay"
-                );
-
-
-            overlay.style.display = "flex";
-
-
-            document
-                .getElementById("loginStatus")
-                .textContent = "";
-
-
-            document
-                .getElementById("wachtwoord")
-                .value = "";
-
-
-            document
-                .getElementById("naam")
-                .focus();
-
+        if (error) {
+            throw error;
         }
 
-
-
-        /* =====================================================
-           LOGIN SLUITEN
-           ===================================================== */
-
-        function closeLogin() {
-
-            document
-                .getElementById("loginOverlay")
-                .style.display = "none";
-
-
-            document
-                .getElementById("loginStatus")
-                .textContent = "";
-
+        if (!data || data.success === false) {
+            throw new Error(
+                data?.message ||
+                "Login mislukt."
+            );
         }
 
-
-
-        /* =====================================================
-           INLOGGEN
-           ===================================================== */
-
-        async function login() {
-
-
-            const naam =
-                document
-                    .getElementById("naam")
-                    .value
-                    .trim();
-
-
-            const wachtwoord =
-                document
-                    .getElementById("wachtwoord")
-                    .value;
-
-
-            const status =
-                document.getElementById(
-                    "loginStatus"
-                );
-
-
-
-            /* ==============================
-               CONTROLEREN
-               ============================== */
-
-            if (
-                !naam ||
-                !wachtwoord
-            ) {
-
-                status.textContent =
-                    "Vul je accountnaam en wachtwoord in.";
-
-                return;
-
-            }
-
-
-
-            status.textContent =
-                "AUTHENTICATING...";
-
-
-
-            try {
-
-
-                const {
-                    data,
-                    error
-                } =
-                    await database.functions.invoke(
-                        "login",
-                        {
-                            body: {
-                                naam: naam,
-                                wachtwoord: wachtwoord
-                            }
-                        }
-                    );
-
-
-
-                /* ==============================
-                   FOUT
-                   ============================== */
-
-                if (error) {
-
-                    console.error(
-                        "Login fout:",
-                        error
-                    );
-
-
-                    status.textContent =
-                        "Login mislukt.";
-
-                    return;
-
-                }
-
-
-
-                /* ==============================
-                   VERKEERDE LOGIN
-                   ============================== */
-
-                if (
-                    !data ||
-                    !data.success
-                ) {
-
-                    status.textContent =
-                        "Verkeerde accountnaam of wachtwoord.";
-
-                    return;
-
-                }
-
-
-
-                /* ==============================
-                   SPELER OPSLAAN
-                   ============================== */
-
-                const spelerNaam =
-                    data.speler_naam || naam;
-
-
-                sessionStorage.setItem(
-                    "globalConquestPlayer",
-                    spelerNaam
-                );
-
-
-
-                /* ==============================
-                   NAAR GAME
-                   ============================== */
-
-                status.textContent =
-                    "COMMAND AUTHORIZED...";
-
-
-                setTimeout(
-                    function() {
-
-                        window.location.href =
-                            "./game.html";
-
-                    },
-                    300
-                );
-
-
-            }
-
-
-            catch (fout) {
-
-
-                console.error(
-                    "Onverwachte login fout:",
-                    fout
-                );
-
-
-                status.textContent =
-                    "Er ging iets mis bij het inloggen.";
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           ENTER / ESCAPE
-           ===================================================== */
-
-        document.addEventListener(
-            "keydown",
-            function(event) {
-
-
-                const overlay =
-                    document.getElementById(
-                        "loginOverlay"
-                    );
-
-
-                if (
-                    event.key === "Enter" &&
-                    overlay.style.display === "flex"
-                ) {
-
-                    login();
-
-                }
-
-
-                if (
-                    event.key === "Escape" &&
-                    overlay.style.display === "flex"
-                ) {
-
-                    closeLogin();
-
-                }
-
-            }
+        const spelerNaam =
+            data.speler_naam || naam;
+
+        sessionStorage.setItem(
+            "globalConquestPlayer",
+            spelerNaam
         );
 
+        window.location.href =
+            "./game.html";
 
-    </script>
+    } catch (error) {
 
+        console.error(error);
+
+        loginStatus.textContent =
+            error.message ||
+            "Login mislukt.";
+
+        loginStatus.className =
+            "login-status error";
+    }
+});
+
+
+document.addEventListener("keydown", (event) => {
+
+    if (
+        event.key === "Escape" &&
+        !loginOverlay.classList.contains("hidden")
+    ) {
+        loginOverlay.classList.add("hidden");
+    }
+
+});
+</script>
 
 </body>
-
 </html>
