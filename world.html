@@ -1,1 +1,559 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Conquest — World</title>
 
+    <link rel="stylesheet" href="./style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="world-body">
+
+<header class="world-topbar">
+    <div class="world-logo">
+        GLOBAL CONQUEST
+        <span>WORLD SELECTION</span>
+    </div>
+
+    <div class="world-commander">
+        COMMANDER:
+        <strong id="commanderName">---</strong>
+    </div>
+
+    <button class="back-button" id="backButton">
+        ← COMMAND CENTER
+    </button>
+</header>
+
+
+<main class="world-layout">
+
+    <!-- LINKER RESOURCEBALK -->
+    <aside class="world-sidebar">
+
+        <div class="sidebar-title">
+            RESOURCES
+        </div>
+
+        <div class="resource-box">
+            <span>POINTS</span>
+            <strong id="points">0</strong>
+        </div>
+
+        <div class="resource-box">
+            <span>MANPOWER</span>
+            <strong id="manpower">0</strong>
+        </div>
+
+        <div class="resource-box">
+            <span>FACTORIES</span>
+            <strong id="factories">0</strong>
+        </div>
+
+        <div class="selected-box">
+            <small>SELECTED POWER</small>
+            <strong id="selectedCountry">NONE</strong>
+        </div>
+
+    </aside>
+
+
+    <!-- WERELDKEUZE -->
+    <section class="world-main">
+
+        <div class="world-heading">
+            <div>
+                <p class="eyebrow">GLOBAL CONQUEST</p>
+                <h1>CHOOSE YOUR POWER</h1>
+                <p class="world-description">
+                    Kies een land, rijk, unie of samenwerking.
+                    Elke speelbare macht krijgt zijn eigen strategische gebieden.
+                </p>
+            </div>
+        </div>
+
+
+        <!-- EUROPA -->
+        <section class="continent-section">
+            <div class="continent-title">
+                <span>🇪🇺</span>
+                EUROPA
+            </div>
+
+            <div class="country-grid">
+
+                <button class="country-card" data-country="Frankrijk">
+                    <span class="flag">🇫🇷</span>
+                    <span>Frankrijk</span>
+                </button>
+
+                <button class="country-card" data-country="Duitsland">
+                    <span class="flag">🇩🇪</span>
+                    <span>Duitsland</span>
+                </button>
+
+                <button class="country-card" data-country="Spanje">
+                    <span class="flag">🇪🇸</span>
+                    <span>Spanje</span>
+                </button>
+
+                <button class="country-card" data-country="Portugal">
+                    <span class="flag">🇵🇹</span>
+                    <span>Portugal</span>
+                </button>
+
+                <button class="country-card" data-country="Griekenland">
+                    <span class="flag">🇬🇷</span>
+                    <span>Griekenland</span>
+                </button>
+
+                <button class="country-card" data-country="UK + Ierland">
+                    <span class="flag">🇬🇧</span>
+                    <span>UK + Ierland</span>
+                </button>
+
+                <button class="country-card" data-country="Zweden">
+                    <span class="flag">🇸🇪</span>
+                    <span>Zweden</span>
+                </button>
+
+                <button class="country-card" data-country="Italië">
+                    <span class="flag">🇮🇹</span>
+                    <span>Italië</span>
+                </button>
+
+                <button class="country-card" data-country="Servië">
+                    <span class="flag">🇷🇸</span>
+                    <span>Servië</span>
+                </button>
+
+                <button class="country-card" data-country="Roemenië + Moldavië">
+                    <span class="flag">🇷🇴</span>
+                    <span>Roemenië + Moldavië</span>
+                </button>
+
+                <button class="country-card" data-country="Kroatië + Bosnië">
+                    <span class="flag">🇭🇷</span>
+                    <span>Kroatië + Bosnië</span>
+                </button>
+
+                <button class="country-card" data-country="Noord-Balkan">
+                    <span class="flag">🌍</span>
+                    <span>Noord-Balkan</span>
+                </button>
+
+                <button class="country-card" data-country="Zuid-Balkan">
+                    <span class="flag">🌍</span>
+                    <span>Zuid-Balkan</span>
+                </button>
+
+                <button class="country-card" data-country="Oostenrijk + Tsjechië + Slovenië">
+                    <span class="flag">🇦🇹</span>
+                    <span>Oostenrijk + Tsjechië + Slovenië</span>
+                </button>
+
+                <button class="country-card" data-country="Rusland">
+                    <span class="flag">🇷🇺</span>
+                    <span>Rusland</span>
+                </button>
+
+                <button class="country-card special" data-country="Marokkaanse Rijk">
+                    <span class="flag">🇲🇦</span>
+                    <span>Marokkaanse Rijk</span>
+                </button>
+
+                <button class="country-card special" data-country="Japans-Koreaanse Unie">
+                    <span class="flag">🇯🇵🇰🇷</span>
+                    <span>Japans-Koreaanse Unie</span>
+                </button>
+
+                <button class="country-card special" data-country="Pools-Zwitserse Samenwerking">
+                    <span class="flag">🇵🇱🇨🇭</span>
+                    <span>Pools-Zwitserse Samenwerking</span>
+                </button>
+
+                <button class="country-card special" data-country="Tajik-Noordische Samenwerking">
+                    <span class="flag">🇹🇯🇳🇴🇮🇸</span>
+                    <span>Tajik-Noordische Samenwerking</span>
+                </button>
+
+            </div>
+        </section>
+
+
+        <!-- AZIË -->
+        <section class="continent-section">
+
+            <div class="continent-title">
+                <span>🌏</span>
+                AZIË
+            </div>
+
+            <div class="country-grid">
+
+                <button class="country-card" data-country="China">
+                    <span class="flag">🇨🇳</span>
+                    <span>China</span>
+                </button>
+
+                <button class="country-card" data-country="India + Pakistan + Bangladesh">
+                    <span class="flag">🇮🇳</span>
+                    <span>India + Pakistan + Bangladesh</span>
+                </button>
+
+                <button class="country-card" data-country="Vietnam + Zuidoost-Azië">
+                    <span class="flag">🇻🇳</span>
+                    <span>Vietnam + Zuidoost-Azië</span>
+                </button>
+
+                <button class="country-card" data-country="Kazachstan + overige Stans">
+                    <span class="flag">🇰🇿</span>
+                    <span>Kazachstan + overige Stans</span>
+                </button>
+
+                <button class="country-card" data-country="Midden-Oosten Oost">
+                    <span class="flag">🕌</span>
+                    <span>Midden-Oosten Oost</span>
+                </button>
+
+                <button class="country-card" data-country="Midden-Oosten West">
+                    <span class="flag">🕌</span>
+                    <span>Midden-Oosten West</span>
+                </button>
+
+                <button class="country-card special" data-country="Türkiye + Kaukasus">
+                    <span class="flag">🇹🇷</span>
+                    <span>Türkiye + Kaukasus</span>
+                </button>
+
+                <button class="country-card" data-country="Indonesië + Papoea-Nieuw-Guinea">
+                    <span class="flag">🇮🇩</span>
+                    <span>Indonesië + Papoea-Nieuw-Guinea</span>
+                </button>
+
+            </div>
+        </section>
+
+
+        <!-- AMERIKA -->
+        <section class="continent-section">
+
+            <div class="continent-title">
+                <span>🌎</span>
+                AMERIKA
+            </div>
+
+            <div class="country-grid">
+
+                <button class="country-card" data-country="Amerika">
+                    <span class="flag">🇺🇸</span>
+                    <span>Amerika</span>
+                </button>
+
+                <button class="country-card" data-country="Canada">
+                    <span class="flag">🇨🇦</span>
+                    <span>Canada</span>
+                </button>
+
+                <button class="country-card" data-country="Mexico">
+                    <span class="flag">🇲🇽</span>
+                    <span>Mexico</span>
+                </button>
+
+                <button class="country-card" data-country="Midden-Amerika">
+                    <span class="flag">🌎</span>
+                    <span>Midden-Amerika</span>
+                </button>
+
+                <button class="country-card special" data-country="Cuba-Jamaicaans Rijk">
+                    <span class="flag">🇨🇺🇯🇲</span>
+                    <span>Cuba-Jamaicaans Rijk</span>
+                </button>
+
+                <button class="country-card" data-country="Caribbean">
+                    <span class="flag">🏝️</span>
+                    <span>Caribbean</span>
+                </button>
+
+                <button class="country-card" data-country="Brazilië">
+                    <span class="flag">🇧🇷</span>
+                    <span>Brazilië</span>
+                </button>
+
+                <button class="country-card" data-country="Argentinië">
+                    <span class="flag">🇦🇷</span>
+                    <span>Argentinië</span>
+                </button>
+
+                <button class="country-card" data-country="Chili">
+                    <span class="flag">🇨🇱</span>
+                    <span>Chili</span>
+                </button>
+
+                <button class="country-card" data-country="West-Zuid-Amerikaanse Republiek">
+                    <span class="flag">🌎</span>
+                    <span>West-Zuid-Amerikaanse Republiek</span>
+                </button>
+
+                <button class="country-card" data-country="Venezuela + Guyana + Suriname">
+                    <span class="flag">🇻🇪</span>
+                    <span>Venezuela + Guyana + Suriname</span>
+                </button>
+
+            </div>
+        </section>
+
+
+        <!-- AFRIKA -->
+        <section class="continent-section">
+
+            <div class="continent-title">
+                <span>🌍</span>
+                AFRIKA
+            </div>
+
+            <div class="country-grid">
+
+                <button class="country-card special" data-country="Libyano-Egyptische Unie">
+                    <span class="flag">🇪🇬</span>
+                    <span>Libyano-Egyptische Unie</span>
+                </button>
+
+                <button class="country-card special" data-country="Zuid-West-Afrikaanse Unie">
+                    <span class="flag">🌍</span>
+                    <span>Zuid-West-Afrikaanse Unie</span>
+                </button>
+
+                <button class="country-card special" data-country="Zuidelijke Afrikaanse Samenwerking">
+                    <span class="flag">🌍</span>
+                    <span>Zuidelijke Afrikaanse Samenwerking</span>
+                </button>
+
+                <button class="country-card" data-country="Madagaskar">
+                    <span class="flag">🇲🇬</span>
+                    <span>Madagaskar</span>
+                </button>
+
+                <button class="country-card" data-country="Oost-Afrika">
+                    <span class="flag">🌍</span>
+                    <span>Oost-Afrika</span>
+                </button>
+
+                <button class="country-card" data-country="Congo">
+                    <span class="flag">🇨🇩</span>
+                    <span>Congo</span>
+                </button>
+
+                <button class="country-card" data-country="Middenlands-Afrika">
+                    <span class="flag">🌍</span>
+                    <span>Middenlands-Afrika</span>
+                </button>
+
+                <button class="country-card" data-country="Afrikaanse Filler">
+                    <span class="flag">🌍</span>
+                    <span>Afrikaanse Filler</span>
+                </button>
+
+            </div>
+        </section>
+
+
+        <!-- OCEANIË -->
+        <section class="continent-section">
+
+            <div class="continent-title">
+                <span>🌊</span>
+                OCEANIË
+            </div>
+
+            <div class="country-grid">
+
+                <button class="country-card" data-country="Australië + Nieuw-Zeeland">
+                    <span class="flag">🇦🇺</span>
+                    <span>Australië + Nieuw-Zeeland</span>
+                </button>
+
+            </div>
+        </section>
+
+    </section>
+
+</main>
+
+
+<script>
+    const supabaseUrl =
+        "https://qelqaiczgibxyxfqtapg.supabase.co";
+
+    const supabaseKey =
+        "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
+
+    const database =
+        window.supabase.createClient(
+            supabaseUrl,
+            supabaseKey
+        );
+
+
+    const speler =
+        sessionStorage.getItem("globalConquestPlayer");
+
+
+    if (!speler) {
+        window.location.href = "./index.html";
+    }
+
+
+    document.getElementById("commanderName").textContent =
+        speler || "---";
+
+
+    function parsePunten(value) {
+
+        if (value === null || value === undefined) {
+            return 0;
+        }
+
+        let tekst = String(value)
+            .trim()
+            .toUpperCase()
+            .replace(",", ".");
+
+        if (!tekst) {
+            return 0;
+        }
+
+        let multiplier = 1;
+
+        if (tekst.endsWith("K")) {
+            multiplier = 1000;
+            tekst = tekst.slice(0, -1);
+        }
+
+        if (tekst.endsWith("M")) {
+            multiplier = 1000000;
+            tekst = tekst.slice(0, -1);
+        }
+
+        const nummer = Number(tekst);
+
+        if (Number.isNaN(nummer)) {
+            return 0;
+        }
+
+        return nummer * multiplier;
+    }
+
+
+    async function laadSpeler() {
+
+        if (!speler) return;
+
+        const { data, error } = await database
+            .from("players")
+            .select("naam, plus, min")
+            .eq("naam", speler)
+            .maybeSingle();
+
+
+        if (error) {
+            console.error("Speler laden mislukt:", error);
+            return;
+        }
+
+
+        if (!data) {
+            document.getElementById("points").textContent = "0";
+            return;
+        }
+
+
+        const plus =
+            parsePunten(data.plus);
+
+        const min =
+            Math.abs(parsePunten(data.min));
+
+        const totaal =
+            plus - min;
+
+
+        document.getElementById("points").textContent =
+            Math.max(0, Math.floor(totaal)).toLocaleString("nl-NL");
+    }
+
+
+    laadSpeler();
+
+
+    database
+        .channel("global-conquest-world-players")
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "players"
+            },
+            function () {
+                laadSpeler();
+            }
+        )
+        .subscribe();
+
+
+    // LAND KIEZEN
+
+    const countryCards =
+        document.querySelectorAll(".country-card");
+
+    const selectedCountry =
+        document.getElementById("selectedCountry");
+
+
+    countryCards.forEach(function(card) {
+
+        card.addEventListener("click", function() {
+
+            countryCards.forEach(function(otherCard) {
+                otherCard.classList.remove("selected");
+            });
+
+
+            card.classList.add("selected");
+
+
+            const country =
+                card.dataset.country;
+
+
+            selectedCountry.textContent =
+                country.toUpperCase();
+
+
+            sessionStorage.setItem(
+                "globalConquestNation",
+                country
+            );
+
+        });
+
+    });
+
+
+    // TERUG
+
+    document.getElementById("backButton")
+        .addEventListener("click", function() {
+
+            window.location.href =
+                "./game.html";
+
+        });
+</script>
+
+</body>
+</html>
