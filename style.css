@@ -1,80 +1,531 @@
 /* =========================================================
-   GLOBAL CONQUEST — COMMAND CENTER STYLE
+   GLOBAL CONQUEST
+   MAIN COMMAND INTERFACE
+   ========================================================= */
+
+
+/* =========================================================
+   RESET
    ========================================================= */
 
 * {
     box-sizing: border-box;
+
     margin: 0;
     padding: 0;
 }
 
+
 html,
 body {
-    min-height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
+
 body {
-    background: #030805;
+    overflow: hidden;
+
+    background: #020603;
+
     color: #d9ead8;
-    font-family: "Courier New", monospace;
+
+    font-family:
+        "Courier New",
+        monospace;
 }
 
 
 /* =========================================================
-   GAME SCREEN
+   START SCREEN
    ========================================================= */
 
-.game-screen {
-    min-height: 100vh;
+.start-screen {
     position: relative;
+
+    width: 100vw;
+    height: 100vh;
+
     overflow: hidden;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
 
     background:
         radial-gradient(
-            circle at 50% 35%,
-            rgba(39, 105, 54, 0.28),
-            transparent 45%
-        ),
-        linear-gradient(
-            135deg,
-            #020603,
-            #07150d 45%,
-            #020604
+            circle at center,
+            rgba(38, 100, 50, 0.28) 0%,
+            rgba(10, 31, 17, 0.8) 40%,
+            #020603 85%
         );
 }
 
 
-/* Tactical grid */
+/* =========================================================
+   BACKGROUND GRID
+   ========================================================= */
 
-.game-screen::before {
-    content: "";
+.background-grid {
+    position: absolute;
 
-    position: fixed;
     inset: 0;
 
     pointer-events: none;
 
     background-image:
         linear-gradient(
-            rgba(110, 255, 120, 0.035) 1px,
+            rgba(120, 220, 120, 0.045) 1px,
             transparent 1px
         ),
         linear-gradient(
             90deg,
-            rgba(110, 255, 120, 0.035) 1px,
+            rgba(120, 220, 120, 0.045) 1px,
             transparent 1px
         );
 
-    background-size: 45px 45px;
+    background-size: 50px 50px;
+
+    mask-image:
+        radial-gradient(
+            ellipse at center,
+            black 0%,
+            transparent 80%
+        );
 }
 
 
-/* Scanline effect */
+/* =========================================================
+   SCANLINES
+   ========================================================= */
 
-.game-screen::after {
+.scanlines {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,0.018),
+            rgba(255,255,255,0.018) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+
+    opacity: 0.45;
+}
+
+
+/* =========================================================
+   DECORATIVE GLOW
+   ========================================================= */
+
+.start-screen::before {
     content: "";
 
+    position: absolute;
+
+    width: 650px;
+    height: 650px;
+
+    border: 1px solid rgba(100, 200, 100, 0.08);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 100px rgba(60, 160, 70, 0.08);
+
+    pointer-events: none;
+}
+
+
+.start-screen::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 30px;
+
+    border: 1px solid rgba(90, 180, 90, 0.08);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SYSTEM STATUS
+   ========================================================= */
+
+.system-status {
+    position: absolute;
+
+    top: 30px;
+    left: 35px;
+
+    z-index: 3;
+
+    color: #769b7b;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+}
+
+
+.status-dot {
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    margin-right: 7px;
+
+    border-radius: 50%;
+
+    background: #72dc68;
+
+    box-shadow:
+        0 0 10px rgba(114, 220, 104, 0.8);
+
+    animation: pulse 2s infinite;
+}
+
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+}
+
+
+/* =========================================================
+   VERSION
+   ========================================================= */
+
+.version {
+    position: absolute;
+
+    top: 30px;
+    right: 35px;
+
+    color: #49674e;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   START CONTENT
+   ========================================================= */
+
+.start-content {
+    position: relative;
+
+    z-index: 2;
+
+    width: min(800px, 90%);
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   TOP LABEL
+   ========================================================= */
+
+.top-label {
+    margin-bottom: 20px;
+
+    color: #618e68;
+
+    font-size: 10px;
+
+    letter-spacing: 5px;
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.start-content h1 {
+    color: #e0f4db;
+
+    font-size: clamp(
+        48px,
+        9vw,
+        105px
+    );
+
+    line-height: 0.9;
+
+    letter-spacing: 8px;
+
+    font-weight: 900;
+
+    text-shadow:
+        0 0 20px rgba(130, 255, 110, 0.15),
+        0 0 50px rgba(80, 180, 80, 0.08);
+}
+
+
+.start-content h1 span {
+    display: block;
+
+    margin-top: 12px;
+
+    color: #8cff72;
+
+    text-shadow:
+        0 0 15px rgba(140, 255, 114, 0.3);
+}
+
+
+/* =========================================================
+   TAGLINE
+   ========================================================= */
+
+.tagline {
+    margin-top: 28px;
+
+    color: #78977d;
+
+    font-size: 12px;
+
+    letter-spacing: 7px;
+}
+
+
+/* =========================================================
+   LINE
+   ========================================================= */
+
+.start-line {
+    width: 280px;
+
+    height: 1px;
+
+    margin: 35px auto;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #4cae55,
+            transparent
+        );
+}
+
+
+/* =========================================================
+   PLAY BUTTON
+   ========================================================= */
+
+.play-button {
+    position: relative;
+
+    width: min(330px, 90%);
+
+    padding: 19px 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #64c965,
+            #3e9949
+        );
+
+    border: 1px solid #9aff89;
+
+    color: #031007;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 25px rgba(80, 200, 90, 0.15);
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+
+.play-button:hover {
+    transform: translateY(-3px);
+
+    background:
+        linear-gradient(
+            180deg,
+            #83e877,
+            #52b85a
+        );
+
+    box-shadow:
+        0 0 35px rgba(90, 220, 100, 0.3);
+}
+
+
+.play-button:active {
+    transform: translateY(1px);
+}
+
+
+.play-icon {
+    font-size: 18px;
+}
+
+
+.play-text {
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   START HINT
+   ========================================================= */
+
+.start-hint {
+    margin-top: 18px;
+
+    color: #4d6e53;
+
+    font-size: 9px;
+
+    letter-spacing: 3px;
+}
+
+
+/* =========================================================
+   BOTTOM INFORMATION
+   ========================================================= */
+
+.bottom-info {
+    position: absolute;
+
+    left: 35px;
+    right: 35px;
+    bottom: 30px;
+
+    z-index: 3;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 50px;
+
+    color: #46634b;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+}
+
+
+.bottom-info strong {
+    margin-left: 7px;
+
+    color: #70a876;
+
+    font-weight: normal;
+}
+
+
+/* =========================================================
+   FULLSCREEN LOGIN
+   ========================================================= */
+
+.login-overlay {
     position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 9999;
+
+    display: none;
+
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(35, 95, 46, 0.32),
+            rgba(1, 6, 3, 0.98) 72%
+        );
+
+    backdrop-filter: blur(6px);
+}
+
+
+/* Login grid */
+
+.login-overlay::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(
+            rgba(120, 220, 120, 0.04) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(120, 220, 120, 0.04) 1px,
+            transparent 1px
+        );
+
+    background-size: 50px 50px;
+}
+
+
+/* Login scanlines */
+
+.login-overlay::after {
+    content: "";
+
+    position: absolute;
+
     inset: 0;
 
     pointer-events: none;
@@ -87,168 +538,42 @@ body {
             transparent 1px,
             transparent 4px
         );
-
-    opacity: 0.4;
 }
 
 
 /* =========================================================
-   HEADER
+   LOGIN BOX
    ========================================================= */
 
-.game-header {
+.login-box {
     position: relative;
+
     z-index: 2;
 
-    min-height: 95px;
+    width: min(460px, 90%);
 
-    padding: 18px 35px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    background:
-        linear-gradient(
-            180deg,
-            #0a1c11,
-            #06110a
-        );
-
-    border-bottom: 2px solid #3c8f48;
-
-    box-shadow:
-        0 5px 25px rgba(0, 0, 0, 0.55);
-}
-
-
-.game-header::before {
-    content: "SYSTEM // GLOBAL CONQUEST";
-
-    position: absolute;
-    top: 5px;
-    left: 35px;
-
-    color: #50785a;
-
-    font-size: 8px;
-    letter-spacing: 2px;
-}
-
-
-.game-header h1 {
-    color: #9cff86;
-
-    font-size: 27px;
-
-    letter-spacing: 5px;
-
-    text-shadow:
-        0 0 12px rgba(140, 255, 114, 0.35);
-}
-
-
-.game-header p {
-    margin-top: 7px;
-
-    color: #78977d;
-
-    font-size: 11px;
-
-    letter-spacing: 3px;
-}
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-.logout-button {
-    position: relative;
-
-    padding: 11px 20px;
-
-    background: #091b0f;
-
-    border: 1px solid #4cae55;
-
-    color: #8cff72;
-
-    font-family: "Courier New", monospace;
-
-    font-size: 12px;
-    font-weight: bold;
-
-    letter-spacing: 1px;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s,
-        box-shadow 0.2s,
-        transform 0.2s;
-}
-
-
-.logout-button:hover {
-    background: #14351d;
-
-    box-shadow:
-        0 0 15px rgba(76, 174, 85, 0.25);
-
-    transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   CONTENT
-   ========================================================= */
-
-.game-content {
-    position: relative;
-    z-index: 1;
-
-    width: min(1150px, 92%);
-
-    margin: 55px auto;
-
-    display: grid;
-
-    grid-template-columns: 0.9fr 1.4fr;
-
-    gap: 25px;
-}
-
-
-/* =========================================================
-   PANELS
-   ========================================================= */
-
-.welcome-panel,
-.map-placeholder {
-    position: relative;
-
-    padding: 30px;
+    padding: 40px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(16, 39, 27, 0.96),
-            rgba(5, 18, 10, 0.98)
+            #10271b,
+            #050f08
         );
 
-    border: 1px solid #326d3c;
+    border: 1px solid #4cae55;
 
     box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.4),
-        inset 0 0 25px rgba(68, 160, 75, 0.035);
+        0 0 60px rgba(0, 0, 0, 0.75),
+        0 0 30px rgba(76, 174, 85, 0.08);
+
+    text-align: left;
 }
 
 
 /* Corner decoration */
 
-.welcome-panel::before,
-.map-placeholder::before {
+.login-box::before {
     content: "";
 
     position: absolute;
@@ -256,16 +581,15 @@ body {
     top: -1px;
     left: -1px;
 
-    width: 45px;
-    height: 45px;
+    width: 60px;
+    height: 60px;
 
-    border-top: 3px solid #78d967;
-    border-left: 3px solid #78d967;
+    border-top: 3px solid #8cff72;
+    border-left: 3px solid #8cff72;
 }
 
 
-.welcome-panel::after,
-.map-placeholder::after {
+.login-box::after {
     content: "";
 
     position: absolute;
@@ -273,89 +597,61 @@ body {
     right: -1px;
     bottom: -1px;
 
-    width: 45px;
-    height: 45px;
+    width: 60px;
+    height: 60px;
 
-    border-right: 3px solid #78d967;
-    border-bottom: 3px solid #78d967;
-}
-
-
-.welcome-panel h2,
-.map-placeholder h2 {
-    color: #94ff7b;
-
-    font-size: 20px;
-
-    letter-spacing: 3px;
-
-    text-shadow:
-        0 0 8px rgba(140, 255, 114, 0.2);
-}
-
-
-.welcome-panel > p,
-.map-placeholder > p {
-    margin-top: 12px;
-
-    color: #8da991;
-
-    font-size: 12px;
-
-    line-height: 1.6;
+    border-right: 3px solid #8cff72;
+    border-bottom: 3px solid #8cff72;
 }
 
 
 /* =========================================================
-   STATS
+   LOGIN TOP
    ========================================================= */
 
-.stats {
-    display: grid;
+.login-top {
+    margin-bottom: 12px;
 
-    grid-template-columns: 1fr;
+    color: #557c5b;
 
-    gap: 12px;
+    font-size: 9px;
 
-    margin-top: 30px;
+    letter-spacing: 3px;
 }
 
 
-.stat {
-    position: relative;
+.login-status-line {
+    margin-bottom: 25px;
 
-    padding: 17px;
+    color: #65856b;
 
-    background:
-        linear-gradient(
-            90deg,
-            #06130a,
-            #0b2112
-        );
+    font-size: 9px;
 
-    border: 1px solid #285f36;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    transition:
-        border-color 0.2s,
-        transform 0.2s;
+    letter-spacing: 2px;
 }
 
 
-.stat:hover {
-    border-color: #62bb5e;
+/* =========================================================
+   LOGIN TITLE
+   ========================================================= */
 
-    transform: translateX(3px);
+.login-box h2 {
+    color: #9cff86;
+
+    font-size: 25px;
+
+    letter-spacing: 4px;
+
+    text-shadow:
+        0 0 12px rgba(140, 255, 114, 0.25);
 }
 
 
-.stat span {
-    color: #718d76;
+.login-subtitle {
+    margin-top: 10px;
+    margin-bottom: 28px;
+
+    color: #78977d;
 
     font-size: 10px;
 
@@ -363,94 +659,79 @@ body {
 }
 
 
-.stat strong {
-    color: #9cff86;
+/* =========================================================
+   LABELS
+   ========================================================= */
 
-    font-size: 21px;
+.login-box label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #6f9275;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.login-box input {
+    width: 100%;
+
+    padding: 15px;
+
+    margin-bottom: 18px;
+
+    background: #020804;
+
+    border: 1px solid #285f36;
+
+    outline: none;
+
+    color: #c9f5c1;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
 
     letter-spacing: 1px;
 
-    text-shadow:
-        0 0 8px rgba(140, 255, 114, 0.2);
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+
+.login-box input::placeholder {
+    color: #4d6953;
+}
+
+
+.login-box input:focus {
+    border-color: #78d967;
+
+    box-shadow:
+        0 0 15px rgba(120, 217, 103, 0.12);
 }
 
 
 /* =========================================================
-   WORLD MAP
+   LOGIN BUTTON
    ========================================================= */
 
-.map-placeholder {
-    min-height: 450px;
+.login-button {
+    width: 100%;
 
-    display: flex;
+    margin-top: 5px;
 
-    flex-direction: column;
-
-    justify-content: center;
-
-    align-items: center;
-
-    text-align: center;
-
-    overflow: hidden;
-}
-
-
-/* Fake tactical map background */
-
-.map-placeholder {
-    background:
-        radial-gradient(
-            circle,
-            rgba(65, 130, 70, 0.18),
-            transparent 55%
-        ),
-        linear-gradient(
-            rgba(8, 32, 17, 0.95),
-            rgba(3, 13, 7, 0.98)
-        );
-}
-
-
-/* Map grid */
-
-.map-placeholder .map-icon {
-    position: relative;
-
-    font-size: 75px;
-
-    margin-bottom: 20px;
-
-    filter:
-        grayscale(1)
-        brightness(0.8)
-        sepia(0.2);
-
-    opacity: 0.85;
-
-    text-shadow:
-        0 0 25px rgba(140, 255, 114, 0.2);
-}
-
-
-.map-placeholder h2 {
-    position: relative;
-}
-
-
-.map-placeholder > p {
-    max-width: 400px;
-}
-
-
-/* =========================================================
-   ENTER WORLD BUTTON
-   ========================================================= */
-
-.start-map-button {
-    margin-top: 30px;
-
-    padding: 14px 28px;
+    padding: 16px;
 
     background:
         linear-gradient(
@@ -459,16 +740,16 @@ body {
             #3f9f4b
         );
 
-    border: 1px solid #86ed7c;
+    border: 1px solid #8cff72;
 
-    box-shadow:
-        0 0 20px rgba(76, 174, 85, 0.18);
+    color: #031007;
 
-    color: #041008;
-
-    font-family: "Courier New", monospace;
+    font-family:
+        "Courier New",
+        monospace;
 
     font-size: 12px;
+
     font-weight: bold;
 
     letter-spacing: 2px;
@@ -477,123 +758,220 @@ body {
 
     transition:
         transform 0.2s,
-        box-shadow 0.2s,
-        background 0.2s;
+        box-shadow 0.2s;
 }
 
 
-.start-map-button:hover {
-    background:
-        linear-gradient(
-            180deg,
-            #82e878,
-            #52b858
-        );
+.login-button:hover {
+    transform: translateY(-2px);
 
     box-shadow:
-        0 0 25px rgba(100, 201, 101, 0.35);
-
-    transform: translateY(-2px);
-}
-
-
-.start-map-button:active {
-    transform: translateY(1px);
+        0 0 25px rgba(100, 201, 101, 0.3);
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   BACK BUTTON
    ========================================================= */
 
-@media (max-width: 750px) {
+.close-login {
+    width: 100%;
 
-    .game-header {
-        min-height: 85px;
+    margin-top: 12px;
 
-        padding: 20px 15px;
+    padding: 13px;
+
+    background: transparent;
+
+    border: 1px solid #285f36;
+
+    color: #718d76;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s,
+        border-color 0.2s,
+        background 0.2s;
+}
+
+
+.close-login:hover {
+    color: #9cff86;
+
+    border-color: #4cae55;
+
+    background: #091b0f;
+}
+
+
+/* =========================================================
+   LOGIN ERROR / STATUS
+   ========================================================= */
+
+#loginStatus {
+    min-height: 18px;
+
+    margin-top: 17px;
+
+    color: #ffb36b;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .start-screen::after {
+        inset: 15px;
     }
 
 
-    .game-header::before {
-        left: 15px;
+    .system-status {
+        top: 20px;
+        left: 20px;
+
+        font-size: 8px;
     }
 
 
-    .game-header h1 {
-        font-size: 17px;
+    .version {
+        top: 20px;
+        right: 20px;
+
+        font-size: 7px;
+    }
+
+
+    .top-label {
+        font-size: 8px;
 
         letter-spacing: 3px;
     }
 
 
-    .game-header p {
-        font-size: 9px;
+    .start-content h1 {
+        font-size: 45px;
 
-        letter-spacing: 2px;
+        letter-spacing: 5px;
     }
 
 
-    .logout-button {
-        padding: 9px 11px;
+    .tagline {
+        font-size: 8px;
 
-        font-size: 10px;
+        letter-spacing: 4px;
     }
 
 
-    .game-content {
-        width: 94%;
+    .bottom-info {
+        left: 15px;
+        right: 15px;
+        bottom: 20px;
 
-        grid-template-columns: 1fr;
+        gap: 15px;
 
-        margin-top: 30px;
+        font-size: 7px;
     }
 
 
-    .welcome-panel,
-    .map-placeholder {
-        padding: 23px;
+    .bottom-info div {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 4px;
+
+        text-align: center;
     }
 
 
-    .map-placeholder {
-        min-height: 350px;
+    .bottom-info strong {
+        margin-left: 0;
     }
 
 
-    .map-placeholder .map-icon {
-        font-size: 60px;
+    .login-box {
+        width: 92%;
+
+        padding: 30px 22px;
+    }
+
+
+    .login-box h2 {
+        font-size: 19px;
+
+        letter-spacing: 3px;
     }
 
 }
 
 
 /* =========================================================
-   VERY SMALL PHONES
+   SMALL PHONES
    ========================================================= */
 
 @media (max-width: 420px) {
 
-    .game-header h1 {
-        font-size: 14px;
+    .version {
+        display: none;
     }
 
 
-    .game-header p {
-        font-size: 8px;
+    .start-content h1 {
+        font-size: 37px;
+
+        letter-spacing: 4px;
     }
 
 
-    .logout-button {
-        padding: 8px;
-
-        font-size: 9px;
+    .top-label {
+        font-size: 7px;
     }
 
 
-    .welcome-panel h2,
-    .map-placeholder h2 {
-        font-size: 16px;
+    .tagline {
+        font-size: 7px;
+
+        letter-spacing: 3px;
+    }
+
+
+    .play-button {
+        width: 90%;
+
+        padding: 16px;
+    }
+
+
+    .bottom-info {
+        gap: 10px;
+    }
+
+
+    .bottom-info div {
+        font-size: 6px;
+    }
+
+
+    .login-box {
+        padding: 27px 18px;
     }
 
 }
