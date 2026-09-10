@@ -1721,7 +1721,11 @@ if (!window.supabase) {
 
 const database =
     window.supabase.createClient(
-       console.log(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+console.log(
     "SUPABASE CLIENT:",
     database
 );
@@ -1730,10 +1734,6 @@ console.log(
     "SUPABASE KEY AANWEZIG:",
     !!SUPABASE_KEY
 );
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-
 
 /* =========================================================
    WW3 STATE
