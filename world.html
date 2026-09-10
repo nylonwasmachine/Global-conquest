@@ -2380,16 +2380,6 @@ function updateWorldUI() {
 
 async function createWW3() {
 
-    if (!isGovernment) {
-
-        alert(
-            "Alleen Overheid kan WW3 starten."
-        );
-
-        return;
-    }
-
-
     chooseCountryButton.disabled =
         true;
 
@@ -2692,13 +2682,11 @@ chooseCountryButton.addEventListener(
     async () => {
 
         /*
-         * OVERHEID START WW3
+         * GEEN WW3
+         * Probeer te starten.
+         * De database controleert of de speler Overheid is.
          */
-
-        if (
-            isGovernment &&
-            !activeWW3
-        ) {
+        if (!activeWW3) {
 
             await createWW3();
 
@@ -2707,23 +2695,8 @@ chooseCountryButton.addEventListener(
 
 
         /*
-         * GEEN WW3
-         */
-
-        if (!activeWW3) {
-
-            alert(
-                "WW3 is nog niet gestart door Overheid."
-            );
-
-            return;
-        }
-
-
-        /*
          * AL EEN LAND
          */
-
         if (myWW3) {
 
             alert(
@@ -2735,29 +2708,17 @@ chooseCountryButton.addEventListener(
 
 
         /*
-         * OPEN LANDENLIJST
+         * ACTIEVE WW3
+         * Open landenkeuze
          */
-
-        await refreshWW3();
-
-
-        if (!activeWW3) {
-
-            alert(
-                "WW3 is niet meer actief."
-            );
-
-            return;
-        }
-
-
         countryOverlay.classList.add(
             "show"
         );
 
+        renderCountryList();
+
     }
 );
-
 
 /* =========================================================
    CLOSE COUNTRY WINDOW
