@@ -1,184 +1,210 @@
 <!DOCTYPE html>
+
 <html lang="nl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Global Conquest — Command Center</title>
+```
+<meta charset="UTF-8">
 
-    <link rel="stylesheet" href="./style.css">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>
+    Global Conquest — Command Center
+</title>
+
+<link
+    rel="stylesheet"
+    href="./style.css"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+```
+
 </head>
 
 <body class="game-body">
 
 <div class="game-shell">
 
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
+```
+<!-- =====================================================
+     HEADER
+====================================================== -->
 
-    <header class="game-header">
+<header class="game-header">
 
-        <div>
-            <div class="game-logo">
-                GLOBAL CONQUEST
-            </div>
+    <div>
 
-            <div class="game-subtitle">
-                COMMAND CENTER
-            </div>
+        <div class="game-logo">
+            GLOBAL CONQUEST
+        </div>
+
+        <div class="game-subtitle">
+            COMMAND CENTER
+        </div>
+
+    </div>
+
+
+    <div class="commander-box">
+
+        <span>
+            COMMANDER
+        </span>
+
+        <strong id="commanderName">
+            ---
+        </strong>
+
+    </div>
+
+
+    <button
+        class="logout-btn"
+        id="logoutBtn"
+    >
+        LOGOUT
+    </button>
+
+</header>
+
+
+<!-- =====================================================
+     COMMAND CENTER
+====================================================== -->
+
+<main class="command-center">
+
+
+    <!-- WELCOME -->
+
+    <section class="welcome-panel">
+
+        <div class="panel-tag">
+            SYSTEM ONLINE
         </div>
 
 
-        <div class="commander-box">
-            <span>COMMANDER</span>
+        <h1>
+            WELCOME, COMMANDER
+        </h1>
 
-            <strong id="commanderName">
-                ---
-            </strong>
-        </div>
+
+        <p>
+            Kies een wereldmacht en begin
+            aan je veroveringstocht.
+        </p>
 
 
         <button
-            class="logout-btn"
-            id="logoutBtn"
+            class="world-btn"
+            id="openWorldBtn"
         >
-            LOGOUT
+            🌍 ENTER WORLD
         </button>
 
-    </header>
+    </section>
 
 
-    <!-- =====================================================
-         COMMAND CENTER
-    ====================================================== -->
+    <!-- =================================================
+         PLAYER STATS
+    ================================================== -->
 
-    <main class="command-center">
-
-        <!-- WELCOME -->
-
-        <section class="welcome-panel">
-
-            <div class="panel-tag">
-                SYSTEM ONLINE
-            </div>
+    <section class="stats-grid">
 
 
-            <h1>
-                WELCOME, COMMANDER
-            </h1>
+        <div class="stat-card">
+
+            <span>
+                POINTS
+            </span>
+
+            <strong id="points">
+                0
+            </strong>
+
+        </div>
 
 
-            <p>
-                Kies een wereldmacht en begin
-                aan je veroveringstocht.
-            </p>
+        <div class="stat-card">
+
+            <span>
+                MANPOWER
+            </span>
+
+            <strong id="manpower">
+                0
+            </strong>
+
+        </div>
 
 
-            <button
-                class="world-btn"
-                id="openWorldBtn"
-            >
-                🌍 ENTER WORLD
-            </button>
+        <div class="stat-card">
 
-        </section>
+            <span>
+                FACTORIES
+            </span>
 
+            <strong id="factories">
+                0
+            </strong>
 
-        <!-- =================================================
-             PLAYER STATS
-        ================================================== -->
-
-        <section class="stats-grid">
-
-            <div class="stat-card">
-
-                <span>
-                    POINTS
-                </span>
-
-                <strong id="points">
-                    0
-                </strong>
-
-            </div>
+        </div>
 
 
-            <div class="stat-card">
-
-                <span>
-                    MANPOWER
-                </span>
-
-                <strong id="manpower">
-                    0
-                </strong>
-
-            </div>
+    </section>
 
 
-            <div class="stat-card">
+    <!-- =================================================
+         GAME STATUS
+    ================================================== -->
 
-                <span>
-                    FACTORIES
-                </span>
+    <section class="welcome-panel">
 
-                <strong id="factories">
-                    0
-                </strong>
-
-            </div>
-
-        </section>
+        <div class="panel-tag">
+            GLOBAL CONQUEST
+        </div>
 
 
-        <!-- =================================================
-             GAME STATUS
-        ================================================== -->
-
-        <section class="welcome-panel">
-
-            <div class="panel-tag">
-                GLOBAL CONQUEST
-            </div>
+        <h2>
+            STRATEGIC WORLD
+        </h2>
 
 
-            <h2>
-                STRATEGIC WORLD
-            </h2>
+        <p>
+            Selecteer een power om je eigen
+            wereldrijk te beginnen.
+        </p>
 
 
-            <p>
-                Selecteer een power om je eigen
-                wereldrijk te beginnen.
-            </p>
+        <div
+            id="selectedNationStatus"
+            style="
+                margin-top:18px;
+                padding:12px;
+                border:1px solid rgba(82,255,173,.25);
+                background:rgba(82,255,173,.03);
+                color:#8fffc7;
+                font-size:13px;
+            "
+        >
+            NO POWER SELECTED
+        </div>
+
+    </section>
 
 
-            <div
-                id="selectedNationStatus"
-                style="
-                    margin-top:18px;
-                    padding:12px;
-                    border:1px solid rgba(82,255,173,.25);
-                    background:rgba(82,255,173,.03);
-                    color:#8fffc7;
-                    font-size:13px;
-                "
-            >
-                NO POWER SELECTED
-            </div>
-
-        </section>
-
-    </main>
+</main>
+```
 
 </div>
 
-
 <script>
+
 
 /* =========================================================
    SUPABASE
@@ -188,8 +214,17 @@ const supabaseUrl =
     "https://qelqaiczgibxyxfqtapg.supabase.co";
 
 
+/*
+ * BELANGRIJK:
+ *
+ * DEZE KEY MOET EXACT DEZELFDE ZIJN
+ * ALS DE PUBLISHABLE KEY IN INDEX.HTML.
+ *
+ * NOOIT SERVICE_ROLE GEBRUIKEN.
+ */
+
 const supabaseKey =
-    "sb_publishable_aZSOOfRnROvePvZ2WWOf8g_ZhfZTCes";
+    "DEZELFDE_PUBLISHABLE_KEY_ALS_IN_INDEX_HTML";
 
 
 const database =
@@ -200,7 +235,7 @@ const database =
 
 
 /* =========================================================
-   PLAYER
+   PLAYER UIT SESSION STORAGE
 ========================================================= */
 
 let speler =
@@ -209,12 +244,47 @@ let speler =
     );
 
 
-/*
-    Als er geen ingelogde speler is,
-    terug naar de login.
-*/
+let playerId =
+    sessionStorage.getItem(
+        "globalConquestPlayerId"
+    );
+
+
+let sessionToken =
+    sessionStorage.getItem(
+        "globalConquestSession"
+    );
+
+
+/* =========================================================
+   DEBUG — GEEN TOKEN TONEN
+========================================================= */
+
+console.log(
+    "GAME PLAYER:",
+    speler
+);
+
+console.log(
+    "GAME PLAYER ID:",
+    !!playerId
+);
+
+console.log(
+    "GAME SESSION:",
+    !!sessionToken
+);
+
+
+/* =========================================================
+   GEEN SPELER
+========================================================= */
 
 if (!speler) {
+
+    console.warn(
+        "Geen globalConquestPlayer gevonden."
+    );
 
     window.location.href =
         "./index.html";
@@ -294,9 +364,7 @@ function parsePunten(value) {
         );
 
 
-    if (
-        Number.isNaN(number)
-    ) {
+    if (Number.isNaN(number)) {
 
         return 0;
 
@@ -349,11 +417,12 @@ async function laadSpeler() {
     }
 
 
-    /*
-        Geen speler gevonden.
-    */
-
     if (!data) {
+
+        console.warn(
+            "Geen speler gevonden:",
+            speler
+        );
 
         document.getElementById(
             "points"
@@ -365,9 +434,9 @@ async function laadSpeler() {
     }
 
 
-    /*
-        Spelernaam synchroniseren.
-    */
+    /* -----------------------------------------
+       NAAM SYNCHRONISEREN
+    ----------------------------------------- */
 
     speler =
         data.naam;
@@ -385,9 +454,9 @@ async function laadSpeler() {
         speler;
 
 
-    /*
-        POINTS
-    */
+    /* -----------------------------------------
+       POINTS
+    ----------------------------------------- */
 
     const plus =
         parsePunten(
@@ -415,7 +484,6 @@ async function laadSpeler() {
         ).toLocaleString(
             "nl-NL"
         );
-
 
 }
 
@@ -463,6 +531,63 @@ document
         "click",
         function() {
 
+            /*
+             * Nog één controle voordat we
+             * naar world.html gaan.
+             */
+
+            const currentPlayer =
+                sessionStorage.getItem(
+                    "globalConquestPlayer"
+                );
+
+
+            const currentSession =
+                sessionStorage.getItem(
+                    "globalConquestSession"
+                );
+
+
+            console.log(
+                "OPEN WORLD — PLAYER:",
+                currentPlayer
+            );
+
+
+            console.log(
+                "OPEN WORLD — SESSION:",
+                !!currentSession
+            );
+
+
+            if (!currentPlayer) {
+
+                alert(
+                    "Geen commander gevonden. Log opnieuw in."
+                );
+
+                window.location.href =
+                    "./index.html";
+
+                return;
+
+            }
+
+
+            if (!currentSession) {
+
+                alert(
+                    "Geen beveiligde sessie gevonden. Log opnieuw in."
+                );
+
+                window.location.href =
+                    "./index.html";
+
+                return;
+
+            }
+
+
             window.location.href =
                 "./world.html";
 
@@ -482,13 +607,20 @@ document
         "click",
         function() {
 
-            /*
-                Alle tijdelijke gamegegevens
-                verwijderen.
-            */
-
             sessionStorage.removeItem(
                 "globalConquestPlayer"
+            );
+
+            sessionStorage.removeItem(
+                "globalConquestPlayerId"
+            );
+
+            sessionStorage.removeItem(
+                "globalConquestAuthId"
+            );
+
+            sessionStorage.removeItem(
+                "globalConquestSession"
             );
 
             sessionStorage.removeItem(
@@ -503,10 +635,6 @@ document
                 "globalConquestCapital"
             );
 
-
-            /*
-                Terug naar login.
-            */
 
             window.location.href =
                 "./index.html";
@@ -557,11 +685,9 @@ function updateSelectedNation() {
 updateSelectedNation();
 
 
-/*
-    Als de pagina vanuit een andere pagina
-    terug geopend wordt, de gekozen power
-    opnieuw tonen.
-*/
+/* =========================================================
+   PAGE SHOW
+========================================================= */
 
 window.addEventListener(
     "pageshow",
@@ -571,6 +697,7 @@ window.addEventListener(
 
     }
 );
+
 
 </script>
 
