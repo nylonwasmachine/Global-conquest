@@ -1825,7 +1825,7 @@ async function checkAccountRole() {
     try {
         const { data, error } =
             await database.rpc(
-                "get_player_from_session",
+                "get_player_role_from_session",
                 {
                     p_token: sessionToken
                 }
