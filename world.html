@@ -1657,18 +1657,10 @@ const loadMapButton =
    COMMANDER
    ========================================================= */
 
-const currentPlayerName =
-    sessionStorage.getItem("globalConquestPlayer");
-
-if (currentPlayerName) {
+if (playerName) {
 
     commanderName.textContent =
-        currentPlayerName;
-
-    console.log(
-        "COMMANDER SET:",
-        currentPlayerName
-    );
+        playerName;
 
 } else {
 
@@ -1842,6 +1834,20 @@ function showSelectedPower(power) {
 
 async function checkAccountRole() {
 
+    /*
+     * UI-FALLBACK:
+     * De database blijft de echte beveiliging.
+     * Als de rol-RPC tijdelijk niet bereikbaar is, zorgen we er
+     * alleen voor dat Overheid de START-knop kan zien.
+     */
+    isGovernment =
+        String(playerName || "").trim().toLowerCase() === "overheid";
+
+    console.log(
+        "WW3 UI GOVERNMENT FALLBACK:",
+        isGovernment
+    );
+
     try {
 
         const result =
@@ -1861,26 +1867,13 @@ async function checkAccountRole() {
         if (error) {
 
             console.error(
-                "ACCOUNT ROLE ERROR MESSAGE:",
-                error?.message
+                "ACCOUNT ROLE RPC ERROR:",
+                JSON.stringify(error, null, 2)
             );
 
-            console.error(
-                "ACCOUNT ROLE ERROR CODE:",
-                error?.code
+            console.warn(
+                "Rol-RPC werkt niet; UI gebruikt tijdelijk de Overheid-naam als fallback."
             );
-
-            console.error(
-                "ACCOUNT ROLE ERROR HINT:",
-                error?.hint
-            );
-
-            console.error(
-                "ACCOUNT ROLE ERROR DETAILS:",
-                error?.details
-            );
-
-            isGovernment = false;
 
             return;
         }
@@ -1900,11 +1893,13 @@ async function checkAccountRole() {
             speler?.account_role
         );
 
+        /*
+         * Als de database antwoordt, gebruiken we de echte rol.
+         */
         isGovernment =
             String(
                 speler?.account_role || ""
-            ).toLowerCase() ===
-            "government";
+            ).trim().toLowerCase() === "government";
 
         console.log(
             "WW3 IS GOVERNMENT:",
@@ -1918,7 +1913,9 @@ async function checkAccountRole() {
             error
         );
 
-        isGovernment = false;
+        console.warn(
+            "Rol-check mislukt; UI blijft de veilige Overheid-fallback gebruiken."
+        );
 
     }
 }
@@ -2380,6 +2377,23 @@ function updateWorldUI() {
 
 async function createWW3() {
 
+    /*
+     * BELANGRIJK:
+     * Geen frontend-blokkade meer op isGovernment.
+     *
+     * De Supabase RPC create_ww3 controleert server-side
+     * of de sessie bij account_role = "government" hoort.
+     */
+
+    if (!sessionToken) {
+
+        alert(
+            "Je sessie ontbreekt. Log opnieuw in."
+        );
+
+        return;
+    }
+
     chooseCountryButton.disabled =
         true;
 
@@ -2682,9 +2696,10 @@ chooseCountryButton.addEventListener(
     async () => {
 
         /*
-         * GEEN WW3
-         * Probeer te starten.
-         * De database controleert of de speler Overheid is.
+         * GEEN ACTIEVE WW3:
+         *
+         * Probeer altijd create_ww3.
+         * De database bepaalt of de speler Overheid is.
          */
         if (!activeWW3) {
 
@@ -2708,17 +2723,27 @@ chooseCountryButton.addEventListener(
 
 
         /*
-         * ACTIEVE WW3
-         * Open landenkeuze
+         * ACTIEVE WW3:
+         * open de landenlijst.
          */
+        await refreshWW3();
+
+        if (!activeWW3) {
+
+            alert(
+                "WW3 is niet meer actief."
+            );
+
+            return;
+        }
+
         countryOverlay.classList.add(
             "show"
         );
 
-        renderCountryList();
-
     }
 );
+
 
 /* =========================================================
    CLOSE COUNTRY WINDOW
@@ -2803,16 +2828,6 @@ loadMapButton.addEventListener(
 /* =========================================================
    INITIALIZE
    ========================================================= */
-console.log(
-    "FINAL PLAYER:",
-    sessionStorage.getItem("globalConquestPlayer")
-);
-
-console.log(
-    "FINAL COMMANDER:",
-    commanderName.textContent
-);
-
 async function initializeWorld() {
 
     await checkAccountRole();
@@ -2841,6 +2856,21 @@ async function initializeWorld() {
     console.log(
         "My WW3:",
         myWW3
+    );
+
+    console.log(
+        "FINAL PLAYER:",
+        sessionStorage.getItem("globalConquestPlayer")
+    );
+
+    console.log(
+        "FINAL COMMANDER:",
+        commanderName.textContent
+    );
+
+    console.log(
+        "FINAL GOVERNMENT:",
+        isGovernment
     );
 }
 
