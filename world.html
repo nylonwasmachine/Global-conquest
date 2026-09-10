@@ -1822,75 +1822,51 @@ function showSelectedPower(power) {
    ========================================================= */
 
 async function checkAccountRole() {
-
-    isGovernment = false;
-
     try {
-
-        const result =
+        const { data, error } =
             await database.rpc(
                 "get_player_from_session",
                 {
-                    p_token:
-                        sessionToken
+                    p_token: sessionToken
                 }
             );
 
-        const data =
-            result.data;
-
-        const error =
-            result.error;
-
         if (error) {
-            throw error;
-        }
-
-        if (!data) {
-            throw new Error(
-                "Geen speler ontvangen."
+            console.error(
+                "ACCOUNT ROLE ERROR:",
+                error
             );
+            return;
         }
 
-        const role =
-            String(
-                data.account_role || ""
-            ).toLowerCase();
-
-        const name =
-            String(
-                data.naam || ""
-            ).toLowerCase();
-
-        if (
-            role === "government" &&
-            name === "overheid"
-        ) {
-
-            isGovernment = true;
-
-        }
+        const speler = data;
 
         console.log(
-            "Account:",
-            data.naam,
-            "Role:",
-            data.account_role
+            "WW3 PLAYER NAME:",
+            speler?.naam
+        );
+
+        console.log(
+            "WW3 ACCOUNT ROLE:",
+            speler?.account_role
+        );
+
+        isGovernment =
+            speler?.account_role?.toLowerCase() ===
+            "government";
+
+        console.log(
+            "WW3 IS GOVERNMENT:",
+            isGovernment
         );
 
     } catch (error) {
-
         console.error(
-            "Account role kon niet worden geladen:",
+            "ACCOUNT ROLE CHECK MISLUKT:",
             error
         );
-
-        isGovernment = false;
-
     }
-
 }
-
 
 /* =========================================================
    LOAD ACTIVE WW3
