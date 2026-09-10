@@ -1469,8 +1469,26 @@ const powers = [
 ];
 
 
+<script>
 /* =========================================================
-   ACCOUNT
+   SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+    "JOUW_BESTAANDE_SUPABASE_URL";
+
+const SUPABASE_KEY =
+    "JOUW_BESTAANDE_PUBLISHABLE_KEY";
+
+const database =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   ACCOUNT / SESSION
    ========================================================= */
 
 const playerName =
@@ -1496,7 +1514,6 @@ if (!playerName || !sessionToken) {
 
     window.location.href =
         "./index.html";
-
 }
 
 
@@ -1505,7 +1522,9 @@ if (!playerName || !sessionToken) {
    ========================================================= */
 
 const commanderName =
-    document.getElementById("commanderName");
+    document.getElementById(
+        "commanderName"
+    );
 
 const points =
     document.getElementById("points");
@@ -1571,72 +1590,820 @@ const loadMapButton =
    ACCOUNT INFO
    ========================================================= */
 
-if (playerName) {
+commanderName.textContent =
+    playerName;
 
-    commanderName.textContent =
-        playerName;
-
-}
 
 /* =========================================================
-   COUNTRY LIST
+   WW3 STATE
    ========================================================= */
+
+let activeWW3 = null;
+
+let occupiedCountries = new Map();
+
+let myWW3 = null;
 
 let selectedPower = null;
 
+let isGovernment = false;
+
+
+/* =========================================================
+   COUNTRY DATA
+   ========================================================= */
+
+/*
+ * LAAT HIER JE BESTAANDE powers = [ ... ];
+ * VOLLEDIG STAAN.
+ *
+ * Dus jouw huidige powers-array blijft precies
+ * zoals hij nu is.
+ */
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function getPowerById(id) {
+
+    return powers.find(
+        power =>
+            power.id === id
+    );
+
+}
+
+
+function clearLocalNation() {
+
+    sessionStorage.removeItem(
+        "globalConquestNation"
+    );
+
+    sessionStorage.removeItem(
+        "globalConquestNationId"
+    );
+
+    sessionStorage.removeItem(
+        "globalConquestCapital"
+    );
+
+}
+
+
+function setLocalNation(power) {
+
+    sessionStorage.setItem(
+        "globalConquestNation",
+        power.name
+    );
+
+    sessionStorage.setItem(
+        "globalConquestNationId",
+        power.id
+    );
+
+    sessionStorage.setItem(
+        "globalConquestCapital",
+        power.zones[0]
+    );
+
+}
+
+
+function showSelectedPower(power) {
+
+    if (!power) return;
+
+    selectedPower = power;
+
+    selectedName.textContent =
+        `${power.flag} ${power.name}`;
+
+    selectedRegion.textContent =
+        `${power.region} · 7 CONQUEST ZONES`;
+
+    selectedCountry.classList.add(
+        "show"
+    );
+
+    chooseCountryButton.innerHTML =
+        `✓ ${power.name}
+         <span class="arrow">→</span>`;
+
+    loadMapButton.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   CHECK ACCOUNT ROLE
+   ========================================================= */
+
+async function checkAccountRole() {
+
+    try {
+
+        /*
+         * We gebruiken de serverfunctie om het account
+         * uit de beveiligde sessie te halen.
+         */
+
+        const { data, error } =
+            await database.rpc(
+                "get_player_from_session",
+                {
+                    p_token: sessionToken
+                }
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data) {
+            throw new Error(
+                "Geen speler ontvangen."
+            );
+        }
+
+        isGovernment =
+            String(data.account_role || "")
+                .toLowerCase() ===
+            "government";
+
+        /*
+         * Extra controle:
+         * alleen het echte Overheid-account
+         * krijgt de WW3-beheerfunctie.
+         */
+
+        if (
+            String(data.naam || "")
+                .toLowerCase() !==
+            "overheid"
+        ) {
+            isGovernment = false;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Account role kon niet worden geladen:",
+            error
+        );
+
+        isGovernment = false;
+    }
+
+}
+
+
+/* =========================================================
+   LOAD ACTIVE WW3
+   ========================================================= */
+
+async function loadActiveWW3() {
+
+    try {
+
+        const { data, error } =
+            await database.rpc(
+                "get_active_ww3"
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        if (
+            data &&
+            data.length > 0
+        ) {
+
+            activeWW3 = data[0];
+
+        } else {
+
+            activeWW3 = null;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "WW3 kon niet worden geladen:",
+            error
+        );
+
+        activeWW3 = null;
+    }
+
+}
+
+
+/* =========================================================
+   LOAD OCCUPIED COUNTRIES
+   ========================================================= */
+
+async function loadOccupiedCountries() {
+
+    occupiedCountries =
+        new Map();
+
+    if (!activeWW3) {
+        return;
+    }
+
+    try {
+
+        const { data, error } =
+            await database.rpc(
+                "get_ww3_countries"
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        (data || []).forEach(
+            row => {
+
+                if (
+                    row.country_id
+                ) {
+
+                    occupiedCountries.set(
+                        row.country_id,
+                        row.player_name
+                    );
+
+                }
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Bezettingen konden niet worden geladen:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD MY WW3
+   ========================================================= */
+
+async function loadMyWW3() {
+
+    myWW3 = null;
+
+    if (!activeWW3) {
+        return;
+    }
+
+    try {
+
+        const { data, error } =
+            await database.rpc(
+                "get_my_ww3",
+                {
+                    p_token:
+                        sessionToken
+                }
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        if (
+            data &&
+            data.length > 0
+        ) {
+
+            myWW3 = data[0];
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Eigen WW3-status kon niet worden geladen:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER COUNTRY LIST
+   ========================================================= */
 
 function renderCountryList() {
 
     countryList.innerHTML = "";
 
-    powers.forEach(power => {
+    /*
+     * Beschikbare landen eerst.
+     * Bezette landen onderaan.
+     */
 
-        const button =
-            document.createElement("button");
+    const sortedPowers =
+        [...powers].sort(
+            (a, b) => {
 
-        button.className =
-            "country-option";
-
-        button.innerHTML = `
-            <div class="country-option-name">
-                ${power.flag} ${power.name}
-            </div>
-
-            <div class="country-option-region">
-                ${power.region} · 7 CONQUEST ZONES
-            </div>
-        `;
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                document
-                    .querySelectorAll(
-                        ".country-option"
-                    )
-                    .forEach(element =>
-                        element.classList.remove(
-                            "active"
-                        )
+                const aTaken =
+                    occupiedCountries.has(
+                        a.id
                     );
 
-                button.classList.add("active");
+                const bTaken =
+                    occupiedCountries.has(
+                        b.id
+                    );
 
-                selectedPower = power;
+                if (
+                    aTaken === bTaken
+                ) {
+                    return 0;
+                }
 
-                countrySelectedText.textContent =
-                    `${power.flag} ${power.name}`;
-
-                selectCountryButton.disabled =
-                    false;
+                return aTaken
+                    ? 1
+                    : -1;
 
             }
         );
 
-        countryList.appendChild(button);
 
-    });
+    sortedPowers.forEach(
+        power => {
+
+            const isTaken =
+                occupiedCountries.has(
+                    power.id
+                );
+
+            const owner =
+                occupiedCountries.get(
+                    power.id
+                );
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "country-option";
+
+
+            if (isTaken) {
+
+                button.disabled =
+                    true;
+
+                button.style.opacity =
+                    "0.45";
+
+                button.style.cursor =
+                    "not-allowed";
+
+            }
+
+
+            button.innerHTML = `
+                <div class="country-option-name">
+                    ${power.flag} ${power.name}
+                </div>
+
+                <div class="country-option-region">
+                    ${
+                        isTaken
+                            ? `BEZET — ${owner}`
+                            : `${power.region} · 7 CONQUEST ZONES`
+                    }
+                </div>
+            `;
+
+
+            if (!isTaken) {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        document
+                            .querySelectorAll(
+                                ".country-option"
+                            )
+                            .forEach(
+                                element =>
+                                    element.classList.remove(
+                                        "active"
+                                    )
+                            );
+
+                        button.classList.add(
+                            "active"
+                        );
+
+                        selectedPower =
+                            power;
+
+                        countrySelectedText.textContent =
+                            `${power.flag} ${power.name}`;
+
+                        selectCountryButton.disabled =
+                            false;
+
+                    }
+                );
+
+            }
+
+
+            countryList.appendChild(
+                button
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE MAIN UI
+   ========================================================= */
+
+function updateWorldUI() {
+
+    /*
+     * Geen actieve WW3
+     */
+
+    if (!activeWW3) {
+
+        chooseCountryButton.disabled =
+            true;
+
+        chooseCountryButton.style.opacity =
+            "0.45";
+
+        chooseCountryButton.style.cursor =
+            "not-allowed";
+
+        if (isGovernment) {
+
+            chooseCountryButton.disabled =
+                false;
+
+            chooseCountryButton.style.opacity =
+                "1";
+
+            chooseCountryButton.style.cursor =
+                "pointer";
+
+            chooseCountryButton.innerHTML =
+                `START WW3
+                 <span class="arrow">→</span>`;
+
+        } else {
+
+            chooseCountryButton.innerHTML =
+                `WW3 WACHT OP OVERHEID`;
+
+        }
+
+        return;
+    }
+
+
+    /*
+     * Er is een actieve WW3.
+     */
+
+    chooseCountryButton.disabled =
+        false;
+
+    chooseCountryButton.style.opacity =
+        "1";
+
+    chooseCountryButton.style.cursor =
+        "pointer";
+
+
+    /*
+     * Speler heeft al een land.
+     */
+
+    if (myWW3) {
+
+        const myPower =
+            getPowerById(
+                myWW3.country_id
+            );
+
+        if (myPower) {
+
+            showSelectedPower(
+                myPower
+            );
+
+        }
+
+        chooseCountryButton.innerHTML =
+            `✓ ${myPower
+                ? myPower.name
+                : "COUNTRY SELECTED"}
+             <span class="arrow">→</span>`;
+
+        /*
+         * Niet opnieuw kiezen zolang je
+         * nog in deze WW3 zit.
+         */
+
+        return;
+    }
+
+
+    /*
+     * Normale speler zonder land.
+     */
+
+    chooseCountryButton.innerHTML =
+        `CHOOSE COUNTRY
+         <span class="arrow">→</span>`;
+
+}
+
+
+/* =========================================================
+   START WW3 — ONLY GOVERNMENT
+   ========================================================= */
+
+async function createWW3() {
+
+    if (!isGovernment) {
+
+        alert(
+            "Alleen Overheid kan WW3 starten."
+        );
+
+        return;
+    }
+
+    chooseCountryButton.disabled =
+        true;
+
+    try {
+
+        const { data, error } =
+            await database.rpc(
+                "create_ww3",
+                {
+                    p_token:
+                        sessionToken
+                }
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        activeWW3 = data;
+
+        alert(
+            "WW3 is gestart."
+        );
+
+        await refreshWW3();
+
+    } catch (error) {
+
+        console.error(
+            "WW3 starten mislukt:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "WW3 kon niet worden gestart."
+        );
+
+        chooseCountryButton.disabled =
+            false;
+
+    }
+
+}
+
+
+/* =========================================================
+   JOIN WW3
+   ========================================================= */
+
+async function joinWW3(power) {
+
+    if (!power) {
+        return;
+    }
+
+    if (!activeWW3) {
+
+        alert(
+            "Er is momenteel geen actieve WW3."
+        );
+
+        return;
+    }
+
+    if (myWW3) {
+
+        alert(
+            "Je hebt al een land in deze WW3."
+        );
+
+        return;
+    }
+
+
+    selectCountryButton.disabled =
+        true;
+
+    try {
+
+        const { data, error } =
+            await database.rpc(
+                "join_ww3",
+                {
+                    p_token:
+                        sessionToken,
+
+                    p_country_id:
+                        power.id
+                }
+            );
+
+        if (error) {
+            throw error;
+        }
+
+
+        /*
+         * Server heeft het land bevestigd.
+         */
+
+        setLocalNation(
+            power
+        );
+
+        myWW3 = data;
+
+        showSelectedPower(
+            power
+        );
+
+
+        countryOverlay.classList.remove(
+            "show"
+        );
+
+
+        await refreshWW3();
+
+    } catch (error) {
+
+        console.error(
+            "Land kiezen mislukt:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Dit land kon niet worden gekozen."
+        );
+
+        /*
+         * Mogelijk heeft iemand anders
+         * het land net gekozen.
+         */
+
+        await refreshWW3();
+
+    } finally {
+
+        selectCountryButton.disabled =
+            !selectedPower;
+
+    }
+
+}
+
+
+/* =========================================================
+   LEAVE WW3
+   ========================================================= */
+
+async function leaveWW3() {
+
+    if (!myWW3) {
+        return;
+    }
+
+    const confirmed =
+        confirm(
+            "Weet je zeker dat je je huidige land wilt verlaten?"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        const { error } =
+            await database.rpc(
+                "leave_ww3",
+                {
+                    p_token:
+                        sessionToken
+                }
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        myWW3 = null;
+
+        clearLocalNation();
+
+        selectedPower = null;
+
+        selectedCountry.classList.remove(
+            "show"
+        );
+
+        loadMapButton.classList.remove(
+            "show"
+        );
+
+        countrySelectedText.textContent =
+            "NONE";
+
+        await refreshWW3();
+
+        alert(
+            "Je hebt je land verlaten."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "WW3 verlaten mislukt:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Je kon WW3 niet verlaten."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   REFRESH
+   ========================================================= */
+
+async function refreshWW3() {
+
+    await loadActiveWW3();
+
+    await loadOccupiedCountries();
+
+    await loadMyWW3();
+
+    renderCountryList();
+
+    updateWorldUI();
 
 }
 
@@ -1647,9 +2414,58 @@ function renderCountryList() {
 
 chooseCountryButton.addEventListener(
     "click",
-    () => {
+    async () => {
 
-        countryOverlay.classList.add("show");
+        /*
+         * Overheid kan WW3 starten.
+         */
+
+        if (
+            isGovernment &&
+            !activeWW3
+        ) {
+
+            await createWW3();
+
+            return;
+        }
+
+
+        /*
+         * Geen server.
+         */
+
+        if (!activeWW3) {
+
+            alert(
+                "WW3 is nog niet gestart door Overheid."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Speler heeft al een land.
+         */
+
+        if (myWW3) {
+
+            alert(
+                "Je hebt al een land in deze WW3. " +
+                "Je kunt pas opnieuw kiezen nadat je " +
+                "je land hebt verlaten of bent overgenomen."
+            );
+
+            return;
+        }
+
+
+        await refreshWW3();
+
+        countryOverlay.classList.add(
+            "show"
+        );
 
     }
 );
@@ -1659,7 +2475,9 @@ closeCountry.addEventListener(
     "click",
     () => {
 
-        countryOverlay.classList.remove("show");
+        countryOverlay.classList.remove(
+            "show"
+        );
 
     }
 );
@@ -1670,7 +2488,8 @@ countryOverlay.addEventListener(
     event => {
 
         if (
-            event.target === countryOverlay
+            event.target ===
+            countryOverlay
         ) {
 
             countryOverlay.classList.remove(
@@ -1684,68 +2503,41 @@ countryOverlay.addEventListener(
 
 
 /* =========================================================
-   SELECT
+   SELECT COUNTRY BUTTON
    ========================================================= */
 
 selectCountryButton.addEventListener(
     "click",
-    () => {
+    async () => {
 
-        if (!selectedPower) return;
+        if (!selectedPower) {
+            return;
+        }
 
-
-        /*
-         * Het gekozen rijk wordt aan deze
-         * browser/account-sessie gekoppeld.
-         */
-
-        sessionStorage.setItem(
-            "globalConquestNation",
-            selectedPower.name
+        await joinWW3(
+            selectedPower
         );
-
-        sessionStorage.setItem(
-            "globalConquestNationId",
-            selectedPower.id
-        );
-
-        sessionStorage.setItem(
-            "globalConquestCapital",
-            selectedPower.zones[0]
-        );
-
-
-        /*
-         * UI
-         */
-
-        selectedName.textContent =
-            `${selectedPower.flag} ${selectedPower.name}`;
-
-        selectedRegion.textContent =
-            `${selectedPower.region} · 7 CONQUEST ZONES`;
-
-        selectedCountry.classList.add("show");
-
-        chooseCountryButton.innerHTML =
-            `✓ ${selectedPower.name}
-             <span class="arrow">→</span>`;
-
-        loadMapButton.classList.add("show");
-
-        countryOverlay.classList.remove("show");
 
     }
 );
 
 
 /* =========================================================
-   MAP
+   LOAD MAP
    ========================================================= */
 
 loadMapButton.addEventListener(
     "click",
     () => {
+
+        if (!myWW3) {
+
+            alert(
+                "Je moet eerst officieel een land kiezen."
+            );
+
+            return;
+        }
 
         window.location.href =
             "./map.html";
@@ -1755,55 +2547,82 @@ loadMapButton.addEventListener(
 
 
 /* =========================================================
-   START
+   INITIALIZE
    ========================================================= */
 
-renderCountryList();
+async function initializeWorld() {
 
+    try {
 
-/*
- * Als er al een land gekozen was,
- * herstel dit uit sessionStorage.
- */
+        await checkAccountRole();
 
-const savedNationId =
-    sessionStorage.getItem(
-        "globalConquestNationId"
-    );
+        await refreshWW3();
 
-if (savedNationId) {
+        /*
+         * Oude lokale keuze verwijderen als de
+         * server zegt dat deze speler niet meer
+         * in een actieve WW3 zit.
+         */
 
-    const saved =
-        powers.find(
-            power =>
-                power.id === savedNationId
-        );
+        if (!myWW3) {
 
-    if (saved) {
+            clearLocalNation();
 
-        selectedPower = saved;
+            selectedPower = null;
 
-        selectedName.textContent =
-            `${saved.flag} ${saved.name}`;
+            selectedCountry.classList.remove(
+                "show"
+            );
 
-        selectedRegion.textContent =
-            `${saved.region} · 7 CONQUEST ZONES`;
+            loadMapButton.classList.remove(
+                "show"
+            );
 
-        selectedCountry.classList.add(
-            "show"
-        );
+        }
 
-        chooseCountryButton.innerHTML =
-            `✓ ${saved.name}
-             <span class="arrow">→</span>`;
+    } catch (error) {
 
-        loadMapButton.classList.add(
-            "show"
+        console.error(
+            "World initialization error:",
+            error
         );
 
     }
 
 }
+
+
+/* =========================================================
+   AUTO REFRESH
+   ========================================================= */
+
+/*
+ * Elke 10 seconden opnieuw controleren.
+ *
+ * Hierdoor ziet een speler bijvoorbeeld vrij snel
+ * dat België inmiddels door iemand anders is gekozen.
+ */
+
+setInterval(
+    async () => {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            await refreshWW3();
+
+        }
+
+    },
+    10000
+);
+
+
+initializeWorld();
+
+</script>
 
 </script>
 
