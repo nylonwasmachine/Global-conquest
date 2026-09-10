@@ -1839,7 +1839,7 @@ async function checkAccountRole() {
             return;
         }
 
-        const speler = data;
+        const speler = data?.[0];
 
         console.log(
             "WW3 PLAYER NAME:",
@@ -1867,7 +1867,6 @@ async function checkAccountRole() {
         );
     }
 }
-
 /* =========================================================
    LOAD ACTIVE WW3
    ========================================================= */
