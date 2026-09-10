@@ -1,1 +1,1100 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Conquest - Wereldkaart</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #07111f;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: 64px;
+      background: #0d1b2d;
+      border-bottom: 1px solid #24364d;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #91a4ba;
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .back {
+      background: #162a42;
+      color: white;
+      border: 1px solid #304963;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .back:hover {
+      background: #203b5c;
+    }
+
+    .layout {
+      height: calc(100vh - 64px);
+      display: flex;
+    }
+
+    .sidebar {
+      width: 310px;
+      min-width: 310px;
+      background: #0b1727;
+      border-right: 1px solid #24364d;
+      overflow-y: auto;
+      padding: 18px;
+      z-index: 5;
+    }
+
+    .sidebar h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .help {
+      color: #8fa3ba;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .power {
+      border: 1px solid #273c54;
+      background: #101f32;
+      border-radius: 9px;
+      padding: 12px;
+      margin-bottom: 9px;
+      cursor: pointer;
+    }
+
+    .power:hover {
+      background: #172a42;
+    }
+
+    .power.active {
+      border-color: #65a9ff;
+      background: #172e49;
+    }
+
+    .power-name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .power-countries {
+      color: #8fa3ba;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .map-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      background: #081321;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .country {
+      stroke: #243c55;
+      stroke-width: 0.7;
+      cursor: pointer;
+    }
+
+    .country:hover {
+      stroke: white;
+      stroke-width: 1.5;
+    }
+
+    .capital-point {
+      fill: white;
+      stroke: #111;
+      stroke-width: 2;
+      cursor: pointer;
+    }
+
+    .province-point {
+      fill: #ffd166;
+      stroke: #111;
+      stroke-width: 1.5;
+      cursor: pointer;
+    }
+
+    .point-label {
+      fill: white;
+      font-size: 10px;
+      pointer-events: none;
+      paint-order: stroke;
+      stroke: #07111f;
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+
+    .info {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      width: 270px;
+      background: rgba(9, 21, 36, 0.94);
+      border: 1px solid #304963;
+      border-radius: 10px;
+      padding: 15px;
+      display: none;
+      z-index: 4;
+    }
+
+    .info.show {
+      display: block;
+    }
+
+    .info-title {
+      font-size: 17px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .info-small {
+      color: #9db0c6;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .province-list {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .capital {
+      color: #ffd166;
+      font-weight: bold;
+    }
+
+    .zoom-controls {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      gap: 5px;
+      z-index: 4;
+    }
+
+    .zoom-controls button {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #304963;
+      border-radius: 7px;
+      background: #0d1b2d;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .zoom-controls button:hover {
+      background: #1a304a;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div>
+      <div class="title">🌍 GLOBAL CONQUEST — WERELDKAART</div>
+      <div class="subtitle">
+        Alle rijken, landen, unies en samenwerkingen
+      </div>
+    </div>
+
+    <button class="back" onclick="window.location.href='./game.html'">
+      ← TERUG
+    </button>
+  </div>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <h2>WERELD MACHTEN</h2>
+
+      <div class="help">
+        Klik op een macht om te zien welke landen en
+        provincies erbij horen.
+      </div>
+
+      <div id="powerList"></div>
+    </aside>
+
+    <main class="map-wrap">
+
+      <svg id="map"></svg>
+
+      <div class="zoom-controls">
+        <button id="zoomIn">+</button>
+        <button id="zoomOut">−</button>
+        <button id="resetZoom">⟳</button>
+      </div>
+
+      <div class="info" id="info">
+        <div class="info-title" id="infoTitle"></div>
+        <div class="info-small" id="infoCountry"></div>
+        <ol class="province-list" id="provinceList"></ol>
+      </div>
+
+    </main>
+
+  </div>
+
+<script>
+/* =========================================================
+   GLOBAL CONQUEST
+   7 PROVINCIES PER LAND
+   1 = HOOFDSTADSPROVINCIE
+   6 = ANDERE PROVINCIES
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   MACHTEN
+   Voeg hier later al je rijken/landen/unies toe.
+   --------------------------------------------------------- */
+
+const powers = [
+
+  {
+    id: "frankrijk",
+    name: "Frankrijk",
+    flag: "🇫🇷",
+    countries: ["France"]
+  },
+
+  {
+    id: "duitsland",
+    name: "Duitsland",
+    flag: "🇩🇪",
+    countries: ["Germany"]
+  },
+
+  {
+    id: "nederland",
+    name: "Nederland",
+    flag: "🇳🇱",
+    countries: ["Netherlands"]
+  },
+
+  {
+    id: "spanje",
+    name: "Spanje",
+    flag: "🇪🇸",
+    countries: ["Spain"]
+  },
+
+  {
+    id: "italie",
+    name: "Italië",
+    flag: "🇮🇹",
+    countries: ["Italy"]
+  },
+
+  {
+    id: "verenigd_kingdom",
+    name: "Verenigd Koninkrijk",
+    flag: "🇬🇧",
+    countries: ["United Kingdom"]
+  },
+
+  {
+    id: "rusland",
+    name: "Rusland",
+    flag: "🇷🇺",
+    countries: ["Russia"]
+  },
+
+  {
+    id: "china",
+    name: "China",
+    flag: "🇨🇳",
+    countries: ["China"]
+  },
+
+  {
+    id: "india",
+    name: "India",
+    flag: "🇮🇳",
+    countries: ["India"]
+  },
+
+  {
+    id: "japan",
+    name: "Japan",
+    flag: "🇯🇵",
+    countries: ["Japan"]
+  },
+
+  {
+    id: "verenigde_staten",
+    name: "Verenigde Staten",
+    flag: "🇺🇸",
+    countries: ["United States of America"]
+  },
+
+  {
+    id: "canada",
+    name: "Canada",
+    flag: "🇨🇦",
+    countries: ["Canada"]
+  },
+
+  {
+    id: "brazilie",
+    name: "Brazilië",
+    flag: "🇧🇷",
+    countries: ["Brazil"]
+  },
+
+  {
+    id: "australie",
+    name: "Australië",
+    flag: "🇦🇺",
+    countries: ["Australia"]
+  }
+
+];
+
+
+/* ---------------------------------------------------------
+   KLEUREN
+   --------------------------------------------------------- */
+
+const colors = [
+  "#3478f6",
+  "#e74c3c",
+  "#27ae60",
+  "#9b59b6",
+  "#f39c12",
+  "#1abc9c",
+  "#e84393",
+  "#16a085",
+  "#d35400",
+  "#8e44ad",
+  "#2980b9",
+  "#c0392b",
+  "#2ecc71",
+  "#f1c40f"
+];
+
+powers.forEach((power, index) => {
+  power.color = colors[index % colors.length];
+});
+
+
+/* ---------------------------------------------------------
+   PROVINCIES
+   ---------------------------------------------------------
+
+   BELANGRIJK:
+
+   Elk land krijgt EXACT 7 punten:
+
+   1. Hoofdstadprovincie
+   2. Provincie 2
+   3. Provincie 3
+   4. Provincie 4
+   5. Provincie 5
+   6. Provincie 6
+   7. Provincie 7
+
+   De punten worden automatisch over het land
+   verdeeld.
+   --------------------------------------------------------- */
+
+const PROVINCE_COUNT = 7;
+
+
+/* ---------------------------------------------------------
+   KAART
+   --------------------------------------------------------- */
+
+const svg = d3.select("#map");
+
+const mapWrap = document.querySelector(".map-wrap");
+
+let width;
+let height;
+
+let world;
+let projection;
+let path;
+
+let zoom;
+
+
+/* ---------------------------------------------------------
+   TOOLTIP / INFO
+   --------------------------------------------------------- */
+
+const info = document.getElementById("info");
+const infoTitle = document.getElementById("infoTitle");
+const infoCountry = document.getElementById("infoCountry");
+const provinceList = document.getElementById("provinceList");
+
+
+/* ---------------------------------------------------------
+   HULPFUNCTIE: LAND NAAM
+   --------------------------------------------------------- */
+
+function getCountryName(feature) {
+
+  return feature.properties?.name ||
+         feature.properties?.NAME ||
+         "Onbekend land";
+
+}
+
+
+/* ---------------------------------------------------------
+   HULPFUNCTIE: MACHT ZOEKEN
+   --------------------------------------------------------- */
+
+function getPowerForCountry(countryName) {
+
+  return powers.find(power =>
+    power.countries.some(country =>
+      country.toLowerCase() === countryName.toLowerCase()
+    )
+  );
+
+}
+
+
+/* ---------------------------------------------------------
+   PROVINCIEPUNTEN GENEREREN
+   ---------------------------------------------------------
+
+   We hebben op deze wereldkaart alleen landsgrenzen.
+   Daarom maken we 7 GAME-PROVINCIES binnen ieder land.
+
+   Het zijn dus strategische provinciepunten voor
+   Global Conquest, geen officiële administratieve grenzen.
+   --------------------------------------------------------- */
+
+function generateProvincePoints(feature) {
+
+  const bounds = d3.geoBounds(feature);
+
+  const minLon = bounds[0][0];
+  const minLat = bounds[0][1];
+
+  const maxLon = bounds[1][0];
+  const maxLat = bounds[1][1];
+
+  const candidates = [];
+
+  /*
+    Veel mogelijke punten maken.
+  */
+
+  const grid = 12;
+
+  for (let y = 0; y <= grid; y++) {
+
+    for (let x = 0; x <= grid; x++) {
+
+      const lon =
+        minLon +
+        (maxLon - minLon) * (x / grid);
+
+      const lat =
+        minLat +
+        (maxLat - minLat) * (y / grid);
+
+      const point = [lon, lat];
+
+      if (d3.geoContains(feature, point)) {
+        candidates.push(point);
+      }
+
+    }
+
+  }
+
+
+  /*
+    Als een land klein is en weinig punten heeft,
+    gebruiken we het middelpunt.
+  */
+
+  const center = d3.geoCentroid(feature);
+
+  if (candidates.length === 0) {
+    return Array(PROVINCE_COUNT).fill(center);
+  }
+
+
+  /*
+    Eerst hoofdstad ongeveer in het midden.
+  */
+
+  const selected = [center];
+
+
+  /*
+    Daarna steeds het kandidaatpunt kiezen dat
+    het verst van de al gekozen punten ligt.
+
+    Hierdoor worden de 6 andere punten mooi verspreid.
+  */
+
+  while (
+    selected.length < PROVINCE_COUNT &&
+    selected.length < candidates.length
+  ) {
+
+    let best = null;
+    let bestDistance = -Infinity;
+
+    for (const candidate of candidates) {
+
+      if (
+        selected.some(p =>
+          Math.abs(p[0] - candidate[0]) < 0.01 &&
+          Math.abs(p[1] - candidate[1]) < 0.01
+        )
+      ) {
+        continue;
+      }
+
+      let nearest = Infinity;
+
+      for (const existing of selected) {
+
+        const distance =
+          Math.pow(candidate[0] - existing[0], 2) +
+          Math.pow(candidate[1] - existing[1], 2);
+
+        nearest = Math.min(nearest, distance);
+
+      }
+
+      if (nearest > bestDistance) {
+        bestDistance = nearest;
+        best = candidate;
+      }
+
+    }
+
+    if (!best) break;
+
+    selected.push(best);
+
+  }
+
+
+  /*
+    Als we nog niet aan 7 komen,
+    vullen we aan met het midden.
+  */
+
+  while (selected.length < PROVINCE_COUNT) {
+    selected.push(center);
+  }
+
+  return selected.slice(0, PROVINCE_COUNT);
+
+}
+
+
+/* ---------------------------------------------------------
+   LANDEN / PROVINCIES OPBOUWEN
+   --------------------------------------------------------- */
+
+function buildCountryData(countries) {
+
+  return countries.map(feature => {
+
+    const name = getCountryName(feature);
+
+    const power = getPowerForCountry(name);
+
+    const provincePoints =
+      generateProvincePoints(feature);
+
+    return {
+
+      feature,
+      name,
+      power,
+
+      provinces: provincePoints.map((point, index) => ({
+        name:
+          index === 0
+            ? "Hoofdstadprovincie"
+            : `Provincie ${index + 1}`,
+
+        point,
+
+        capital: index === 0
+      }))
+
+    };
+
+  });
+
+}
+
+
+/* ---------------------------------------------------------
+   INFO PANEL
+   --------------------------------------------------------- */
+
+function showCountryInfo(country) {
+
+  info.classList.add("show");
+
+  infoTitle.textContent =
+    `${country.power?.flag || "🌍"} ${country.name}`;
+
+  infoCountry.textContent =
+    country.power
+      ? `Onderdeel van ${country.power.name}`
+      : "Nog niet toegewezen aan een macht";
+
+  provinceList.innerHTML = "";
+
+  country.provinces.forEach(province => {
+
+    const li = document.createElement("li");
+
+    li.textContent = province.name;
+
+    if (province.capital) {
+      li.className = "capital";
+      li.textContent += " ★ HOOFDSTAD";
+    }
+
+    provinceList.appendChild(li);
+
+  });
+
+}
+
+
+/* ---------------------------------------------------------
+   MACHTENLIJST
+   --------------------------------------------------------- */
+
+function createPowerList(countryData) {
+
+  const container =
+    document.getElementById("powerList");
+
+  container.innerHTML = "";
+
+  powers.forEach(power => {
+
+    const countries =
+      countryData.filter(c =>
+        c.power?.id === power.id
+      );
+
+    const div =
+      document.createElement("div");
+
+    div.className = "power";
+
+    div.innerHTML = `
+      <div class="power-name">
+        ${power.flag} ${power.name}
+      </div>
+
+      <div class="power-countries">
+        ${countries.length} land(en)
+      </div>
+    `;
+
+    div.addEventListener("click", () => {
+
+      document
+        .querySelectorAll(".power")
+        .forEach(el =>
+          el.classList.remove("active")
+        );
+
+      div.classList.add("active");
+
+      highlightPower(power);
+
+    });
+
+    container.appendChild(div);
+
+  });
+
+}
+
+
+/* ---------------------------------------------------------
+   MACHT HIGHLIGHTEN
+   --------------------------------------------------------- */
+
+function highlightPower(power) {
+
+  svg
+    .selectAll(".country")
+    .transition()
+    .duration(250)
+    .attr("opacity", function() {
+
+      const element =
+        d3.select(this).datum();
+
+      return element.power?.id === power.id
+        ? 1
+        : 0.18;
+
+    });
+
+  svg
+    .selectAll(".province-point")
+    .transition()
+    .duration(250)
+    .attr("opacity", function() {
+
+      const element =
+        d3.select(this).datum();
+
+      return element.country.power?.id === power.id
+        ? 1
+        : 0.15;
+
+    });
+
+}
+
+
+/* ---------------------------------------------------------
+   KAART TEKENEN
+   --------------------------------------------------------- */
+
+function drawMap() {
+
+  width = mapWrap.clientWidth;
+  height = mapWrap.clientHeight;
+
+  svg
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", `0 0 ${width} ${height}`);
+
+
+  /*
+    De kaart gebruikt bijna de volledige ruimte.
+
+    GEEN grote tekst over de kaart.
+    Daardoor blokkeren teksten de provinciepunten niet.
+  */
+
+  projection = d3
+    .geoNaturalEarth1()
+    .fitExtent(
+      [
+        [5, 5],
+        [width - 5, height - 5]
+      ],
+      world
+    );
+
+
+  /*
+    Kaart iets groter maken.
+  */
+
+  projection.scale(
+    projection.scale() * 1.12
+  );
+
+  projection.translate([
+    width / 2,
+    height / 2
+  ]);
+
+
+  path = d3.geoPath()
+    .projection(projection);
+
+
+  svg.selectAll("*").remove();
+
+
+  /*
+    ACHTERGROND
+  */
+
+  svg
+    .append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("fill", "#081321");
+
+
+  /*
+    LANDEN
+  */
+
+  const countryData =
+    buildCountryData(world.features);
+
+
+  const countriesLayer =
+    svg.append("g")
+      .attr("class", "countries");
+
+
+  countriesLayer
+    .selectAll("path")
+    .data(countryData)
+    .join("path")
+    .attr("class", "country")
+    .attr("d", d => path(d.feature))
+    .attr("fill", d =>
+      d.power
+        ? d.power.color
+        : "#26384c"
+    )
+    .on("click", (event, d) => {
+
+      showCountryInfo(d);
+
+    });
+
+
+  /*
+    PROVINCIEPUNTEN
+  */
+
+  const provinceLayer =
+    svg.append("g")
+      .attr("class", "provinces");
+
+
+  countryData.forEach(country => {
+
+    country.provinces.forEach((province, index) => {
+
+      const screenPoint =
+        projection(province.point);
+
+      if (!screenPoint) return;
+
+      /*
+        Hoofdstad is groter.
+      */
+
+      provinceLayer
+        .append("circle")
+        .datum({
+          country,
+          province
+        })
+        .attr(
+          "class",
+          province.capital
+            ? "capital-point"
+            : "province-point"
+        )
+        .attr("cx", screenPoint[0])
+        .attr("cy", screenPoint[1])
+        .attr(
+          "r",
+          province.capital ? 7 : 4
+        )
+        .on("click", (event, d) => {
+
+          event.stopPropagation();
+
+          showCountryInfo(d.country);
+
+        });
+
+
+      /*
+        Alleen een klein label bij de
+        provinciepunten.
+
+        Geen groot tekstblok.
+      */
+
+      if (province.capital) {
+
+        provinceLayer
+          .append("text")
+          .attr("class", "point-label")
+          .attr("x", screenPoint[0] + 9)
+          .attr("y", screenPoint[1] + 4)
+          .text("★");
+
+      }
+
+    });
+
+  });
+
+
+  createPowerList(countryData);
+
+
+  /*
+    ZOOM
+  */
+
+  zoom = d3.zoom()
+    .scaleExtent([1, 5])
+    .on("zoom", event => {
+
+      svg
+        .selectAll("g")
+        .attr("transform", event.transform);
+
+    });
+
+  svg.call(zoom);
+
+
+  /*
+    Klik op reset
+  */
+
+  document
+    .getElementById("zoomIn")
+    .onclick = () => {
+
+      svg.transition()
+        .call(
+          zoom.scaleBy,
+          1.4
+        );
+
+    };
+
+
+  document
+    .getElementById("zoomOut")
+    .onclick = () => {
+
+      svg.transition()
+        .call(
+          zoom.scaleBy,
+          0.7
+        );
+
+    };
+
+
+  document
+    .getElementById("resetZoom")
+    .onclick = () => {
+
+      svg.transition()
+        .call(
+          zoom.transform,
+          d3.zoomIdentity
+        );
+
+    };
+
+}
+
+
+/* ---------------------------------------------------------
+   KAART LADEN
+   --------------------------------------------------------- */
+
+async function loadWorld() {
+
+  try {
+
+    const data =
+      await d3.json(
+        "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json"
+      );
+
+    world =
+      topojson.feature(
+        data,
+        data.objects.countries
+      );
+
+    drawMap();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "De wereldkaart kon niet worden geladen."
+    );
+
+  }
+
+}
+
+
+/* ---------------------------------------------------------
+   RESIZE
+   --------------------------------------------------------- */
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    if (world) {
+      drawMap();
+    }
+
+  }
+);
+
+
+/* ---------------------------------------------------------
+   START
+   --------------------------------------------------------- */
+
+loadWorld();
+
+</script>
+
+</body>
+</html>
