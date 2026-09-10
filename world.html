@@ -1548,35 +1548,7 @@ const powers = [
 
 
 /* =========================================================
-   SUPABASE
-   ========================================================= */
-
-const SUPABASE_URL =
-    "https://qelqaiczgibxyxfqtapg.supabase.co";
-
-
-/*
- * BELANGRIJK:
- *
- * Zet hieronder DEZELFDE PUBLISHABLE/ANON KEY
- * als in jouw bestaande game.html.
- *
- * GEBRUIK HIER NIET DE SERVICE_ROLE KEY.
- */
-
-const SUPABASE_KEY =
-    "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
-
-
-const database =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-
-
-/* =========================================================
-   ACCOUNT / SESSION
+   ACCOUNT / SESSION — EERST LADEN
    ========================================================= */
 
 const playerName =
@@ -1595,6 +1567,144 @@ const sessionToken =
     );
 
 
+/* =========================================================
+   ELEMENTS — DIRECT VINDEN
+   ========================================================= */
+
+const commanderName =
+    document.getElementById(
+        "commanderName"
+    );
+
+const points =
+    document.getElementById("points");
+
+const manpower =
+    document.getElementById("manpower");
+
+const factories =
+    document.getElementById("factories");
+
+const chooseCountryButton =
+    document.getElementById(
+        "chooseCountryButton"
+    );
+
+const countryOverlay =
+    document.getElementById(
+        "countryOverlay"
+    );
+
+const closeCountry =
+    document.getElementById(
+        "closeCountry"
+    );
+
+const countryList =
+    document.getElementById(
+        "countryList"
+    );
+
+const selectCountryButton =
+    document.getElementById(
+        "selectCountryButton"
+    );
+
+const countrySelectedText =
+    document.getElementById(
+        "countrySelectedText"
+    );
+
+const selectedCountry =
+    document.getElementById(
+        "selectedCountry"
+    );
+
+const selectedName =
+    document.getElementById(
+        "selectedName"
+    );
+
+const selectedRegion =
+    document.getElementById(
+        "selectedRegion"
+    );
+
+const loadMapButton =
+    document.getElementById(
+        "loadMapButton"
+    );
+
+
+/* =========================================================
+   COMMANDER DIRECT TONEN
+   ========================================================= */
+
+if (playerName) {
+
+    commanderName.textContent =
+        playerName;
+
+} else {
+
+    commanderName.textContent =
+        "UNKNOWN";
+
+    console.warn(
+        "globalConquestPlayer ontbreekt in sessionStorage."
+    );
+
+}
+
+
+/* =========================================================
+   SESSION CONTROLEREN
+   ========================================================= */
+
+if (
+    !playerName ||
+    !sessionToken
+) {
+
+    console.warn(
+        "Geen geldige Global Conquest sessie gevonden."
+    );
+
+    window.location.href =
+        "./index.html";
+
+}
+
+
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+    "https://qelqaiczgibxyxfqtapg.supabase.co";
+
+const SUPABASE_KEY =
+    "DEZELFDE_PUBLISHABLE_KEY_ALS_IN_GAME_HTML";
+
+
+if (!window.supabase) {
+
+    console.error(
+        "Supabase library is niet geladen."
+    );
+
+    throw new Error(
+        "Supabase library ontbreekt."
+    );
+
+}
+
+
+const database =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 /* =========================================================
    ELEMENTS
    ========================================================= */
