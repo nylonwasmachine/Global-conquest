@@ -277,14 +277,25 @@ loginForm.addEventListener(
                SPELERGEGEVENS OPSLAAN
             --------------------------------- */
 
-            const spelerNaam =
-                data.speler_naam || naam;
+     const spelerNaam =
+    data.speler_naam || naam;
 
 
-            sessionStorage.setItem(
-                "globalConquestPlayer",
-                spelerNaam
-            );
+sessionStorage.setItem(
+    "globalConquestPlayer",
+    spelerNaam
+);
+
+
+// Beveiligde WW3-sessie opslaan
+if (data.session_token) {
+
+    sessionStorage.setItem(
+        "globalConquestSession",
+        data.session_token
+    );
+
+}
 
 
             if (data.player_id) {
