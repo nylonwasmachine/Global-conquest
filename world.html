@@ -1703,7 +1703,7 @@ const SUPABASE_URL =
  * PLAATS HIER JE BESTAANDE PUBLISHABLE KEY.
  */
 const SUPABASE_KEY =
-    "YOUR_EXISTING_PUBLISHABLE_KEY";
+    "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
 
 
 if (!window.supabase) {
@@ -1721,6 +1721,15 @@ if (!window.supabase) {
 
 const database =
     window.supabase.createClient(
+       console.log(
+    "SUPABASE CLIENT:",
+    database
+);
+
+console.log(
+    "SUPABASE KEY AANWEZIG:",
+    !!SUPABASE_KEY
+);
         SUPABASE_URL,
         SUPABASE_KEY
     );
