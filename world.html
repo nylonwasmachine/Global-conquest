@@ -1821,15 +1821,13 @@ function showSelectedPower(power) {
    ACCOUNT ROLE
    ========================================================= */
 
-async function checkAccountRole() {
-    try {
-        const { data, error } =
-            await database.rpc(
-                "get_player_from_session",
-                {
-                    p_token: sessionToken
-                }
-            );
+const { data, error } =
+    await database.rpc(
+        "get_player_from_session",
+        {
+            p_token: sessionToken
+        }
+    );
 
         if (error) {
             console.error(
