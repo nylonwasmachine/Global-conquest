@@ -1847,15 +1847,25 @@ async function checkAccountRole() {
         const error = result.error;
 
         if (error) {
-            console.error(
-                "ACCOUNT ROLE ERROR:",
-                error
-            );
+console.error(
+    "ACCOUNT ROLE ERROR MESSAGE:",
+    error?.message
+);
 
-            isGovernment = false;
-            return;
-        }
+console.error(
+    "ACCOUNT ROLE ERROR CODE:",
+    error?.code
+);
 
+console.error(
+    "ACCOUNT ROLE ERROR HINT:",
+    error?.hint
+);
+
+console.error(
+    "ACCOUNT ROLE ERROR DETAILS:",
+    error?.details
+);
         const speler = Array.isArray(data)
             ? data[0]
             : data;
