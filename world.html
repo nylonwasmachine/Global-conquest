@@ -1657,10 +1657,18 @@ const loadMapButton =
    COMMANDER
    ========================================================= */
 
-if (playerName) {
+const currentPlayerName =
+    sessionStorage.getItem("globalConquestPlayer");
+
+if (currentPlayerName) {
 
     commanderName.textContent =
-        playerName;
+        currentPlayerName;
+
+    console.log(
+        "COMMANDER SET:",
+        currentPlayerName
+    );
 
 } else {
 
