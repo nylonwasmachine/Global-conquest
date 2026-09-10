@@ -1824,8 +1824,16 @@ document.getElementById(
    ZONE STATE
    ========================================================= */
 
+/*
+ * Je eigen 7 strategische gebieden zijn vanaf het begin
+ * automatisch van jou.
+ *
+ * Alleen gebieden die je later van een andere macht verovert
+ * worden opgeslagen als "conquered".
+ */
+
 const storageKey =
-    `globalConquestZones_${power.id}`;
+    `globalConquestZones_${selectedNationId}`;
 
 let conqueredZones = [];
 
@@ -1843,6 +1851,16 @@ try {
     conqueredZones = [];
 
 }
+
+
+/*
+ * Alle 7 startgebieden zijn automatisch OWNED.
+ */
+
+const ownedStartingZones =
+    power.zones.map(
+        (_, index) => index
+    );
 
 
 /* =========================================================
@@ -1869,15 +1887,16 @@ function renderZoneList() {
             button.className =
                 "zone-button";
 
-            if (
-                conqueredZones.includes(index)
-            ) {
+            /*
+             * Eigen startgebieden krijgen dezelfde
+             * actieve uitstraling, maar zijn niet
+             * "conquered".
+             */
 
-                button.classList.add(
-                    "active"
-                );
+            button.classList.add(
+                "active"
+            );
 
-            }
 
             button.innerHTML = `
                 <span class="zone-number">
@@ -1887,11 +1906,14 @@ function renderZoneList() {
                 ${zone[0]}
 
                 <small>
-                    ${index === 0
-                        ? "CAPITAL AREA"
-                        : "STRATEGIC AREA"}
+                    ${
+                        index === 0
+                            ? "CAPITAL AREA · OWNED"
+                            : "STRATEGIC AREA · OWNED"
+                    }
                 </small>
             `;
+
 
             button.addEventListener(
                 "click",
@@ -1902,12 +1924,21 @@ function renderZoneList() {
                 }
             );
 
+
             zoneList.appendChild(
                 button
             );
 
         }
     );
+
+
+    /*
+     * De 7 eigen startgebieden zijn al van jou.
+     *
+     * Daarom tonen we hier alleen later
+     * veroverde gebieden.
+     */
 
     document.getElementById(
         "conqueredCount"
@@ -2047,12 +2078,6 @@ function countryBelongsToPower(
 async function loadWorldMap() {
 
     try {
-
-        /*
-         * 110m is bewust gebruikt.
-         * Veel lichter dan zeer gedetailleerde
-         * administratieve provincie-data.
-         */
 
         const world =
             await d3.json(
@@ -2194,16 +2219,6 @@ function initializeMap(
         );
 
 
-    /*
-     * Israel wordt niet als eigen
-     * macht weergegeven.
-     *
-     * In deze vereenvoudigde kaart
-     * krijgt de Palestine-zone de
-     * strategische marker.
-     */
-
-
     /* -----------------------------------------------------
        ZOOM
        ----------------------------------------------------- */
@@ -2340,8 +2355,18 @@ function createZoneMarkers() {
                 .append("g")
                 .attr(
                     "class",
-                    "zone-marker"
+                    "zone-marker owned"
                 );
+
+
+            /*
+             * Eigen startgebied.
+             */
+
+            marker.classed(
+                "owned",
+                true
+            );
 
 
             if (index === 0) {
@@ -2353,6 +2378,12 @@ function createZoneMarkers() {
 
             }
 
+
+            /*
+             * Als dit gebied later opnieuw
+             * als conquered opgeslagen staat,
+             * houden we de conquered-status.
+             */
 
             if (
                 conqueredZones.includes(
@@ -2493,10 +2524,6 @@ function focusZone(index) {
     );
 
 
-    /*
-     * Zoom naar het gebied.
-     */
-
     const scale =
         Math.min(
             4,
@@ -2561,8 +2588,8 @@ function showZoneInfo(
         "zoneInfoDescription"
     ).textContent =
         index === 0
-            ? `${zone[0]} is de hoofdstadzone van ${power.name}. Dit is het belangrijkste strategische gebied van deze macht.`
-            : `${zone[0]} vertegenwoordigt een strategisch deel van ${power.name}. Ga ongeveer naar het midden van dit gebied om het over te nemen.`;
+            ? `${zone[0]} is de hoofdstadzone van ${power.name}. Dit gebied is vanaf het begin onder jouw controle.`
+            : `${zone[0]} is een strategisch gebied van ${power.name}. Dit gebied is vanaf het begin onder jouw controle.`;
 
 
     const conquerButton =
@@ -2571,27 +2598,21 @@ function showZoneInfo(
         );
 
 
-    if (
-        conqueredZones.includes(
-            index
-        )
-    ) {
+    /*
+     * EIGEN GEBIED
+     *
+     * Dit kan nooit opnieuw worden veroverd.
+     */
 
-        conquerButton.textContent =
-            "AREA CONQUERED";
+    conquerButton.textContent =
+        "AREA OWNED";
 
-        conquerButton.disabled =
-            true;
+    conquerButton.disabled =
+        true;
 
-    } else {
 
-        conquerButton.textContent =
-            "CONQUER AREA";
-
-        conquerButton.disabled =
-            false;
-
-    }
+    conquerButton.style.display =
+        "block";
 
 
     document.getElementById(
@@ -2613,6 +2634,11 @@ document.getElementById(
     "click",
     () => {
 
+        /*
+         * Je eigen 7 startgebieden mogen
+         * nooit via deze knop worden veroverd.
+         */
+
         if (
             selectedZoneIndex === null
         ) {
@@ -2621,22 +2647,26 @@ document.getElementById(
 
 
         if (
+            ownedStartingZones.includes(
+                selectedZoneIndex
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        if (
             conqueredZones.includes(
                 selectedZoneIndex
             )
         ) {
+
             return;
+
         }
 
-
-        /*
-         * Voorlopig lokaal opslaan.
-         *
-         * Later kunnen we dit vervangen
-         * door Supabase zodat conquest
-         * ook echt aan het account
-         * gekoppeld wordt.
-         */
 
         conqueredZones.push(
             selectedZoneIndex
@@ -2681,11 +2711,6 @@ document.getElementById(
         ).disabled =
             true;
 
-
-        document.getElementById(
-            "mapStatus"
-        );
-
     }
 );
 
@@ -2715,12 +2740,6 @@ function showCountryInfo(
     countryName
 ) {
 
-    /*
-     * Alleen een kleine info-reactie.
-     * De echte conquest gebeurt via
-     * de 7 strategische markers.
-     */
-
     const info =
         document.getElementById(
             "zoneInfo"
@@ -2739,9 +2758,14 @@ function showCountryInfo(
         countryBelongsToPower(
             countryName
         )
-            ? `${countryName} valt binnen het grondgebied van ${power.name}. De zeven markers bepalen de strategische conquest-zones.`
-            : `${countryName} is momenteel geen onderdeel van je geselecteerde macht. Gebruik de strategische zones om gebieden te veroveren.`;
+            ? `${countryName} valt binnen het grondgebied van ${power.name}. De zeven strategische gebieden van deze macht zijn vanaf het begin van jou.`
+            : `${countryName} is momenteel geen onderdeel van je geselecteerde macht. Gebruik de strategische zones om later gebieden te veroveren.`;
 
+
+    /*
+     * Bij een landklik mag je niet per ongeluk
+     * een conquest uitvoeren.
+     */
 
     document.getElementById(
         "conquerButton"
@@ -2751,19 +2775,6 @@ function showCountryInfo(
 
     info.classList.add(
         "show"
-    );
-
-
-    setTimeout(
-        () => {
-
-            document.getElementById(
-                "conquerButton"
-            ).style.display =
-                "block";
-
-        },
-        0
     );
 
 }
@@ -2780,8 +2791,6 @@ window.addEventListener(
         /*
          * Voorlopig geen volledige
          * redraw tijdens resize.
-         *
-         * Dat voorkomt onnodige lag.
          */
 
     }
@@ -2793,8 +2802,3 @@ window.addEventListener(
    ========================================================= */
 
 loadWorldMap();
-
-</script>
-
-</body>
-</html>
