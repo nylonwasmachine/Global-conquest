@@ -1571,33 +1571,12 @@ const loadMapButton =
    ACCOUNT INFO
    ========================================================= */
 
-if (player) {
+if (playerName) {
 
     commanderName.textContent =
-        player.naam ||
-        player.name ||
-        "COMMANDER";
-
-    points.textContent =
-        player.points ??
-        Math.max(
-            0,
-            Number(player.plus || 0) -
-            Math.abs(Number(player.min || 0))
-        );
-
-    manpower.textContent =
-        player.mankracht ??
-        player.manpower ??
-        0;
-
-    factories.textContent =
-        player.fabrieken ??
-        player.factories ??
-        0;
+        playerName;
 
 }
-
 
 /* =========================================================
    COUNTRY LIST
