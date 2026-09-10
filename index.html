@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 
 <html lang="nl">
@@ -7,9 +8,7 @@
     <title>Global Conquest</title>
     <link rel="stylesheet" href="./style.css">
 
-```
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-```
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 </head>
 
@@ -17,109 +16,107 @@
 
 <div class="start-screen">
 
-```
-<div class="background-grid"></div>
-<div class="scanlines"></div>
+    <div class="background-grid"></div>
+    <div class="scanlines"></div>
 
-<div class="system-status">
-    <span class="status-light"></span>
-    GLOBAL CONQUEST SYSTEM ONLINE
-</div>
+    <div class="system-status">
+        <span class="status-light"></span>
+        GLOBAL CONQUEST SYSTEM ONLINE
+    </div>
 
-<div class="version">
-    BUILD 1.0.0 // COMMAND NETWORK
-</div>
+    <div class="version">
+        BUILD 1.0.0 // COMMAND NETWORK
+    </div>
 
-<main class="start-content">
+    <main class="start-content">
 
-    <div class="title-small">WELCOME TO</div>
+        <div class="title-small">WELCOME TO</div>
 
-    <h1>GLOBAL<br><span>CONQUEST</span></h1>
+        <h1>GLOBAL<br><span>CONQUEST</span></h1>
 
-    <div class="title-line"></div>
+        <div class="title-line"></div>
 
-    <p class="tagline">
-        COMMAND • CONQUER • SURVIVE
-    </p>
+        <p class="tagline">
+            COMMAND • CONQUER • SURVIVE
+        </p>
 
-    <button id="enterCommandBtn" class="main-button">
-        <span>ENTER COMMAND</span>
-        <span>→</span>
-    </button>
+        <button id="enterCommandBtn" class="main-button">
+            <span>ENTER COMMAND</span>
+            <span>→</span>
+        </button>
 
-</main>
+    </main>
 
-<div class="bottom-info">
-    <span>STRATEGIC COMMAND NETWORK</span>
-    <span>•</span>
-    <span>ONLINE</span>
-</div>
-```
+    <div class="bottom-info">
+        <span>STRATEGIC COMMAND NETWORK</span>
+        <span>•</span>
+        <span>ONLINE</span>
+    </div>
 
 </div>
+
 
 <!-- LOGIN -->
 
 <div id="loginOverlay" class="login-overlay hidden">
 
-```
-<div class="login-grid"></div>
-<div class="login-scanlines"></div>
+    <div class="login-grid"></div>
+    <div class="login-scanlines"></div>
 
-<div class="login-box">
+    <div class="login-box">
 
-    <div class="login-corner tl"></div>
-    <div class="login-corner tr"></div>
-    <div class="login-corner bl"></div>
-    <div class="login-corner br"></div>
+        <div class="login-corner tl"></div>
+        <div class="login-corner tr"></div>
+        <div class="login-corner bl"></div>
+        <div class="login-corner br"></div>
 
-    <div class="login-top">
-        <span class="status-light"></span>
-        SECURE COMMAND LOGIN
-    </div>
+        <div class="login-top">
+            <span class="status-light"></span>
+            SECURE COMMAND LOGIN
+        </div>
 
-    <h2>COMMAND ACCESS</h2>
+        <h2>COMMAND ACCESS</h2>
 
-    <p class="login-subtitle">
-        IDENTIFY YOURSELF, COMMANDER
-    </p>
+        <p class="login-subtitle">
+            IDENTIFY YOURSELF, COMMANDER
+        </p>
 
-    <form id="loginForm">
+        <form id="loginForm">
 
-        <label for="naam">COMMANDER NAME</label>
+            <label for="naam">COMMANDER NAME</label>
 
-        <input
-            id="naam"
-            type="text"
-            autocomplete="username"
-            required
-        >
+            <input
+                id="naam"
+                type="text"
+                autocomplete="username"
+                required
+            >
 
-        <label for="wachtwoord">PASSWORD</label>
+            <label for="wachtwoord">PASSWORD</label>
 
-        <input
-            id="wachtwoord"
-            type="password"
-            autocomplete="current-password"
-            required
-        >
+            <input
+                id="wachtwoord"
+                type="password"
+                autocomplete="current-password"
+                required
+            >
 
-        <button type="submit" class="login-button">
-            ACCESS COMMAND
+            <button type="submit" class="login-button">
+                ACCESS COMMAND
+            </button>
+
+        </form>
+
+        <button id="closeLoginBtn" class="close-login">
+            CANCEL
         </button>
 
-    </form>
+        <div id="loginStatus" class="login-status"></div>
 
-    <button id="closeLoginBtn" class="close-login">
-        CANCEL
-    </button>
-
-    <div id="loginStatus" class="login-status"></div>
+    </div>
 
 </div>
-```
 
-</div>
 
 <script>
 
@@ -259,6 +256,25 @@ loginForm.addEventListener(
             }
 
 
+            /* ---------------------------------
+               TIJDELIJKE DEBUG
+            --------------------------------- */
+
+            console.log(
+                "LOGIN RESPONSE:",
+                data
+            );
+
+            console.log(
+                "Heeft session token:",
+                !!data?.session_token
+            );
+
+
+            /* ---------------------------------
+               LOGIN CONTROLEREN
+            --------------------------------- */
+
             if (
                 !data ||
                 data.success === false
@@ -277,26 +293,19 @@ loginForm.addEventListener(
                SPELERGEGEVENS OPSLAAN
             --------------------------------- */
 
-     const spelerNaam =
-    data.speler_naam || naam;
+            const spelerNaam =
+                data.speler_naam || naam;
 
 
-sessionStorage.setItem(
-    "globalConquestPlayer",
-    spelerNaam
-);
+            sessionStorage.setItem(
+                "globalConquestPlayer",
+                spelerNaam
+            );
 
 
-// Beveiligde WW3-sessie opslaan
-if (data.session_token) {
-
-    sessionStorage.setItem(
-        "globalConquestSession",
-        data.session_token
-    );
-
-}
-
+            /* ---------------------------------
+               PLAYER ID
+            --------------------------------- */
 
             if (data.player_id) {
 
@@ -308,6 +317,10 @@ if (data.session_token) {
             }
 
 
+            /* ---------------------------------
+               AUTH ID
+            --------------------------------- */
+
             if (data.auth_id) {
 
                 sessionStorage.setItem(
@@ -316,6 +329,32 @@ if (data.session_token) {
                 );
 
             }
+
+
+            /* ---------------------------------
+               BEVEILIGDE WW3-SESSIE
+            --------------------------------- */
+
+            if (data.session_token) {
+
+                sessionStorage.setItem(
+                    "globalConquestSession",
+                    data.session_token
+                );
+
+            }
+
+
+            /* ---------------------------------
+               CONTROLEREN OF TOKEN IS OPGESLAGEN
+            --------------------------------- */
+
+            console.log(
+                "WW3 sessie opgeslagen:",
+                !!sessionStorage.getItem(
+                    "globalConquestSession"
+                )
+            );
 
 
             /* ---------------------------------
@@ -374,3 +413,4 @@ document.addEventListener(
 
 </body>
 </html>
+```
