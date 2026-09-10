@@ -1844,39 +1844,51 @@ async function checkAccountRole() {
 
     try {
 
-        const result = await database.rpc(
-            "get_player_from_session",
-            {
-                p_token: sessionToken
-            }
-        );
+        const result =
+            await database.rpc(
+                "get_player_from_session",
+                {
+                    p_token: sessionToken
+                }
+            );
 
-        const data = result.data;
-        const error = result.error;
+        const data =
+            result.data;
+
+        const error =
+            result.error;
 
         if (error) {
-console.error(
-    "ACCOUNT ROLE ERROR MESSAGE:",
-    error?.message
-);
 
-console.error(
-    "ACCOUNT ROLE ERROR CODE:",
-    error?.code
-);
+            console.error(
+                "ACCOUNT ROLE ERROR MESSAGE:",
+                error?.message
+            );
 
-console.error(
-    "ACCOUNT ROLE ERROR HINT:",
-    error?.hint
-);
+            console.error(
+                "ACCOUNT ROLE ERROR CODE:",
+                error?.code
+            );
 
-console.error(
-    "ACCOUNT ROLE ERROR DETAILS:",
-    error?.details
-);
-        const speler = Array.isArray(data)
-            ? data[0]
-            : data;
+            console.error(
+                "ACCOUNT ROLE ERROR HINT:",
+                error?.hint
+            );
+
+            console.error(
+                "ACCOUNT ROLE ERROR DETAILS:",
+                error?.details
+            );
+
+            isGovernment = false;
+
+            return;
+        }
+
+        const speler =
+            Array.isArray(data)
+                ? data[0]
+                : data;
 
         console.log(
             "WW3 PLAYER NAME:",
@@ -1891,7 +1903,8 @@ console.error(
         isGovernment =
             String(
                 speler?.account_role || ""
-            ).toLowerCase() === "government";
+            ).toLowerCase() ===
+            "government";
 
         console.log(
             "WW3 IS GOVERNMENT:",
@@ -1906,6 +1919,7 @@ console.error(
         );
 
         isGovernment = false;
+
     }
 }
 
