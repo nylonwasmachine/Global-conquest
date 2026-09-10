@@ -81,6 +81,7 @@
         <form id="loginForm">
 
             <label for="naam">COMMANDER NAME</label>
+
             <input
                 id="naam"
                 type="text"
@@ -89,6 +90,7 @@
             >
 
             <label for="wachtwoord">PASSWORD</label>
+
             <input
                 id="wachtwoord"
                 type="password"
@@ -143,96 +145,202 @@ const loginStatus =
     document.getElementById("loginStatus");
 
 
+/* -----------------------------------------
+   OPEN LOGIN
+----------------------------------------- */
+
 enterCommandBtn.addEventListener("click", () => {
+
     loginOverlay.classList.remove("hidden");
 
     setTimeout(() => {
-        document.getElementById("naam").focus();
+        document
+            .getElementById("naam")
+            .focus();
     }, 100);
+
 });
 
+
+/* -----------------------------------------
+   CLOSE LOGIN
+----------------------------------------- */
 
 closeLoginBtn.addEventListener("click", () => {
+
     loginOverlay.classList.add("hidden");
+
     loginStatus.textContent = "";
+
 });
 
 
-loginForm.addEventListener("submit", async (event) => {
+/* -----------------------------------------
+   LOGIN
+----------------------------------------- */
 
-    event.preventDefault();
+loginForm.addEventListener(
+    "submit",
+    async (event) => {
 
-    const naam =
-        document.getElementById("naam").value.trim();
+        event.preventDefault();
 
-    const wachtwoord =
-        document.getElementById("wachtwoord").value;
+        const naam =
+            document
+                .getElementById("naam")
+                .value
+                .trim();
 
-    loginStatus.textContent =
-        "AUTHENTICATING COMMANDER...";
-
-    loginStatus.className =
-        "login-status loading";
-
-    try {
-
-        const { data, error } =
-            await database.functions.invoke(
-                "login",
-                {
-                    body: {
-                        naam,
-                        wachtwoord
-                    }
-                }
-            );
-
-        if (error) {
-            throw error;
-        }
-
-        if (!data || data.success === false) {
-            throw new Error(
-                data?.message ||
-                "Login mislukt."
-            );
-        }
-
-        const spelerNaam =
-            data.speler_naam || naam;
-
-        sessionStorage.setItem(
-            "globalConquestPlayer",
-            spelerNaam
-        );
-
-        window.location.href =
-            "./game.html";
-
-    } catch (error) {
-
-        console.error(error);
+        const wachtwoord =
+            document
+                .getElementById("wachtwoord")
+                .value;
 
         loginStatus.textContent =
-            error.message ||
-            "Login mislukt.";
+            "AUTHENTICATING COMMANDER...";
 
         loginStatus.className =
-            "login-status error";
+            "login-status loading";
+
+
+        try {
+
+            /* -----------------------------
+               CUSTOM LOGIN
+            ----------------------------- */
+
+            const {
+                data,
+                error
+            } =
+                await database.functions.invoke(
+                    "login",
+                    {
+                        body: {
+                            naam,
+                            wachtwoord
+                        }
+                    }
+                );
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            if (
+                !data ||
+                data.success === false
+            ) {
+
+                throw new Error(
+                    data?.error ||
+                    data?.message ||
+                    "Login mislukt."
+                );
+
+            }
+
+
+            const spelerNaam =
+                data.speler_naam || naam;
+
+
+            /* -----------------------------
+               SUPABASE AUTH SESSION
+            ----------------------------- */
+
+            if (
+                data.access_token &&
+                data.refresh_token
+            ) {
+
+                const {
+                    error: sessionError
+                } =
+                    await database.auth.setSession({
+                        access_token:
+                            data.access_token,
+
+                        refresh_token:
+                            data.refresh_token
+                    });
+
+
+                if (sessionError) {
+                    throw sessionError;
+                }
+
+            } else {
+
+                throw new Error(
+                    "De server heeft geen beveiligde sessie teruggegeven."
+                );
+
+            }
+
+
+            /* -----------------------------
+               BESTAANDE GLOBAL CONQUEST LOGIN
+            ----------------------------- */
+
+            sessionStorage.setItem(
+                "globalConquestPlayer",
+                spelerNaam
+            );
+
+
+            /* -----------------------------
+               GO TO GAME
+            ----------------------------- */
+
+            window.location.href =
+                "./game.html";
+
+        } catch (error) {
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+            loginStatus.textContent =
+                error.message ||
+                "Login mislukt.";
+
+            loginStatus.className =
+                "login-status error";
+
+        }
+
     }
-});
+);
 
 
-document.addEventListener("keydown", (event) => {
+/* -----------------------------------------
+   ESCAPE = CLOSE LOGIN
+----------------------------------------- */
 
-    if (
-        event.key === "Escape" &&
-        !loginOverlay.classList.contains("hidden")
-    ) {
-        loginOverlay.classList.add("hidden");
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape" &&
+            !loginOverlay.classList.contains(
+                "hidden"
+            )
+        ) {
+
+            loginOverlay.classList.add(
+                "hidden"
+            );
+
+        }
+
     }
-
-});
+);
 </script>
 
 </body>
