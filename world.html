@@ -1,1893 +1,1468 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Global Conquest — World</title>
-
-    <link rel="stylesheet" href="./style.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        /* =====================================================
-           BASIS
-        ===================================================== */
-
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .gc-world {
-            width: 100vw;
-            height: 100vh;
-            background: #071018;
-            color: #f4f7f8;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Conquest — Choose Country</title>
+
+<link rel="stylesheet" href="./style.css">
+
+<style>
+/* =========================================================
+   WORLD SELECT — EXTRA STYLES
+   ========================================================= */
+
+.world-select-screen {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(0,255,150,.08),
+            transparent 55%
+        ),
+        #020604;
+}
+
+.world-select-grid {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(0,255,150,.045) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0,255,150,.045) 1px,
+            transparent 1px
+        );
+
+    background-size: 40px 40px;
+}
+
+.world-select-scanlines {
+    position: absolute;
+    inset: 0;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 4px,
+            rgba(0,0,0,.13) 5px
+        );
 
-
-        /* =====================================================
-           TOPBAR
-        ===================================================== */
-
-        .gc-topbar {
-            height: 72px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 0 22px;
-            box-sizing: border-box;
-
-            background: #0b151e;
-            border-bottom: 1px solid #263642;
-
-            position: relative;
-            z-index: 100;
-        }
-
-        .gc-logo {
-            font-size: 22px;
-            font-weight: 900;
-            letter-spacing: 3px;
-        }
-
-        .gc-logo span {
-            display: block;
-            margin-top: 4px;
-            font-size: 9px;
-            letter-spacing: 4px;
-            opacity: .55;
-        }
-
-        .gc-commander {
-            font-size: 12px;
-            letter-spacing: 1px;
-        }
-
-        .gc-commander strong {
-            margin-left: 6px;
-        }
-
-        .gc-back {
-            border: 1px solid #465966;
-            background: #101e28;
-            color: white;
-            padding: 11px 15px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .gc-back:hover {
-            background: #1a2b38;
-        }
-
-
-        /* =====================================================
-           HOOFDLAYOUT
-        ===================================================== */
-
-        .gc-world-layout {
-            width: 100vw;
-            height: calc(100vh - 72px);
-
-            display: flex;
+    pointer-events: none;
+}
 
-            overflow: hidden;
-        }
+.world-header {
+    position: relative;
+    z-index: 5;
 
+    height: 70px;
 
-        /* =====================================================
-           LINKERPANEEL
-        ===================================================== */
+    display: flex;
+    align-items: center;
 
-        .gc-left-panel {
-            width: 320px;
-            min-width: 320px;
-            height: 100%;
+    padding: 0 25px;
 
-            box-sizing: border-box;
+    border-bottom:
+        1px solid rgba(0,255,150,.2);
 
-            background: #0a141c;
-            border-right: 1px solid #2b3d49;
+    background:
+        rgba(3,10,7,.96);
+}
 
-            overflow-y: auto;
-            overflow-x: hidden;
+.world-logo {
+    color: #bffff0;
+    font-weight: bold;
+    letter-spacing: 4px;
+}
 
-            position: relative;
-            z-index: 90;
-        }
+.world-logo span {
+    color: #52ffad;
+}
 
+.world-commander {
+    margin-left: auto;
+    margin-right: 25px;
 
-        /* =====================================================
-           RESOURCES
-        ===================================================== */
+    color: #4e7865;
 
-        .gc-resources {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1px;
-            background: #2b3d49;
-        }
+    font-size: 9px;
+    letter-spacing: 2px;
+}
 
-        .gc-resource {
-            padding: 14px 18px;
-            background: #0d1a23;
-        }
+.world-commander strong {
+    color: #9bffd1;
+}
 
-        .gc-resource span {
-            display: block;
-            font-size: 10px;
-            letter-spacing: 2px;
-            opacity: .55;
-        }
+.world-back {
+    padding: 9px 14px;
 
-        .gc-resource strong {
-            display: block;
-            margin-top: 5px;
-            font-size: 20px;
-        }
+    background: transparent;
 
+    border: 1px solid #294a39;
 
-        /* =====================================================
-           SELECTIE
-        ===================================================== */
+    color: #608b75;
 
-        .gc-selection {
-            margin: 15px;
-            padding: 14px;
+    font-family: inherit;
+    font-size: 9px;
 
-            border: 1px solid #344956;
-            background: #0e1c26;
-        }
+    cursor: pointer;
+}
 
-        .gc-small-title {
-            font-size: 9px;
-            letter-spacing: 2px;
-            opacity: .5;
-        }
+.world-back:hover {
+    border-color: #52ffad;
+    color: #9dffd0;
+}
 
-        .gc-current {
-            margin-top: 9px;
-            font-size: 14px;
-            font-weight: 900;
-        }
+.world-layout {
+    position: relative;
+    z-index: 2;
 
-        .gc-city-selected {
-            margin-top: 8px;
-            font-size: 11px;
-            opacity: .7;
-        }
+    min-height:
+        calc(100vh - 70px);
 
+    display: grid;
 
-        /* =====================================================
-           POWER LIJST
-        ===================================================== */
+    grid-template-columns:
+        230px 1fr;
+}
 
-        .gc-country-title {
-            padding: 12px 15px;
+/* =========================================================
+   STATS
+   ========================================================= */
 
-            font-size: 11px;
-            font-weight: bold;
-            letter-spacing: 2px;
+.world-stats {
+    border-right:
+        1px solid rgba(0,255,150,.18);
 
-            border-top: 1px solid #263944;
-            border-bottom: 1px solid #263944;
-        }
+    background:
+        rgba(2,9,6,.9);
 
-        .gc-list-continent {
-            padding: 12px 15px 6px;
+    padding: 25px 18px;
+}
 
-            font-size: 9px;
-            letter-spacing: 2px;
+.world-stats-title {
+    color: #4e806a;
 
-            color: #7e929e;
-        }
+    font-size: 9px;
+    letter-spacing: 3px;
 
-        .gc-country-list {
-            padding-bottom: 30px;
-        }
+    margin-bottom: 22px;
+}
 
-        .gc-power-button {
-            width: calc(100% - 20px);
+.world-stat {
+    padding: 16px 12px;
 
-            margin: 3px 10px;
+    margin-bottom: 12px;
 
-            min-height: 42px;
+    background:
+        rgba(0,255,150,.025);
 
-            display: flex;
-            align-items: center;
+    border:
+        1px solid rgba(0,255,150,.12);
+}
 
-            gap: 11px;
+.world-stat-label {
+    color: #4e7965;
 
-            text-align: left;
+    font-size: 8px;
+    letter-spacing: 2px;
+}
 
-            border: 1px solid transparent;
+.world-stat-value {
+    color: #a9ffda;
 
-            background: #0d1a23;
-            color: white;
+    font-size: 25px;
+    font-weight: bold;
 
-            cursor: pointer;
+    margin-top: 8px;
+}
 
-            padding: 8px 10px;
+.world-stat-line {
+    height: 1px;
 
-            font-weight: 700;
-        }
+    margin-top: 13px;
 
-        .gc-power-button:hover {
-            background: #162731;
-            border-color: #3c5360;
-        }
+    background:
+        rgba(0,255,150,.1);
+}
 
-        .gc-power-button.active {
-            background: #1a3340;
-            border-color: #8faebb;
-        }
+/* =========================================================
+   CENTER
+   ========================================================= */
 
-        .gc-power-button.special {
-            border-left: 3px solid #c8a84e;
-        }
+.world-select-center {
+    position: relative;
 
-        .gc-power-flag {
-            font-size: 20px;
-            min-width: 38px;
-        }
+    display: flex;
 
+    align-items: center;
+    justify-content: center;
 
-        /* =====================================================
-           KAARTGEBIED
-           VOLLEDIG ALLES RECHTS VAN DE LINKERBALK
-        ===================================================== */
+    padding: 30px;
+}
 
-        .gc-map-area {
-            flex: 1 1 auto;
+.world-select-content {
+    width: min(850px, 100%);
 
-            width: calc(100vw - 320px);
+    text-align: center;
+}
 
-            min-width: 0;
-            min-height: 0;
+.world-select-status {
+    color: #6affbd;
 
-            height: 100%;
+    font-size: 10px;
+    letter-spacing: 4px;
 
-            position: relative;
+    margin-bottom: 18px;
+}
 
-            overflow: hidden;
+.world-select-status .status-dot {
+    margin-right: 8px;
+}
 
-            background: #d9e0df;
-        }
+.world-select-content h1 {
+    color: #dffff0;
 
+    font-size: clamp(
+        55px,
+        9vw,
+        105px
+    );
 
-        /* =====================================================
-           ZWEVENDE KAART HEADER
-           LIGT OVER DE KAART
-        ===================================================== */
+    line-height: .82;
 
-        .gc-map-header {
-            position: absolute;
+    letter-spacing: 7px;
 
-            top: 16px;
-            left: 16px;
-            right: 16px;
+    text-shadow:
+        0 0 25px rgba(0,255,150,.18);
+}
 
-            min-height: 72px;
+.world-select-content h1 span {
+    color: #52ffad;
+}
 
-            padding: 13px 18px;
+.world-title-line {
+    width: 260px;
+    height: 1px;
 
-            box-sizing: border-box;
+    margin: 30px auto 20px;
 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+    background: #52ffad;
 
-            background: rgba(7, 16, 24, .94);
+    box-shadow:
+        0 0 15px #52ffad;
+}
 
-            border: 1px solid #334753;
+.world-select-description {
+    color: #5e9078;
 
-            z-index: 50;
+    font-size: 10px;
 
-            backdrop-filter: blur(6px);
-        }
+    letter-spacing: 2px;
 
-        .gc-map-kicker {
-            font-size: 9px;
-            letter-spacing: 3px;
-            opacity: .5;
-        }
+    line-height: 1.8;
 
-        .gc-map-header h1 {
-            margin: 4px 0;
+    max-width: 570px;
 
-            font-size: 21px;
-            font-weight: 900;
-        }
+    margin: 0 auto 30px;
+}
 
-        .gc-map-header p {
-            margin: 0;
+.choose-country-button {
+    display: inline-flex;
 
-            font-size: 11px;
+    align-items: center;
 
-            opacity: .65;
-        }
+    gap: 25px;
 
+    padding: 16px 32px;
 
-        /* =====================================================
-           SELECTEER STAD KNOP
-        ===================================================== */
+    background:
+        rgba(0,255,150,.06);
 
-        .gc-select-city {
-            padding: 14px 22px;
+    border:
+        1px solid #52ffad;
 
-            border: 1px solid #aab9bd;
+    color: #8bffca;
 
-            background: #162731;
-            color: white;
+    font-family: inherit;
 
-            font-weight: 900;
+    font-weight: bold;
 
-            letter-spacing: 1px;
+    letter-spacing: 3px;
 
-            cursor: pointer;
+    cursor: pointer;
 
-            white-space: nowrap;
-        }
+    transition: .2s;
+}
 
-        .gc-select-city:not(:disabled):hover {
-            background: #24414e;
-        }
+.choose-country-button:hover {
+    background:
+        rgba(0,255,150,.15);
 
-        .gc-select-city:disabled {
-            opacity: .35;
+    box-shadow:
+        0 0 30px rgba(0,255,150,.2);
 
-            cursor: not-allowed;
-        }
+    transform:
+        translateY(-2px);
+}
 
+.choose-country-button .arrow {
+    font-size: 18px;
+}
 
-        /* =====================================================
-           KAARTCONTAINER
-           VULT 100% VAN HET RECHTERGEBIED
-        ===================================================== */
+/* =========================================================
+   SELECTED COUNTRY
+   ========================================================= */
 
-        .gc-map-container {
-            position: absolute;
+.selected-country {
+    display: none;
 
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+    width: min(500px, 100%);
 
-            width: 100%;
-            height: 100%;
+    margin: 25px auto 0;
 
-            overflow: hidden;
-        }
+    padding: 16px;
 
-        #worldMap {
-            position: absolute;
+    text-align: left;
 
-            top: 0;
-            left: 0;
+    border:
+        1px solid rgba(0,255,150,.25);
 
-            width: 100%;
-            height: 100%;
+    background:
+        rgba(0,255,150,.035);
+}
 
-            display: block;
-        }
+.selected-country.show {
+    display: block;
+}
 
+.selected-label {
+    color: #4f806b;
 
-        /* =====================================================
-           LANDEN
-        ===================================================== */
+    font-size: 8px;
 
-        .gc-map-country {
-            fill: #c5cecd;
+    letter-spacing: 2px;
+}
 
-            stroke: #839294;
+.selected-name {
+    color: #bffff0;
 
-            stroke-width: .45;
-        }
+    font-size: 17px;
 
-        .gc-map-country.selected-territory {
-            fill: #596f78;
+    font-weight: bold;
 
-            stroke: #263b44;
+    margin-top: 7px;
+}
 
-            stroke-width: 1.2;
-        }
+.selected-region {
+    color: #527d68;
 
-        .gc-map-borders {
-            fill: none;
+    font-size: 9px;
 
-            stroke: #758486;
+    margin-top: 5px;
 
-            stroke-width: .5;
+    letter-spacing: 1px;
+}
 
-            pointer-events: none;
-        }
+.load-map-button {
+    display: none;
 
+    margin-top: 15px;
 
-        /* =====================================================
-           STEDEN
-        ===================================================== */
+    padding: 13px 25px;
 
-        .gc-city-marker {
-            cursor: pointer;
-        }
+    border:
+        1px solid #52ffad;
 
-        .gc-city-marker circle {
-            fill: #142832;
+    background:
+        rgba(0,255,150,.08);
 
-            stroke: white;
+    color: #7dffc2;
 
-            stroke-width: 2;
-        }
+    font-family: inherit;
 
-        .gc-city-marker .gc-city-inner {
-            fill: white;
+    font-weight: bold;
 
-            stroke: none;
-        }
+    letter-spacing: 2px;
 
-        .gc-city-marker text {
-            font-size: 11px;
+    cursor: pointer;
+}
 
-            font-weight: 900;
+.load-map-button.show {
+    display: inline-block;
+}
 
-            fill: #101b20;
+.load-map-button:hover {
+    background:
+        rgba(0,255,150,.18);
 
-            paint-order: stroke;
+    box-shadow:
+        0 0 20px rgba(0,255,150,.18);
+}
 
-            stroke: white;
+/* =========================================================
+   COUNTRY OVERLAY
+   ========================================================= */
 
-            stroke-width: 4px;
+.country-overlay {
+    position: fixed;
 
-            stroke-linejoin: round;
+    inset: 0;
 
-            pointer-events: none;
-        }
+    z-index: 100;
 
-        .gc-city-marker:hover circle {
-            r: 12;
-        }
+    display: none;
 
-        .gc-city-marker.chosen circle {
-            fill: #d0ad4c;
+    align-items: center;
+    justify-content: center;
 
-            stroke: #17252c;
+    padding: 25px;
 
-            stroke-width: 3;
-        }
+    background:
+        rgba(0,5,3,.92);
+}
 
-        .gc-city-marker.chosen .gc-city-inner {
-            fill: white;
-        }
+.country-overlay.show {
+    display: flex;
+}
 
+.country-grid {
+    position: absolute;
+    inset: 0;
 
-        /* =====================================================
-           LOADING
-        ===================================================== */
+    background-image:
+        linear-gradient(
+            rgba(0,255,150,.045) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0,255,150,.045) 1px,
+            transparent 1px
+        );
 
-        .gc-map-loading {
-            position: absolute;
+    background-size: 35px 35px;
+}
 
-            z-index: 80;
+.country-window {
+    position: relative;
 
-            inset: 0;
+    z-index: 2;
 
-            display: flex;
+    width: min(850px, 100%);
 
-            align-items: center;
+    max-height: 82vh;
 
-            justify-content: center;
+    display: flex;
 
-            background: #d9e0df;
+    flex-direction: column;
 
-            color: #18252b;
+    background:
+        rgba(3,11,7,.98);
 
-            font-size: 14px;
+    border:
+        1px solid rgba(0,255,150,.35);
 
-            font-weight: 900;
+    box-shadow:
+        0 0 60px rgba(0,0,0,.7);
+}
 
-            letter-spacing: 2px;
-        }
+.country-window::before,
+.country-window::after {
+    content: "";
 
+    position: absolute;
 
-        /* =====================================================
-           MOBIEL
-        ===================================================== */
+    width: 16px;
+    height: 16px;
 
-        @media (max-width: 850px) {
+    border-color: #52ffad;
+}
 
-            html,
-            body {
-                overflow: auto;
-            }
+.country-window::before {
+    top: -1px;
+    left: -1px;
 
-            .gc-world {
-                height: auto;
-                min-height: 100vh;
-            }
+    border-top: 2px solid;
+    border-left: 2px solid;
+}
 
-            .gc-world-layout {
-                height: auto;
-                min-height: calc(100vh - 72px);
-            }
+.country-window::after {
+    right: -1px;
+    bottom: -1px;
 
-            .gc-left-panel {
-                width: 250px;
-                min-width: 250px;
-            }
+    border-right: 2px solid;
+    border-bottom: 2px solid;
+}
 
-            .gc-map-area {
-                width: calc(100vw - 250px);
-            }
+.country-window-header {
+    display: flex;
 
-            .gc-map-header {
-                top: 8px;
-                left: 8px;
-                right: 8px;
+    align-items: center;
+    justify-content: space-between;
 
-                padding: 10px 12px;
-            }
+    padding: 20px;
 
-            .gc-map-header h1 {
-                font-size: 16px;
-            }
+    border-bottom:
+        1px solid rgba(0,255,150,.16);
+}
 
-            .gc-map-header p {
-                font-size: 9px;
-            }
+.country-window-title {
+    color: #bffff0;
 
-            .gc-select-city {
-                padding: 10px 13px;
-                font-size: 10px;
-            }
-        }
-    </style>
+    font-size: 18px;
+
+    font-weight: bold;
+
+    letter-spacing: 3px;
+}
+
+.country-window-subtitle {
+    color: #4e806a;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    margin-top: 5px;
+}
+
+.close-country {
+    background: transparent;
+
+    border: none;
+
+    color: #608b75;
+
+    font-family: inherit;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+.close-country:hover {
+    color: #9dffd0;
+}
+
+.country-list {
+    overflow-y: auto;
+
+    padding: 18px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+}
+
+.country-option {
+    padding: 15px;
+
+    text-align: left;
+
+    background:
+        rgba(0,255,150,.025);
+
+    border:
+        1px solid rgba(0,255,150,.12);
+
+    color: #a8d6bf;
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition: .15s;
+}
+
+.country-option:hover {
+    background:
+        rgba(0,255,150,.08);
+
+    border-color:
+        rgba(0,255,150,.4);
+}
+
+.country-option.active {
+    border-color: #52ffad;
+
+    background:
+        rgba(0,255,150,.11);
+
+    box-shadow:
+        0 0 18px rgba(0,255,150,.08);
+}
+
+.country-option-name {
+    color: #cffff0;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+}
+
+.country-option-region {
+    color: #527d68;
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+
+    margin-top: 6px;
+}
+
+.country-window-footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 15px 18px;
+
+    border-top:
+        1px solid rgba(0,255,150,.16);
+}
+
+.country-selected-text {
+    color: #4e806a;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+}
+
+.country-selected-text strong {
+    color: #9dffd0;
+}
+
+.select-country-button {
+    padding: 12px 25px;
+
+    background:
+        rgba(0,255,150,.08);
+
+    border:
+        1px solid #52ffad;
+
+    color: #7dffc2;
+
+    font-family: inherit;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+}
+
+.select-country-button:disabled {
+    opacity: .3;
+    cursor: not-allowed;
+}
+
+.select-country-button:not(:disabled):hover {
+    background:
+        rgba(0,255,150,.18);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:800px) {
+
+    .world-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .world-stats {
+        border-right: none;
+
+        border-bottom:
+            1px solid rgba(0,255,150,.18);
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 8px;
+
+        padding: 12px;
+    }
+
+    .world-stats-title {
+        display: none;
+    }
+
+    .world-stat {
+        margin: 0;
+    }
+
+    .world-commander {
+        display: none;
+    }
+
+    .world-select-center {
+        min-height:
+            calc(100vh - 175px);
+    }
+
+    .country-list {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media(max-width:500px) {
+
+    .world-header {
+        padding: 0 15px;
+    }
+
+    .world-logo {
+        font-size: 11px;
+    }
+
+    .world-select-center {
+        padding: 20px 15px;
+    }
+
+    .world-select-content h1 {
+        font-size: 47px;
+        letter-spacing: 4px;
+    }
+
+    .world-select-description {
+        font-size: 8px;
+    }
+
+    .country-overlay {
+        padding: 10px;
+    }
+
+    .country-window-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .select-country-button {
+        width: 100%;
+    }
+
+}
+</style>
 </head>
 
+<body>
 
-<body class="gc-world">
+<div class="world-select-screen">
 
-<header class="gc-topbar">
+    <div class="world-select-grid"></div>
+    <div class="world-select-scanlines"></div>
 
-    <div class="gc-logo">
-        GLOBAL CONQUEST
-        <span>WORLD COMMAND</span>
+    <header class="world-header">
+
+        <div class="world-logo">
+            GLOBAL <span>CONQUEST</span>
+        </div>
+
+        <div class="world-commander">
+            COMMANDER:
+            <strong id="commanderName">UNKNOWN</strong>
+        </div>
+
+        <button
+            class="world-back"
+            onclick="window.location.href='./game.html'">
+            ← BACK
+        </button>
+
+    </header>
+
+
+    <div class="world-layout">
+
+        <!-- LINKS: ALLEEN STATS -->
+
+        <aside class="world-stats">
+
+            <div class="world-stats-title">
+                COMMAND RESOURCES
+            </div>
+
+            <div class="world-stat">
+
+                <div class="world-stat-label">
+                    POINTS
+                </div>
+
+                <div
+                    class="world-stat-value"
+                    id="points">
+                    0
+                </div>
+
+                <div class="world-stat-line"></div>
+
+            </div>
+
+            <div class="world-stat">
+
+                <div class="world-stat-label">
+                    MANPOWER
+                </div>
+
+                <div
+                    class="world-stat-value"
+                    id="manpower">
+                    0
+                </div>
+
+                <div class="world-stat-line"></div>
+
+            </div>
+
+            <div class="world-stat">
+
+                <div class="world-stat-label">
+                    FACTORIES
+                </div>
+
+                <div
+                    class="world-stat-value"
+                    id="factories">
+                    0
+                </div>
+
+                <div class="world-stat-line"></div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- MIDDEN -->
+
+        <main class="world-select-center">
+
+            <section class="world-select-content">
+
+                <div class="world-select-status">
+                    <span class="status-dot"></span>
+                    WORLD COMMAND READY
+                </div>
+
+                <h1>
+                    CHOOSE<br>
+                    <span>COUNTRY</span>
+                </h1>
+
+                <div class="world-title-line"></div>
+
+                <p class="world-select-description">
+                    SELECT A POWER TO BEGIN YOUR CONQUEST.
+                    EACH POWER CONTROLS SEVEN STRATEGIC
+                    CONQUEST ZONES.
+                </p>
+
+                <button
+                    class="choose-country-button"
+                    id="chooseCountryButton">
+
+                    CHOOSE COUNTRY
+
+                    <span class="arrow">→</span>
+
+                </button>
+
+
+                <div
+                    class="selected-country"
+                    id="selectedCountry">
+
+                    <div class="selected-label">
+                        SELECTED POWER
+                    </div>
+
+                    <div
+                        class="selected-name"
+                        id="selectedName">
+                    </div>
+
+                    <div
+                        class="selected-region"
+                        id="selectedRegion">
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="load-map-button"
+                    id="loadMapButton">
+
+                    LOAD MAP →
+                </button>
+
+            </section>
+
+        </main>
+
     </div>
 
-    <div class="gc-commander">
-        COMMANDER:
-        <strong id="commanderName">---</strong>
-    </div>
-
-    <button id="backButton" class="gc-back">
-        ← COMMAND CENTER
-    </button>
-
-</header>
+</div>
 
 
-<main class="gc-world-layout">
+<!-- =====================================================
+     COUNTRY SELECT WINDOW
+     ===================================================== -->
 
+<div
+    class="country-overlay"
+    id="countryOverlay">
 
-    <!-- =====================================================
-         LINKERPANEEL
-    ====================================================== -->
+    <div class="country-grid"></div>
 
-    <aside class="gc-left-panel">
+    <div class="country-window">
 
-        <div class="gc-resources">
-
-            <div class="gc-resource">
-                <span>POINTS</span>
-                <strong id="points">0</strong>
-            </div>
-
-            <div class="gc-resource">
-                <span>MANPOWER</span>
-                <strong id="manpower">0</strong>
-            </div>
-
-            <div class="gc-resource">
-                <span>FACTORIES</span>
-                <strong id="factories">0</strong>
-            </div>
-
-        </div>
-
-
-        <div class="gc-selection">
-
-            <div class="gc-small-title">
-                CURRENT SELECTION
-            </div>
-
-            <div id="selectedPower" class="gc-current">
-                GEEN MACHT GEKOZEN
-            </div>
-
-            <div id="selectedCity" class="gc-city-selected">
-                GEEN STAD GEKOZEN
-            </div>
-
-        </div>
-
-
-        <div class="gc-country-title">
-            CHOOSE YOUR POWER
-        </div>
-
-
-        <div id="countryList" class="gc-country-list"></div>
-
-    </aside>
-
-
-    <!-- =====================================================
-         KAART
-    ====================================================== -->
-
-    <section class="gc-map-area">
-
-        <div class="gc-map-header">
+        <div class="country-window-header">
 
             <div>
 
-                <div class="gc-map-kicker">
-                    GLOBAL CONQUEST
+                <div class="country-window-title">
+                    CHOOSE COUNTRY
                 </div>
 
-                <h1 id="mapTitle">
-                    SELECTEER EEN MACHT
-                </h1>
-
-                <p id="mapInstruction">
-                    Kies links een land, rijk, unie of samenwerking.
-                </p>
+                <div class="country-window-subtitle">
+                    SELECT YOUR WORLD POWER
+                </div>
 
             </div>
 
-
             <button
-                id="selectCityButton"
-                class="gc-select-city"
-                disabled
-            >
-                SELECTEER STAD
+                class="close-country"
+                id="closeCountry">
+                ×
             </button>
 
         </div>
 
 
         <div
-            id="mapContainer"
-            class="gc-map-container"
-        >
+            class="country-list"
+            id="countryList">
+        </div>
 
-            <div
-                id="mapLoading"
-                class="gc-map-loading"
-            >
-                WORLD MAP LOADING...
+
+        <div class="country-window-footer">
+
+            <div class="country-selected-text">
+
+                SELECTED:
+                <strong id="countrySelectedText">
+                    NONE
+                </strong>
+
             </div>
 
-            <svg id="worldMap"></svg>
+            <button
+                class="select-country-button"
+                id="selectCountryButton"
+                disabled>
+
+                SELECT
+
+            </button>
 
         </div>
 
-    </section>
+    </div>
 
-</main>
+</div>
 
 
 <script>
 
 /* =========================================================
-   SUPABASE
-========================================================= */
-
-const supabaseUrl =
-    "https://qelqaiczgibxyxfqtapg.supabase.co";
-
-const supabaseKey =
-    "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
-
-const database =
-    window.supabase.createClient(
-        supabaseUrl,
-        supabaseKey
-    );
-
-
-/* =========================================================
-   SPELER
-========================================================= */
-
-const speler =
-    sessionStorage.getItem(
-        "globalConquestPlayer"
-    );
-
-if (!speler) {
-
-    window.location.href =
-        "./index.html";
-
-}
-
-document
-    .getElementById("commanderName")
-    .textContent =
-        speler || "---";
-
-
-/* =========================================================
-   PUNTEN
-========================================================= */
-
-function parsePunten(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return 0;
-    }
-
-    let tekst =
-        String(value)
-            .trim()
-            .toUpperCase()
-            .replace(",", ".");
-
-    if (!tekst) {
-        return 0;
-    }
-
-    let multiplier = 1;
-
-    if (tekst.endsWith("K")) {
-
-        multiplier = 1000;
-
-        tekst =
-            tekst.slice(0, -1);
-
-    }
-
-    if (tekst.endsWith("M")) {
-
-        multiplier = 1000000;
-
-        tekst =
-            tekst.slice(0, -1);
-
-    }
-
-    const nummer =
-        Number(tekst);
-
-    return Number.isNaN(nummer)
-        ? 0
-        : nummer * multiplier;
-
-}
-
-
-async function laadSpeler() {
-
-    if (!speler) {
-        return;
-    }
-
-    const { data, error } =
-        await database
-            .from("players")
-            .select(
-                "naam, plus, min"
-            )
-            .eq(
-                "naam",
-                speler
-            )
-            .maybeSingle();
-
-
-    if (error) {
-
-        console.error(
-            "Speler laden mislukt:",
-            error
-        );
-
-        return;
-    }
-
-
-    if (!data) {
-
-        document
-            .getElementById("points")
-            .textContent =
-                "0";
-
-        return;
-    }
-
-
-    const plus =
-        parsePunten(data.plus);
-
-    const min =
-        Math.abs(
-            parsePunten(data.min)
-        );
-
-
-    const totaal =
-        Math.max(
-            0,
-            plus - min
-        );
-
-
-    document
-        .getElementById("points")
-        .textContent =
-            Math.floor(totaal)
-                .toLocaleString("nl-NL");
-
-}
-
-
-laadSpeler();
-
-
-database
-    .channel(
-        "global-conquest-world-players"
-    )
-    .on(
-        "postgres_changes",
-        {
-            event: "*",
-            schema: "public",
-            table: "players"
-        },
-        function () {
-            laadSpeler();
-        }
-    )
-    .subscribe();
-
-
-/* =========================================================
-   SPEELBARE MACHTEN
-========================================================= */
+   GLOBAL CONQUEST — COUNTRY DATA
+   ========================================================= */
 
 const powers = [
 
-    /* ================= EUROPA ================= */
-
     {
-        id: "france",
+        id: "frankrijk",
         name: "Frankrijk",
         flag: "🇫🇷",
-        continent: "EUROPA",
+        region: "EUROPA",
         countries: ["France"],
-        cities: [
-            ["Parijs", 2.35, 48.86],
-            ["Lyon", 4.84, 45.76],
-            ["Marseille", 5.37, 43.30],
-            ["Bordeaux", -0.58, 44.84],
-            ["Lille", 3.06, 50.63],
-            ["Toulouse", 1.44, 43.60],
-            ["Nantes", -1.55, 47.22]
+        zones: [
+            "Parijs",
+            "Lille",
+            "Nantes",
+            "Bordeaux",
+            "Toulouse",
+            "Marseille",
+            "Lyon"
         ]
     },
 
     {
-        id: "germany",
-        name: "Duitsland",
-        flag: "🇩🇪",
-        continent: "EUROPA",
-        countries: ["Germany"],
-        cities: [
-            ["Berlijn", 13.40, 52.52],
-            ["Hamburg", 9.99, 53.55],
-            ["München", 11.58, 48.14],
-            ["Keulen", 6.96, 50.94],
-            ["Frankfurt", 8.68, 50.11],
-            ["Leipzig", 12.37, 51.34],
-            ["Stuttgart", 9.18, 48.78]
-        ]
-    },
-
-    {
-        id: "spain",
-        name: "Spanje",
-        flag: "🇪🇸",
-        continent: "EUROPA",
-        countries: ["Spain"],
-        cities: [
-            ["Madrid", -3.70, 40.42],
-            ["Barcelona", 2.17, 41.39],
-            ["Valencia", -0.38, 39.47],
-            ["Sevilla", -5.98, 37.39],
-            ["Bilbao", -2.93, 43.26],
-            ["Málaga", -4.42, 36.72],
-            ["Zaragoza", -0.89, 41.65]
-        ]
-    },
-
-    {
-        id: "portugal",
-        name: "Portugal",
-        flag: "🇵🇹",
-        continent: "EUROPA",
-        countries: ["Portugal"],
-        cities: [
-            ["Lissabon", -9.14, 38.72],
-            ["Porto", -8.61, 41.15],
-            ["Braga", -8.43, 41.55],
-            ["Coimbra", -8.43, 40.21],
-            ["Faro", -7.93, 37.02],
-            ["Évora", -7.91, 38.57],
-            ["Viseu", -7.91, 40.66]
-        ]
-    },
-
-    {
-        id: "greece",
-        name: "Griekenland",
-        flag: "🇬🇷",
-        continent: "EUROPA",
-        countries: ["Greece"],
-        cities: [
-            ["Athene", 23.73, 37.98],
-            ["Thessaloniki", 22.94, 40.64],
-            ["Patras", 21.73, 38.25],
-            ["Larissa", 22.42, 39.64],
-            ["Heraklion", 25.13, 35.34],
-            ["Ioannina", 20.85, 39.67],
-            ["Rhodos", 28.22, 36.43]
-        ]
-    },
-
-    {
-        id: "uk",
-        name: "UK + Ierland",
-        flag: "🇬🇧🇮🇪",
-        continent: "EUROPA",
-        countries: [
-            "United Kingdom",
-            "Ireland"
-        ],
-        cities: [
-            ["Londen", -0.13, 51.51],
-            ["Dublin", -6.26, 53.35],
-            ["Manchester", -2.24, 53.48],
-            ["Birmingham", -1.90, 52.49],
-            ["Edinburgh", -3.19, 55.95],
-            ["Glasgow", -4.25, 55.86],
-            ["Cardiff", -3.18, 51.48]
-        ]
-    },
-
-    {
-        id: "sweden",
-        name: "Zweden",
-        flag: "🇸🇪",
-        continent: "EUROPA",
-        countries: ["Sweden"],
-        cities: [
-            ["Stockholm", 18.07, 59.33],
-            ["Göteborg", 11.97, 57.71],
-            ["Malmö", 13.00, 55.60],
-            ["Uppsala", 17.64, 59.86],
-            ["Kiruna", 20.23, 67.86],
-            ["Örebro", 15.21, 59.27],
-            ["Umeå", 20.26, 63.83]
-        ]
-    },
-
-    {
-        id: "italy",
-        name: "Italië",
-        flag: "🇮🇹",
-        continent: "EUROPA",
-        countries: ["Italy"],
-        cities: [
-            ["Rome", 12.50, 41.90],
-            ["Milaan", 9.19, 45.46],
-            ["Napels", 14.27, 40.85],
-            ["Turijn", 7.69, 45.07],
-            ["Venetië", 12.32, 45.44],
-            ["Florence", 11.25, 43.77],
-            ["Palermo", 13.36, 38.12]
-        ]
-    },
-
-    {
-        id: "serbia",
-        name: "Servië",
-        flag: "🇷🇸",
-        continent: "EUROPA",
-        countries: ["Serbia"],
-        cities: [
-            ["Belgrado", 20.46, 44.79],
-            ["Novi Sad", 19.84, 45.27],
-            ["Niš", 21.90, 43.32],
-            ["Kragujevac", 20.92, 44.01],
-            ["Subotica", 19.67, 46.10],
-            ["Čačak", 20.35, 43.89],
-            ["Zrenjanin", 20.39, 45.38]
-        ]
-    },
-
-    {
-        id: "romania",
-        name: "Roemenië + Moldavië",
-        flag: "🇷🇴🇲🇩",
-        continent: "EUROPA",
-        countries: [
-            "Romania",
-            "Moldova"
-        ],
-        cities: [
-            ["Boekarest", 26.10, 44.43],
-            ["Chisinau", 28.83, 47.01],
-            ["Cluj-Napoca", 23.59, 46.77],
-            ["Timișoara", 21.23, 45.75],
-            ["Iași", 27.59, 47.16],
-            ["Constanța", 28.63, 44.17],
-            ["Craiova", 23.80, 44.33]
-        ]
-    },
-
-    {
-        id: "croatia_bosnia",
-        name: "Kroatië + Bosnië",
-        flag: "🇭🇷🇧🇦",
-        continent: "EUROPA",
-        countries: [
-            "Croatia",
-            "Bosnia and Herzegovina"
-        ],
-        cities: [
-            ["Zagreb", 15.98, 45.81],
-            ["Sarajevo", 18.41, 43.86],
-            ["Split", 16.44, 43.51],
-            ["Rijeka", 14.44, 45.33],
-            ["Mostar", 17.81, 43.34],
-            ["Banja Luka", 17.19, 44.77],
-            ["Osijek", 18.68, 45.55]
-        ]
-    },
-
-    {
-        id: "north_balkan",
-        name: "Noord-Balkan",
-        flag: "🌍",
-        continent: "EUROPA",
-        countries: [
-            "Albania",
-            "Kosovo",
-            "Montenegro",
-            "North Macedonia",
-            "Bulgaria"
-        ],
-        cities: [
-            ["Sofia", 23.32, 42.70],
-            ["Skopje", 21.43, 42.00],
-            ["Tirana", 19.82, 41.33],
-            ["Pristina", 21.17, 42.66],
-            ["Podgorica", 19.26, 42.44],
-            ["Plovdiv", 24.75, 42.14],
-            ["Varna", 27.91, 43.21]
-        ]
-    },
-
-    {
-        id: "south_balkan",
-        name: "Zuid-Balkan",
-        flag: "🌍",
-        continent: "EUROPA",
-        countries: [
-            "Slovakia",
-            "Hungary",
-            "Slovenia"
-        ],
-        cities: [
-            ["Boedapest", 19.04, 47.50],
-            ["Bratislava", 17.11, 48.15],
-            ["Ljubljana", 14.51, 46.06],
-            ["Debrecen", 21.63, 47.53],
-            ["Košice", 21.26, 48.72],
-            ["Maribor", 15.65, 46.55],
-            ["Szeged", 20.15, 46.25]
-        ]
-    },
-
-    {
-        id: "austria_czechia_slovenia",
-        name: "Oostenrijk + Tsjechië + Slovenië",
-        flag: "🇦🇹🇨🇿🇸🇮",
-        continent: "EUROPA",
-        countries: [
-            "Austria",
-            "Czechia",
-            "Slovenia"
-        ],
-        cities: [
-            ["Wenen", 16.37, 48.21],
-            ["Praag", 14.42, 50.08],
-            ["Ljubljana", 14.51, 46.06],
-            ["Graz", 15.44, 47.07],
-            ["Brno", 16.61, 49.20],
-            ["Salzburg", 13.04, 47.80],
-            ["Ostrava", 18.26, 49.82]
-        ]
-    },
-
-
-    /* =====================================================
-       SPECIALE MACHTEN
-    ===================================================== */
-
-    {
-        id: "morocco_empire",
-        name: "Marokkaanse Rijk",
-        flag: "🇲🇦",
-        continent: "AFRIKA / EUROPA",
-        special: true,
-        countries: [
-            "Morocco",
-            "Algeria",
-            "Mauritania",
-            "Mali",
-            "Tunisia",
-            "Western Sahara"
-        ],
-        cities: [
-            ["Rabat", -6.84, 34.02],
-            ["Algiers", 3.06, 36.75],
-            ["Nouakchott", -15.98, 18.08],
-            ["Bamako", -8.00, 12.64],
-            ["Tunis", 10.18, 36.81],
-            ["Marrakech", -8.00, 31.63],
-            ["Laayoune", -13.20, 27.15]
-        ]
-    },
-
-    {
-        id: "japan_korea",
-        name: "Japans-Koreaanse Unie",
-        flag: "🇯🇵🇰🇷",
-        continent: "AZIË",
-        special: true,
-        countries: [
-            "Japan",
-            "South Korea",
-            "North Korea",
-            "Norway"
-        ],
-        cities: [
-            ["Tokyo", 139.69, 35.68],
-            ["Seoul", 126.98, 37.57],
-            ["Pyongyang", 125.75, 39.02],
-            ["Oslo", 10.75, 59.91],
-            ["Kyoto", 135.77, 35.01],
-            ["Osaka", 135.50, 34.69],
-            ["Nagasaki", 129.87, 32.75]
-        ]
-    },
-
-    {
-        id: "poland_switzerland",
-        name: "Pools-Zwitserse Samenwerking",
-        flag: "🇵🇱🇨🇭",
-        continent: "EUROPA",
-        special: true,
+        id: "poolse_zwitserse_samenwerking",
+        name: "Pools-Zwitserse samenwerking",
+        flag: "🇵🇱",
+        region: "EUROPA",
         countries: [
             "Poland",
             "Switzerland",
             "Belarus",
+            "Finland",
             "Estonia",
             "Latvia",
             "Lithuania",
-            "Finland"
+            "Kaliningrad"
         ],
-        cities: [
-            ["Warschau", 21.01, 52.23],
-            ["Moskou", 37.62, 55.75],
-            ["Bern", 7.45, 46.95],
-            ["Minsk", 27.56, 53.90],
-            ["Tallinn", 24.75, 59.44],
-            ["Vilnius", 25.28, 54.69],
-            ["Riga", 24.11, 56.95]
+        zones: [
+            "Warschau",
+            "Gdańsk",
+            "Krakau",
+            "Minsk",
+            "Bern",
+            "Helsinki",
+            "Tallinn"
         ]
     },
 
     {
-        id: "tajik_nordic",
-        name: "Tajik-Noordische Samenwerking",
-        flag: "🇹🇯🇳🇴🇮🇸",
-        continent: "EUROPA / AZIË",
-        special: true,
-        countries: [
-            "Tajikistan",
-            "Iceland",
-            "Norway"
-        ],
-        cities: [
-            ["Doesjanbe", 68.78, 38.56],
-            ["Vardø", 31.11, 70.37],
-            ["Bodø", 14.40, 67.28],
-            ["Narvik", 17.43, 68.44],
-            ["Harstad", 16.54, 68.80],
-            ["Tromsø", 18.96, 69.65],
-            ["Langar", 71.47, 37.49]
+        id: "duitsland",
+        name: "Duitsland",
+        flag: "🇩🇪",
+        region: "EUROPA",
+        countries: ["Germany"],
+        zones: [
+            "Berlijn",
+            "Hamburg",
+            "Keulen",
+            "Frankfurt",
+            "München",
+            "Leipzig",
+            "Stuttgart"
         ]
     },
 
+    {
+        id: "oostenrijk_hongarije",
+        name: "Oostenrijk-Hongarije",
+        flag: "🇦🇹",
+        region: "EUROPA",
+        countries: [
+            "Austria",
+            "Hungary",
+            "Slovakia",
+            "Croatia"
+        ],
+        zones: [
+            "Wenen",
+            "Graz",
+            "Salzburg",
+            "Boedapest",
+            "Debrecen",
+            "Bratislava",
+            "Zagreb"
+        ]
+    },
 
-    /* =====================================================
-       AZIË
-    ===================================================== */
+    {
+        id: "oekraine",
+        name: "Oekraïne",
+        flag: "🇺🇦",
+        region: "EUROPA",
+        countries: ["Ukraine"],
+        zones: [
+            "Kyiv",
+            "Lviv",
+            "Odesa",
+            "Dnipro",
+            "Kharkiv",
+            "Zaporizhzhia",
+            "Mykolaiv"
+        ]
+    },
+
+    {
+        id: "rusland",
+        name: "Rusland",
+        flag: "🇷🇺",
+        region: "EUROPA / AZIË",
+        countries: ["Russia"],
+        zones: [
+            "Moskou",
+            "Sint-Petersburg",
+            "Nizjni Novgorod",
+            "Rostov aan de Don",
+            "Jekaterinenburg",
+            "Novosibirsk",
+            "Vladivostok"
+        ]
+    },
+
+    {
+        id: "zweden",
+        name: "Zweden",
+        flag: "🇸🇪",
+        region: "EUROPA",
+        countries: ["Sweden"],
+        zones: [
+            "Stockholm",
+            "Göteborg",
+            "Malmö",
+            "Uppsala",
+            "Örebro",
+            "Umeå",
+            "Kiruna"
+        ]
+    },
+
+    {
+        id: "groot_brittannie",
+        name: "Groot-Brittannië",
+        flag: "🇬🇧",
+        region: "EUROPA",
+        countries: [
+            "United Kingdom",
+            "Ireland"
+        ],
+        zones: [
+            "Londen",
+            "Birmingham",
+            "Manchester",
+            "Edinburgh",
+            "Glasgow",
+            "Cardiff",
+            "Dublin"
+        ]
+    },
+
+    {
+        id: "servie",
+        name: "Servië",
+        flag: "🇷🇸",
+        region: "EUROPA",
+        countries: [
+            "Serbia",
+            "Kosovo",
+            "Montenegro",
+            "North Macedonia"
+        ],
+        zones: [
+            "Belgrado",
+            "Novi Sad",
+            "Niš",
+            "Pristina",
+            "Podgorica",
+            "Skopje",
+            "Kragujevac"
+        ]
+    },
+
+    {
+        id: "grote_turkiye",
+        name: "Grote Türkiye",
+        flag: "🇹🇷",
+        region: "EUROPA / AZIË",
+        countries: [
+            "Turkey",
+            "Greece",
+            "Albania",
+            "Bulgaria",
+            "Georgia",
+            "Armenia",
+            "Azerbaijan"
+        ],
+        zones: [
+            "Ankara",
+            "Istanbul",
+            "Izmir",
+            "Thessaloniki",
+            "Sofia",
+            "Tbilisi",
+            "Yerevan"
+        ]
+    },
+
+    {
+        id: "roemenie",
+        name: "Roemenië",
+        flag: "🇷🇴",
+        region: "EUROPA",
+        countries: [
+            "Romania",
+            "Moldova"
+        ],
+        zones: [
+            "Boekarest",
+            "Cluj-Napoca",
+            "Iași",
+            "Timișoara",
+            "Constanța",
+            "Chișinău",
+            "Craiova"
+        ]
+    },
+
+    {
+        id: "iberische_staat",
+        name: "Iberische staat",
+        flag: "🇪🇸",
+        region: "EUROPA",
+        countries: [
+            "Spain",
+            "Portugal"
+        ],
+        zones: [
+            "Madrid",
+            "Barcelona",
+            "Valencia",
+            "Sevilla",
+            "Bilbao",
+            "Lissabon",
+            "Porto"
+        ]
+    },
+
+    {
+        id: "italie",
+        name: "Italië",
+        flag: "🇮🇹",
+        region: "EUROPA",
+        countries: ["Italy"],
+        zones: [
+            "Rome",
+            "Milaan",
+            "Turijn",
+            "Venetië",
+            "Napels",
+            "Florence",
+            "Palermo"
+        ]
+    },
+
+    {
+        id: "indie",
+        name: "Indië",
+        flag: "🇮🇳",
+        region: "AZIË",
+        countries: [
+            "India",
+            "Pakistan",
+            "Bangladesh",
+            "Sri Lanka",
+            "Nepal",
+            "Bhutan"
+        ],
+        zones: [
+            "New Delhi",
+            "Mumbai",
+            "Kolkata",
+            "Chennai",
+            "Bengaluru",
+            "Lahore",
+            "Kathmandu"
+        ]
+    },
 
     {
         id: "china",
         name: "China",
         flag: "🇨🇳",
-        continent: "AZIË",
-        countries: ["China"],
-        cities: [
-            ["Beijing", 116.40, 39.90],
-            ["Shanghai", 121.47, 31.23],
-            ["Guangzhou", 113.26, 23.13],
-            ["Chengdu", 104.07, 30.67],
-            ["Wuhan", 114.31, 30.59],
-            ["Xi'an", 108.94, 34.34],
-            ["Harbin", 126.64, 45.76]
-        ]
-    },
-
-    {
-        id: "india_union",
-        name: "India + Pakistan + Bangladesh",
-        flag: "🇮🇳",
-        continent: "AZIË",
+        region: "AZIË",
         countries: [
-            "India",
-            "Pakistan",
-            "Bangladesh"
+            "China",
+            "Mongolia",
+            "Taiwan"
         ],
-        cities: [
-            ["New Delhi", 77.21, 28.61],
-            ["Karachi", 67.01, 24.86],
-            ["Dhaka", 90.41, 23.81],
-            ["Mumbai", 72.88, 19.08],
-            ["Lahore", 74.36, 31.55],
-            ["Kolkata", 88.36, 22.57],
-            ["Islamabad", 73.05, 33.69]
+        zones: [
+            "Beijing",
+            "Shanghai",
+            "Guangzhou",
+            "Chengdu",
+            "Wuhan",
+            "Ulaanbaatar",
+            "Taipei"
         ]
     },
 
     {
-        id: "southeast_asia",
-        name: "Vietnam + Zuidoost-Azië",
-        flag: "🇻🇳",
-        continent: "AZIË",
-        countries: [
-            "Vietnam",
-            "Thailand",
-            "Cambodia",
-            "Laos",
-            "Myanmar",
-            "Malaysia"
-        ],
-        cities: [
-            ["Hanoi", 105.85, 21.03],
-            ["Bangkok", 100.50, 13.75],
-            ["Phnom Penh", 104.92, 11.56],
-            ["Vientiane", 102.63, 17.98],
-            ["Yangon", 96.16, 16.84],
-            ["Kuala Lumpur", 101.69, 3.14],
-            ["Ho Chi Minhstad", 106.63, 10.82]
-        ]
-    },
-
-    {
-        id: "central_stans",
-        name: "Kazachstan + overige Stans",
+        id: "de_stannen",
+        name: "De Stannen",
         flag: "🇰🇿",
-        continent: "AZIË",
+        region: "AZIË",
         countries: [
             "Kazakhstan",
+            "Kyrgyzstan",
             "Uzbekistan",
             "Turkmenistan",
-            "Kyrgyzstan"
+            "Afghanistan"
         ],
-        cities: [
-            ["Astana", 71.43, 51.17],
-            ["Almaty", 76.89, 43.24],
-            ["Tasjkent", 69.24, 41.30],
-            ["Ashgabat", 58.38, 37.96],
-            ["Bisjkek", 74.60, 42.87],
-            ["Shymkent", 69.59, 42.32],
-            ["Samarkand", 66.96, 39.65]
+        zones: [
+            "Astana",
+            "Almaty",
+            "Tashkent",
+            "Bishkek",
+            "Ashgabat",
+            "Kabul",
+            "Samarkand"
         ]
     },
 
     {
-        id: "middle_east_east",
-        name: "Midden-Oosten Oost",
-        flag: "🕌",
-        continent: "AZIË",
-        countries: [
-            "Iran",
-            "Iraq",
-            "Kuwait",
-            "Qatar",
-            "Bahrain",
-            "United Arab Emirates",
-            "Oman",
-            "Yemen"
-        ],
-        cities: [
-            ["Teheran", 51.39, 35.69],
-            ["Bagdad", 44.37, 33.31],
-            ["Koeweit-Stad", 47.98, 29.38],
-            ["Doha", 51.53, 25.29],
-            ["Abu Dhabi", 54.37, 24.45],
-            ["Muscat", 58.41, 23.59],
-            ["Sana'a", 44.21, 15.37]
-        ]
-    },
-
-    {
-        id: "middle_east_west",
-        name: "Midden-Oosten West",
-        flag: "🕌",
-        continent: "AZIË",
-        countries: [
-            "Saudi Arabia",
-            "Jordan",
-            "Israel",
-            "Lebanon",
-            "Syria"
-        ],
-        cities: [
-            ["Riyad", 46.72, 24.71],
-            ["Amman", 35.93, 31.95],
-            ["Jeruzalem", 35.21, 31.77],
-            ["Beiroet", 35.50, 33.89],
-            ["Damascus", 36.29, 33.51],
-            ["Jeddah", 39.17, 21.54],
-            ["Medina", 39.61, 24.47]
-        ]
-    },
-
-    {
-        id: "turkiye_caucasus",
-        name: "Türkiye + Kaukasus",
-        flag: "🇹🇷",
-        continent: "AZIË",
-        countries: [
-            "Türkiye",
-            "Georgia",
-            "Armenia",
-            "Azerbaijan"
-        ],
-        cities: [
-            ["Ankara", 32.86, 39.93],
-            ["Istanbul", 28.98, 41.01],
-            ["Tbilisi", 44.79, 41.72],
-            ["Yerevan", 44.51, 40.18],
-            ["Baku", 49.87, 40.41],
-            ["Izmir", 27.14, 38.42],
-            ["Antalya", 30.71, 36.90]
-        ]
-    },
-
-    {
-        id: "indonesia",
-        name: "Indonesië + Papoea-Nieuw-Guinea",
+        id: "indonesisch_rijk",
+        name: "Indonesisch rijk",
         flag: "🇮🇩",
-        continent: "AZIË",
+        region: "AZIË",
         countries: [
             "Indonesia",
-            "Papua New Guinea"
+            "Malaysia",
+            "Brunei",
+            "Singapore",
+            "Papua New Guinea",
+            "Philippines"
         ],
-        cities: [
-            ["Jakarta", 106.85, -6.21],
-            ["Surabaya", 112.75, -7.25],
-            ["Bandung", 107.62, -6.91],
-            ["Medan", 98.67, 3.59],
-            ["Makassar", 119.41, -5.14],
-            ["Denpasar", 115.22, -8.65],
-            ["Port Moresby", 147.18, -9.44]
+        zones: [
+            "Jakarta",
+            "Surabaya",
+            "Medan",
+            "Kuching",
+            "Singapore",
+            "Manila",
+            "Port Moresby"
         ]
     },
 
-
-    /* =====================================================
-       AMERIKA
-    ===================================================== */
-
     {
-        id: "america",
-        name: "Amerika",
-        flag: "🇺🇸",
-        continent: "AMERIKA",
+        id: "japans_koreaanse_unie",
+        name: "Japans-Koreaanse Unie",
+        flag: "🇯🇵",
+        region: "AZIË",
         countries: [
-            "United States of America"
+            "Japan",
+            "North Korea",
+            "South Korea",
+            "Denmark"
         ],
-        cities: [
-            ["Washington", -77.04, 38.91],
-            ["New York", -74.01, 40.71],
-            ["Los Angeles", -118.24, 34.05],
-            ["Chicago", -87.63, 41.88],
-            ["Houston", -95.37, 29.76],
-            ["Miami", -80.19, 25.76],
-            ["Seattle", -122.33, 47.61]
+        zones: [
+            "Tokyo",
+            "Osaka",
+            "Sapporo",
+            "Seoul",
+            "Pyongyang",
+            "Busan",
+            "Kopenhagen"
         ]
     },
 
     {
-        id: "canada",
-        name: "Canada",
-        flag: "🇨🇦",
-        continent: "AMERIKA",
-        countries: ["Canada"],
-        cities: [
-            ["Ottawa", -75.70, 45.42],
-            ["Toronto", -79.38, 43.65],
-            ["Montreal", -73.57, 45.50],
-            ["Vancouver", -123.12, 49.28],
-            ["Calgary", -114.07, 51.05],
-            ["Edmonton", -113.49, 53.55],
-            ["Winnipeg", -97.14, 49.90]
-        ]
-    },
-
-    {
-        id: "mexico",
-        name: "Mexico",
-        flag: "🇲🇽",
-        continent: "AMERIKA",
-        countries: ["Mexico"],
-        cities: [
-            ["Mexico-Stad", -99.13, 19.43],
-            ["Guadalajara", -103.35, 20.67],
-            ["Monterrey", -100.32, 25.69],
-            ["Puebla", -98.21, 19.04],
-            ["Tijuana", -117.04, 32.51],
-            ["Cancún", -86.85, 21.16],
-            ["Mérida", -89.62, 20.97]
-        ]
-    },
-
-    {
-        id: "central_america",
-        name: "Midden-Amerika",
-        flag: "🌎",
-        continent: "AMERIKA",
+        id: "zuidwest_azie",
+        name: "Zuidwest-Azië",
+        flag: "🇹🇭",
+        region: "AZIË",
         countries: [
-            "Guatemala",
-            "Belize",
-            "El Salvador",
-            "Honduras",
-            "Nicaragua",
-            "Costa Rica",
-            "Panama"
+            "Thailand",
+            "Vietnam",
+            "Myanmar",
+            "Cambodia",
+            "Laos"
         ],
-        cities: [
-            ["Guatemala-Stad", -90.51, 14.63],
-            ["Belmopan", -88.77, 17.25],
-            ["San Salvador", -89.19, 13.69],
-            ["Tegucigalpa", -87.21, 14.07],
-            ["Managua", -86.27, 12.11],
-            ["San José", -84.09, 9.93],
-            ["Panama-Stad", -79.52, 8.98]
+        zones: [
+            "Bangkok",
+            "Chiang Mai",
+            "Hanoi",
+            "Ho Chi Minhstad",
+            "Yangon",
+            "Phnom Penh",
+            "Vientiane"
         ]
     },
 
     {
-        id: "cuba_jamaica",
-        name: "Cuba-Jamaicaans Rijk",
-        flag: "🇨🇺🇯🇲",
-        continent: "AMERIKA",
-        special: true,
+        id: "tajik_nordische_samenwerking",
+        name: "Tajik-Nordische samenwerking",
+        flag: "🇹🇯",
+        region: "AZIË / EUROPA",
         countries: [
-            "Cuba",
-            "Jamaica"
+            "Tajikistan",
+            "Norway",
+            "Iceland"
         ],
-        cities: [
-            ["Havana", -82.37, 23.11],
-            ["Kingston", -76.79, 18.00],
-            ["Santiago de Cuba", -75.83, 20.02],
-            ["Holguín", -76.26, 20.89],
-            ["Camagüey", -77.92, 21.38],
-            ["Montego Bay", -77.92, 18.47],
-            ["Spanish Town", -76.96, 17.99]
+        zones: [
+            "Dushanbe",
+            "Khujand",
+            "Oslo",
+            "Bergen",
+            "Trondheim",
+            "Tromsø",
+            "Reykjavík"
         ]
     },
 
     {
-        id: "caribbean",
-        name: "Caribbean",
-        flag: "🏝️",
-        continent: "AMERIKA",
+        id: "oostelijk_midden_oosten",
+        name: "Oostelijk Midden-Oosten",
+        flag: "🇸🇦",
+        region: "AZIË",
         countries: [
-            "Bahamas",
-            "Barbados",
-            "Trinidad and Tobago",
-            "Dominican Republic",
-            "Haiti"
+            "Saudi Arabia",
+            "Iran",
+            "Iraq",
+            "Yemen",
+            "Oman",
+            "Qatar",
+            "United Arab Emirates"
         ],
-        cities: [
-            ["Nassau", -77.35, 25.05],
-            ["Bridgetown", -59.62, 13.10],
-            ["Port of Spain", -61.52, 10.66],
-            ["Santo Domingo", -69.93, 18.49],
-            ["Port-au-Prince", -72.34, 18.54],
-            ["Castries", -60.99, 14.01],
-            ["Kingstown", -61.22, 13.16]
+        zones: [
+            "Riyad",
+            "Jeddah",
+            "Teheran",
+            "Bagdad",
+            "Sana'a",
+            "Muscat",
+            "Doha"
         ]
     },
 
     {
-        id: "brazil",
-        name: "Brazilië",
-        flag: "🇧🇷",
-        continent: "ZUID-AMERIKA",
-        countries: ["Brazil"],
-        cities: [
-            ["Brasília", -47.88, -15.79],
-            ["São Paulo", -46.63, -23.55],
-            ["Rio de Janeiro", -43.17, -22.91],
-            ["Salvador", -38.50, -12.97],
-            ["Recife", -34.88, -8.05],
-            ["Manaus", -60.02, -3.12],
-            ["Porto Alegre", -51.23, -30.03]
-        ]
-    },
-
-    {
-        id: "argentina",
-        name: "Argentinië",
-        flag: "🇦🇷",
-        continent: "ZUID-AMERIKA",
-        countries: ["Argentina"],
-        cities: [
-            ["Buenos Aires", -58.38, -34.60],
-            ["Córdoba", -64.19, -31.42],
-            ["Rosario", -60.65, -32.95],
-            ["Mendoza", -68.85, -32.89],
-            ["Salta", -65.41, -24.78],
-            ["Ushuaia", -68.30, -54.80],
-            ["La Plata", -57.95, -34.92]
-        ]
-    },
-
-    {
-        id: "chile",
-        name: "Chili",
-        flag: "🇨🇱",
-        continent: "ZUID-AMERIKA",
-        countries: ["Chile"],
-        cities: [
-            ["Santiago", -70.67, -33.45],
-            ["Valparaíso", -71.63, -33.05],
-            ["Concepción", -73.05, -36.83],
-            ["Antofagasta", -70.40, -23.65],
-            ["Temuco", -72.59, -38.74],
-            ["Puerto Montt", -73.00, -41.47],
-            ["Punta Arenas", -70.91, -53.16]
-        ]
-    },
-
-    {
-        id: "west_south_america",
-        name: "West-Zuid-Amerikaanse Republiek",
-        flag: "🌎",
-        continent: "ZUID-AMERIKA",
+        id: "westelijk_midden_oosten",
+        name: "Westelijk Midden-Oosten",
+        flag: "🇵🇸",
+        region: "AZIË",
         countries: [
-            "Peru",
-            "Ecuador",
-            "Colombia"
+            "Palestine",
+            "Syria",
+            "Jordan",
+            "Lebanon"
         ],
-        cities: [
-            ["Lima", -77.04, -12.05],
-            ["Quito", -78.47, -0.18],
-            ["Bogotá", -74.07, 4.71],
-            ["Guayaquil", -79.90, -2.19],
-            ["Medellín", -75.56, 6.25],
-            ["Cusco", -71.97, -13.53],
-            ["Cali", -76.53, 3.45]
-        ]
-    },
-
-    {
-        id: "venezuela_guiana",
-        name: "Venezuela + Guyana + Suriname",
-        flag: "🇻🇪",
-        continent: "ZUID-AMERIKA",
-        countries: [
-            "Venezuela",
-            "Guyana",
-            "Suriname"
-        ],
-        cities: [
-            ["Caracas", -66.90, 10.48],
-            ["Georgetown", -58.16, 6.80],
-            ["Paramaribo", -55.20, 5.85],
-            ["Maracaibo", -71.64, 10.65],
-            ["Valencia", -68.01, 10.16],
-            ["Ciudad Guayana", -62.63, 8.35],
-            ["Cumaná", -64.17, 10.45]
-        ]
-    },
-
-
-    /* =====================================================
-       AFRIKA
-    ===================================================== */
-
-    {
-        id: "libya_egypt",
-        name: "Libyano-Egyptische Unie",
-        flag: "🇪🇬🇱🇾",
-        continent: "AFRIKA",
-        special: true,
-        countries: [
-            "Egypt",
-            "Libya",
-            "Sudan"
-        ],
-        cities: [
-            ["Caïro", 31.24, 30.04],
-            ["Tripoli", 13.19, 32.89],
-            ["Khartoem", 32.53, 15.50],
-            ["Alexandrië", 29.92, 31.20],
-            ["Benghazi", 20.07, 32.12],
-            ["Port Sudan", 37.22, 19.62],
-            ["Aswan", 32.90, 24.09]
-        ]
-    },
-
-    {
-        id: "southwest_africa",
-        name: "Zuid-West-Afrikaanse Unie",
-        flag: "🌍",
-        continent: "AFRIKA",
-        countries: [
-            "Guinea",
-            "Ghana",
-            "Liberia",
-            "Sierra Leone",
-            "Senegal",
-            "Gambia",
-            "Guinea-Bissau",
-            "Togo",
-            "Benin",
-            "Burkina Faso",
-            "Ivory Coast"
-        ],
-        cities: [
-            ["Accra", -0.19, 5.56],
-            ["Dakar", -17.47, 14.72],
-            ["Conakry", -13.58, 9.64],
-            ["Monrovia", -10.80, 6.31],
-            ["Freetown", -13.23, 8.48],
-            ["Lomé", 1.22, 6.13],
-            ["Abidjan", -4.02, 5.36]
-        ]
-    },
-
-    {
-        id: "southern_africa",
-        name: "Zuidelijke Afrikaanse Samenwerking",
-        flag: "🌍",
-        continent: "AFRIKA",
-        countries: [
-            "South Africa",
-            "Lesotho",
-            "Eswatini",
-            "Namibia",
-            "Botswana",
-            "Zimbabwe",
-            "Mozambique"
-        ],
-        cities: [
-            ["Pretoria", 28.19, -25.75],
-            ["Windhoek", 17.08, -22.56],
-            ["Gaborone", 25.91, -24.65],
-            ["Harare", 31.05, -17.83],
-            ["Maputo", 32.58, -25.97],
-            ["Maseru", 27.48, -29.31],
-            ["Mbabane", 31.14, -26.31]
-        ]
-    },
-
-    {
-        id: "madagascar",
-        name: "Madagaskar",
-        flag: "🇲🇬",
-        continent: "AFRIKA",
-        countries: ["Madagascar"],
-        cities: [
-            ["Antananarivo", 47.52, -18.91],
-            ["Toamasina", 49.40, -18.15],
-            ["Antsirabe", 47.03, -19.87],
-            ["Mahajanga", 46.32, -15.72],
-            ["Fianarantsoa", 47.09, -21.45],
-            ["Toliara", 43.67, -23.35],
-            ["Morondava", 44.28, -20.28]
-        ]
-    },
-
-    {
-        id: "east_africa",
-        name: "Oost-Afrika",
-        flag: "🌍",
-        continent: "AFRIKA",
-        countries: [
-            "Somalia",
-            "Malawi",
-            "Tanzania",
-            "Kenya",
-            "Uganda",
-            "South Sudan",
-            "Ethiopia",
-            "Eritrea",
-            "Djibouti"
-        ],
-        cities: [
-            ["Nairobi", 36.82, -1.29],
-            ["Addis Abeba", 38.75, 9.03],
-            ["Mogadishu", 45.32, 2.05],
-            ["Dar es Salaam", 39.21, -6.79],
-            ["Kampala", 32.58, 0.35],
-            ["Juba", 31.58, 4.85],
-            ["Asmara", 38.93, 15.32]
-        ]
-    },
-
-    {
-        id: "congo",
-        name: "Congo",
-        flag: "🇨🇩",
-        continent: "AFRIKA",
-        countries: [
-            "Democratic Republic of the Congo",
-            "Republic of the Congo",
-            "Burundi",
-            "Rwanda"
-        ],
-        cities: [
-            ["Kinshasa", 15.27, -4.32],
-            ["Brazzaville", 15.28, -4.27],
-            ["Kigali", 30.06, -1.94],
-            ["Bujumbura", 29.36, -3.38],
-            ["Lubumbashi", 27.48, -11.66],
-            ["Goma", 29.23, -1.68],
-            ["Mbuji-Mayi", 23.60, -6.14]
-        ]
-    },
-
-    {
-        id: "central_africa",
-        name: "Middenlands-Afrika",
-        flag: "🌍",
-        continent: "AFRIKA",
-        countries: [
-            "Niger",
-            "Nigeria",
-            "Cameroon",
-            "Central African Republic",
-            "Gabon",
-            "Chad"
-        ],
-        cities: [
-            ["Abuja", 7.49, 9.08],
-            ["Niamey", 2.11, 13.51],
-            ["Yaoundé", 11.52, 3.87],
-            ["Bangui", 18.56, 4.39],
-            ["Libreville", 9.45, 0.39],
-            ["N'Djamena", 15.06, 12.13],
-            ["Lagos", 3.38, 6.52]
-        ]
-    },
-
-    {
-        id: "africa_filler",
-        name: "Afrikaanse Filler",
-        flag: "🌍",
-        continent: "AFRIKA",
-        countries: [
-            "Angola",
-            "Cape Verde",
-            "Comoros",
-            "Mauritius",
-            "Seychelles"
-        ],
-        cities: [
-            ["Luanda", 13.23, -8.84],
-            ["Praia", -23.51, 14.93],
-            ["Moroni", 43.26, -11.70],
-            ["Port Louis", 57.50, -20.16],
-            ["Victoria", 55.45, -4.62],
-            ["Lobito", 13.57, -12.35],
-            ["Huambo", 15.74, -12.78]
-        ]
-    },
-
-
-    /* =====================================================
-       OCEANIË
-    ===================================================== */
-
-    {
-        id: "australia_nz",
-        name: "Australië + Nieuw-Zeeland",
-        flag: "🇦🇺🇳🇿",
-        continent: "OCEANIË",
-        countries: [
-            "Australia",
-            "New Zealand",
-            "Micronesia",
-            "Marshall Islands",
-            "Palau",
-            "Kiribati",
-            "Tuvalu",
-            "Nauru",
-            "Fiji",
-            "Samoa",
-            "Tonga",
-            "Vanuatu",
-            "Solomon Islands"
-        ],
-        cities: [
-            ["Canberra", 149.13, -35.28],
-            ["Sydney", 151.21, -33.87],
-            ["Melbourne", 144.96, -37.81],
-            ["Perth", 115.86, -31.95],
-            ["Brisbane", 153.03, -27.47],
-            ["Auckland", 174.76, -36.85],
-            ["Wellington", 174.78, -41.29]
+        zones: [
+            "Damascus",
+            "Aleppo",
+            "Amman",
+            "Beiroet",
+            "Jeruzalem",
+            "Gaza",
+            "Nablus"
         ]
     }
 
@@ -1895,761 +1470,295 @@ const powers = [
 
 
 /* =========================================================
-   ELEMENTEN
-========================================================= */
+   ACCOUNT
+   ========================================================= */
+
+const playerRaw =
+    sessionStorage.getItem(
+        "globalConquestPlayer"
+    );
+
+let player = null;
+
+try {
+    player = playerRaw
+        ? JSON.parse(playerRaw)
+        : null;
+} catch {
+    player = null;
+}
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const commanderName =
+    document.getElementById("commanderName");
+
+const points =
+    document.getElementById("points");
+
+const manpower =
+    document.getElementById("manpower");
+
+const factories =
+    document.getElementById("factories");
+
+const chooseCountryButton =
+    document.getElementById(
+        "chooseCountryButton"
+    );
+
+const countryOverlay =
+    document.getElementById(
+        "countryOverlay"
+    );
+
+const closeCountry =
+    document.getElementById(
+        "closeCountry"
+    );
 
 const countryList =
     document.getElementById(
         "countryList"
     );
 
-const selectedPower =
+const selectCountryButton =
     document.getElementById(
-        "selectedPower"
+        "selectCountryButton"
     );
 
-const selectedCity =
+const countrySelectedText =
     document.getElementById(
-        "selectedCity"
+        "countrySelectedText"
     );
 
-const mapTitle =
+const selectedCountry =
     document.getElementById(
-        "mapTitle"
+        "selectedCountry"
     );
 
-const mapInstruction =
+const selectedName =
     document.getElementById(
-        "mapInstruction"
+        "selectedName"
     );
 
-const selectCityButton =
+const selectedRegion =
     document.getElementById(
-        "selectCityButton"
+        "selectedRegion"
     );
 
-const svg =
-    d3.select(
-        "#worldMap"
-    );
-
-const mapContainer =
+const loadMapButton =
     document.getElementById(
-        "mapContainer"
+        "loadMapButton"
     );
-
-const loading =
-    document.getElementById(
-        "mapLoading"
-    );
-
-
-let worldData = null;
-
-let currentPower = null;
-
-let currentCity = null;
 
 
 /* =========================================================
-   CONTINENTEN
-========================================================= */
+   ACCOUNT INFO
+   ========================================================= */
 
-const continentOrder = [
-    "EUROPA",
-    "AZIË",
-    "AMERIKA",
-    "ZUID-AMERIKA",
-    "AFRIKA",
-    "OCEANIË"
-];
+if (player) {
+
+    commanderName.textContent =
+        player.naam ||
+        player.name ||
+        "COMMANDER";
+
+    points.textContent =
+        player.points ??
+        Math.max(
+            0,
+            Number(player.plus || 0) -
+            Math.abs(Number(player.min || 0))
+        );
+
+    manpower.textContent =
+        player.mankracht ??
+        player.manpower ??
+        0;
+
+    factories.textContent =
+        player.fabrieken ??
+        player.factories ??
+        0;
+
+}
 
 
 /* =========================================================
-   POWER LIJST MAKEN
-========================================================= */
+   COUNTRY LIST
+   ========================================================= */
 
-function maakLandLijst() {
+let selectedPower = null;
+
+
+function renderCountryList() {
 
     countryList.innerHTML = "";
 
-
-    continentOrder.forEach(
-        function(continent) {
-
-            const continentPowers =
-                powers.filter(
-                    function(power) {
-
-                        return power.continent
-                            .split(" / ")
-                            .includes(continent);
-
-                    }
-                );
-
-
-            if (
-                !continentPowers.length
-            ) {
-                return;
-            }
-
-
-            const title =
-                document.createElement(
-                    "div"
-                );
-
-            title.className =
-                "gc-list-continent";
-
-            title.textContent =
-                continent;
-
-            countryList.appendChild(
-                title
-            );
-
-
-            continentPowers.forEach(
-                function(power) {
-
-                    const button =
-                        document.createElement(
-                            "button"
-                        );
-
-                    button.className =
-                        "gc-power-button";
-
-
-                    if (power.special) {
-
-                        button.classList.add(
-                            "special"
-                        );
-
-                    }
-
-
-                    button.innerHTML = `
-                        <span class="gc-power-flag">
-                            ${power.flag}
-                        </span>
-
-                        <span>
-                            ${power.name}
-                        </span>
-                    `;
-
-
-                    button.addEventListener(
-                        "click",
-                        function() {
-
-                            kiesMacht(
-                                power
-                            );
-
-
-                            document
-                                .querySelectorAll(
-                                    ".gc-power-button"
-                                )
-                                .forEach(
-                                    function(other) {
-
-                                        other.classList.remove(
-                                            "active"
-                                        );
-
-                                    }
-                                );
-
-
-                            button.classList.add(
-                                "active"
-                            );
-
-                        }
-                    );
-
-
-                    countryList.appendChild(
-                        button
-                    );
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-maakLandLijst();
-
-
-/* =========================================================
-   MACHT KIEZEN
-========================================================= */
-
-function kiesMacht(power) {
-
-    currentPower =
-        power;
-
-    currentCity =
-        null;
-
-
-    selectedPower.textContent =
-        power.name.toUpperCase();
-
-
-    selectedCity.textContent =
-        "KLIK OP EEN STAD";
-
-
-    mapTitle.textContent =
-        power.flag +
-        " " +
-        power.name;
-
-
-    mapInstruction.textContent =
-        "Klik op één van de 7 strategische steden.";
-
-
-    selectCityButton.disabled =
-        true;
-
-
-    selectCityButton.textContent =
-        "SELECTEER STAD";
-
-
-    tekenKaart();
-
-}
-
-
-/* =========================================================
-   WERELDKAART LADEN
-========================================================= */
-
-async function laadWereld() {
-
-    try {
-
-        const response =
-            await fetch(
-                "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json"
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Wereldkaart kon niet geladen worden."
-            );
-
-        }
-
-
-        worldData =
-            await response.json();
-
-
-        loading.style.display =
-            "none";
-
-
-        tekenKaart();
-
-
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        loading.textContent =
-            "WERELDKAART KON NIET WORDEN GELADEN.";
-
-    }
-
-}
-
-
-/* =========================================================
-   NAAM NORMALISEREN
-========================================================= */
-
-function normaliseerNaam(name) {
-
-    return String(name)
-        .toLowerCase()
-        .replace(
-            /[^a-z0-9]/g,
-            ""
-        );
-
-}
-
-
-/* =========================================================
-   CONTROLEREN OF LAND BIJ MACHT HOORT
-========================================================= */
-
-function countryIsPartOfPower(
-    countryName
-) {
-
-    if (!currentPower) {
-        return false;
-    }
-
-
-    const wanted =
-        currentPower.countries
-            .map(
-                normaliseerNaam
-            );
-
-
-    return wanted.includes(
-        normaliseerNaam(
-            countryName
-        )
-    );
-
-}
-
-
-/* =========================================================
-   KAART TEKENEN
-========================================================= */
-
-function tekenKaart() {
-
-    if (!worldData) {
-        return;
-    }
-
-
-    const width =
-        mapContainer.clientWidth;
-
-
-    const height =
-        mapContainer.clientHeight;
-
-
-    if (
-        width <= 0 ||
-        height <= 0
-    ) {
-        return;
-    }
-
-
-    svg
-        .attr(
-            "width",
-            width
-        )
-        .attr(
-            "height",
-            height
-        )
-        .attr(
-            "viewBox",
-            `0 0 ${width} ${height}`
-        );
-
-
-    svg
-        .selectAll("*")
-        .remove();
-
-
-    const world =
-        topojson.feature(
-            worldData,
-            worldData.objects.countries
-        );
-
-
-    /* =====================================================
-       KAARTPROJECTION
-       VOLLEDIGE RECHTERKANT
-    ===================================================== */
-
-    const projection =
-        d3.geoNaturalEarth1();
-
-
-    projection.fitExtent(
-        [
-            [20, 20],
-            [
-                width - 20,
-                height - 20
-            ]
-        ],
-        world
-    );
-
-
-    const path =
-        d3.geoPath()
-            .projection(
-                projection
-            );
-
-
-    /* =====================================================
-       ALLE LANDEN
-    ===================================================== */
-
-    svg
-        .append("g")
-        .selectAll("path")
-        .data(
-            world.features
-        )
-        .join("path")
-        .attr(
-            "class",
-            "gc-map-country"
-        )
-        .attr(
-            "d",
-            path
-        );
-
-
-    /* =====================================================
-       SAMENGEVOEGDE GEBIEDEN
-    ===================================================== */
-
-    if (currentPower) {
-
-        svg
-            .append("g")
-            .selectAll("path")
-            .data(
-                world.features.filter(
-                    function(feature) {
-
-                        return countryIsPartOfPower(
-                            feature.properties.name
-                        );
-
-                    }
-                )
-            )
-            .join("path")
-            .attr(
-                "class",
-                "gc-map-country selected-territory"
-            )
-            .attr(
-                "d",
-                path
-            );
-
-    }
-
-
-    /* =====================================================
-       LANDGRENZEN
-    ===================================================== */
-
-    svg
-        .append("path")
-        .datum(
-            topojson.mesh(
-                worldData,
-                worldData.objects.countries,
-                function(a, b) {
-
-                    return a !== b;
-
-                }
-            )
-        )
-        .attr(
-            "class",
-            "gc-map-borders"
-        )
-        .attr(
-            "d",
-            path
-        );
-
-
-    /* =====================================================
-       STEDEN
-    ===================================================== */
-
-    if (!currentPower) {
-        return;
-    }
-
-
-    const cityGroup =
-        svg
-            .append("g")
-            .attr(
-                "class",
-                "gc-city-layer"
-            );
-
-
-    currentPower.cities.forEach(
-        function(
-            city,
-            index
-        ) {
-
-            const cityName =
-                city[0];
-
-            const longitude =
-                city[1];
-
-            const latitude =
-                city[2];
-
-
-            const coordinates =
-                projection(
-                    [
-                        longitude,
-                        latitude
-                    ]
-                );
-
-
-            if (!coordinates) {
-                return;
-            }
-
-
-            const x =
-                coordinates[0];
-
-            const y =
-                coordinates[1];
-
-
-            const cityNode =
-                cityGroup
-                    .append("g")
-                    .attr(
-                        "class",
-                        "gc-city-marker"
+    powers.forEach(power => {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "country-option";
+
+        button.innerHTML = `
+            <div class="country-option-name">
+                ${power.flag} ${power.name}
+            </div>
+
+            <div class="country-option-region">
+                ${power.region} · 7 CONQUEST ZONES
+            </div>
+        `;
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(
+                        ".country-option"
                     )
-                    .attr(
-                        "transform",
-                        `translate(${x},${y})`
-                    )
-                    .on(
-                        "click",
-                        function(event) {
-
-                            event.stopPropagation();
-
-                            kiesStad(
-                                cityName,
-                                index
-                            );
-
-                        }
+                    .forEach(element =>
+                        element.classList.remove(
+                            "active"
+                        )
                     );
 
+                button.classList.add("active");
 
-            cityNode
-                .append("circle")
-                .attr(
-                    "r",
-                    9
-                );
+                selectedPower = power;
 
+                countrySelectedText.textContent =
+                    `${power.flag} ${power.name}`;
 
-            cityNode
-                .append("circle")
-                .attr(
-                    "class",
-                    "gc-city-inner"
-                )
-                .attr(
-                    "r",
-                    4
-                );
-
-
-            cityNode
-                .append("text")
-                .attr(
-                    "x",
-                    13
-                )
-                .attr(
-                    "y",
-                    4
-                )
-                .text(
-                    cityName
-                );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   STAD KIEZEN
-========================================================= */
-
-function kiesStad(
-    cityName,
-    cityIndex
-) {
-
-    if (!currentPower) {
-        return;
-    }
-
-
-    currentCity = {
-        name: cityName,
-        index: cityIndex
-    };
-
-
-    selectedCity.textContent =
-        cityName.toUpperCase();
-
-
-    mapInstruction.textContent =
-        cityName +
-        " geselecteerd. Bevestig hieronder.";
-
-
-    selectCityButton.disabled =
-        false;
-
-
-    document
-        .querySelectorAll(
-            ".gc-city-marker"
-        )
-        .forEach(
-            function(
-                marker,
-                index
-            ) {
-
-                marker.classList.toggle(
-                    "chosen",
-                    index === cityIndex
-                );
+                selectCountryButton.disabled =
+                    false;
 
             }
         );
 
+        countryList.appendChild(button);
+
+    });
+
 }
 
 
 /* =========================================================
-   STAD BEVESTIGEN
-========================================================= */
+   OPEN / CLOSE
+   ========================================================= */
 
-selectCityButton.addEventListener(
+chooseCountryButton.addEventListener(
     "click",
-    function() {
+    () => {
+
+        countryOverlay.classList.add("show");
+
+    }
+);
+
+
+closeCountry.addEventListener(
+    "click",
+    () => {
+
+        countryOverlay.classList.remove("show");
+
+    }
+);
+
+
+countryOverlay.addEventListener(
+    "click",
+    event => {
 
         if (
-            !currentPower ||
-            !currentCity
+            event.target === countryOverlay
         ) {
-            return;
+
+            countryOverlay.classList.remove(
+                "show"
+            );
+
         }
-
-
-        sessionStorage.setItem(
-            "globalConquestNation",
-            currentPower.name
-        );
-
-
-        sessionStorage.setItem(
-            "globalConquestCapital",
-            currentCity.name
-        );
-
-
-        mapInstruction.textContent =
-            currentCity.name +
-            " is jouw startgebied.";
-
-
-        selectCityButton.textContent =
-            "STARTGEBIED GESELECTEERD";
-
-
-        selectCityButton.disabled =
-            true;
-
-
-        alert(
-            "STARTGEBIED GESELECTEERD\n\n" +
-            currentPower.name +
-            "\n" +
-            currentCity.name
-        );
 
     }
 );
 
 
 /* =========================================================
-   TERUG NAAR COMMAND CENTER
-========================================================= */
+   SELECT
+   ========================================================= */
 
-document
-    .getElementById(
-        "backButton"
-    )
-    .addEventListener(
-        "click",
-        function() {
+selectCountryButton.addEventListener(
+    "click",
+    () => {
 
-            window.location.href =
-                "./game.html";
+        if (!selectedPower) return;
 
-        }
-    );
+
+        /*
+         * Het gekozen rijk wordt aan deze
+         * browser/account-sessie gekoppeld.
+         */
+
+        sessionStorage.setItem(
+            "globalConquestNation",
+            selectedPower.name
+        );
+
+        sessionStorage.setItem(
+            "globalConquestNationId",
+            selectedPower.id
+        );
+
+        sessionStorage.setItem(
+            "globalConquestCapital",
+            selectedPower.zones[0]
+        );
+
+
+        /*
+         * UI
+         */
+
+        selectedName.textContent =
+            `${selectedPower.flag} ${selectedPower.name}`;
+
+        selectedRegion.textContent =
+            `${selectedPower.region} · 7 CONQUEST ZONES`;
+
+        selectedCountry.classList.add("show");
+
+        chooseCountryButton.innerHTML =
+            `✓ ${selectedPower.name}
+             <span class="arrow">→</span>`;
+
+        loadMapButton.classList.add("show");
+
+        countryOverlay.classList.remove("show");
+
+    }
+);
 
 
 /* =========================================================
-   RESIZE
-========================================================= */
+   MAP
+   ========================================================= */
 
-window.addEventListener(
-    "resize",
-    function() {
+loadMapButton.addEventListener(
+    "click",
+    () => {
 
-        if (worldData) {
-            tekenKaart();
-        }
+        window.location.href =
+            "./map.html";
 
     }
 );
@@ -2657,9 +1766,54 @@ window.addEventListener(
 
 /* =========================================================
    START
-========================================================= */
+   ========================================================= */
 
-laadWereld();
+renderCountryList();
+
+
+/*
+ * Als er al een land gekozen was,
+ * herstel dit uit sessionStorage.
+ */
+
+const savedNationId =
+    sessionStorage.getItem(
+        "globalConquestNationId"
+    );
+
+if (savedNationId) {
+
+    const saved =
+        powers.find(
+            power =>
+                power.id === savedNationId
+        );
+
+    if (saved) {
+
+        selectedPower = saved;
+
+        selectedName.textContent =
+            `${saved.flag} ${saved.name}`;
+
+        selectedRegion.textContent =
+            `${saved.region} · 7 CONQUEST ZONES`;
+
+        selectedCountry.classList.add(
+            "show"
+        );
+
+        chooseCountryButton.innerHTML =
+            `✓ ${saved.name}
+             <span class="arrow">→</span>`;
+
+        loadMapButton.classList.add(
+            "show"
+        );
+
+    }
+
+}
 
 </script>
 
