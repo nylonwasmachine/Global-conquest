@@ -1473,19 +1473,30 @@ const powers = [
    ACCOUNT
    ========================================================= */
 
-const playerRaw =
+const playerName =
     sessionStorage.getItem(
         "globalConquestPlayer"
     );
 
-let player = null;
+const playerId =
+    sessionStorage.getItem(
+        "globalConquestPlayerId"
+    );
 
-try {
-    player = playerRaw
-        ? JSON.parse(playerRaw)
-        : null;
-} catch {
-    player = null;
+const sessionToken =
+    sessionStorage.getItem(
+        "globalConquestSession"
+    );
+
+if (!playerName || !sessionToken) {
+
+    console.warn(
+        "Geen geldige Global Conquest sessie gevonden."
+    );
+
+    window.location.href =
+        "./index.html";
+
 }
 
 
