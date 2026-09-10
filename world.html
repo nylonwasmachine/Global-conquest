@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Global Conquest — Choose Country</title>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <link rel="stylesheet" href="./style.css">
 
 <style>
+
 /* =========================================================
-   WORLD SELECT — EXTRA STYLES
+   WORLD SELECT
    ========================================================= */
 
 .world-select-screen {
     min-height: 100vh;
     position: relative;
     overflow: hidden;
+
     background:
         radial-gradient(
             circle at center,
@@ -58,6 +65,11 @@
     pointer-events: none;
 }
 
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 .world-header {
     position: relative;
     z-index: 5;
@@ -78,7 +90,9 @@
 
 .world-logo {
     color: #bffff0;
+
     font-weight: bold;
+
     letter-spacing: 4px;
 }
 
@@ -120,6 +134,11 @@
     color: #9dffd0;
 }
 
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+
 .world-layout {
     position: relative;
     z-index: 2;
@@ -132,6 +151,7 @@
     grid-template-columns:
         230px 1fr;
 }
+
 
 /* =========================================================
    STATS
@@ -192,6 +212,7 @@
     background:
         rgba(0,255,150,.1);
 }
+
 
 /* =========================================================
    CENTER
@@ -274,6 +295,11 @@
     margin: 0 auto 30px;
 }
 
+
+/* =========================================================
+   CHOOSE BUTTON
+   ========================================================= */
+
 .choose-country-button {
     display: inline-flex;
 
@@ -316,6 +342,11 @@
 .choose-country-button .arrow {
     font-size: 18px;
 }
+
+.choose-country-button:disabled {
+    cursor: not-allowed;
+}
+
 
 /* =========================================================
    SELECTED COUNTRY
@@ -371,6 +402,11 @@
     letter-spacing: 1px;
 }
 
+
+/* =========================================================
+   LOAD MAP
+   ========================================================= */
+
 .load-map-button {
     display: none;
 
@@ -406,6 +442,7 @@
     box-shadow:
         0 0 20px rgba(0,255,150,.18);
 }
+
 
 /* =========================================================
    COUNTRY OVERLAY
@@ -552,6 +589,11 @@
     color: #9dffd0;
 }
 
+
+/* =========================================================
+   COUNTRY LIST
+   ========================================================= */
+
 .country-list {
     overflow-y: auto;
 
@@ -623,6 +665,11 @@
     margin-top: 6px;
 }
 
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 .country-window-footer {
     display: flex;
 
@@ -679,6 +726,7 @@
         rgba(0,255,150,.18);
 }
 
+
 /* =========================================================
    RESPONSIVE
    ========================================================= */
@@ -725,7 +773,6 @@
     .country-list {
         grid-template-columns: 1fr;
     }
-
 }
 
 @media(max-width:500px) {
@@ -763,10 +810,12 @@
     .select-country-button {
         width: 100%;
     }
-
 }
+
 </style>
+
 </head>
+
 
 <body>
 
@@ -774,6 +823,11 @@
 
     <div class="world-select-grid"></div>
     <div class="world-select-scanlines"></div>
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
 
     <header class="world-header">
 
@@ -795,15 +849,23 @@
     </header>
 
 
+    <!-- =====================================================
+         MAIN LAYOUT
+         ===================================================== -->
+
     <div class="world-layout">
 
-        <!-- LINKS: ALLEEN STATS -->
+
+        <!-- =================================================
+             STATS
+             ================================================= -->
 
         <aside class="world-stats">
 
             <div class="world-stats-title">
                 COMMAND RESOURCES
             </div>
+
 
             <div class="world-stat">
 
@@ -821,6 +883,7 @@
 
             </div>
 
+
             <div class="world-stat">
 
                 <div class="world-stat-label">
@@ -836,6 +899,7 @@
                 <div class="world-stat-line"></div>
 
             </div>
+
 
             <div class="world-stat">
 
@@ -856,29 +920,35 @@
         </aside>
 
 
-        <!-- MIDDEN -->
+        <!-- =================================================
+             CENTER
+             ================================================= -->
 
         <main class="world-select-center">
 
             <section class="world-select-content">
 
                 <div class="world-select-status">
-                    <span class="status-dot"></span>
+                    <span class="status-dot">●</span>
                     WORLD COMMAND READY
                 </div>
+
 
                 <h1>
                     CHOOSE<br>
                     <span>COUNTRY</span>
                 </h1>
 
+
                 <div class="world-title-line"></div>
+
 
                 <p class="world-select-description">
                     SELECT A POWER TO BEGIN YOUR CONQUEST.
                     EACH POWER CONTROLS SEVEN STRATEGIC
                     CONQUEST ZONES.
                 </p>
+
 
                 <button
                     class="choose-country-button"
@@ -917,6 +987,7 @@
                     id="loadMapButton">
 
                     LOAD MAP →
+
                 </button>
 
             </section>
@@ -928,15 +999,16 @@
 </div>
 
 
-<!-- =====================================================
+<!-- =========================================================
      COUNTRY SELECT WINDOW
-     ===================================================== -->
+     ========================================================= -->
 
 <div
     class="country-overlay"
     id="countryOverlay">
 
     <div class="country-grid"></div>
+
 
     <div class="country-window">
 
@@ -954,10 +1026,13 @@
 
             </div>
 
+
             <button
                 class="close-country"
                 id="closeCountry">
+
                 ×
+
             </button>
 
         </div>
@@ -974,11 +1049,13 @@
             <div class="country-selected-text">
 
                 SELECTED:
+
                 <strong id="countrySelectedText">
                     NONE
                 </strong>
 
             </div>
+
 
             <button
                 class="select-country-button"
@@ -994,6 +1071,7 @@
     </div>
 
 </div>
+
 
 
 <script>
@@ -1469,16 +1547,26 @@ const powers = [
 ];
 
 
-<script>
 /* =========================================================
    SUPABASE
    ========================================================= */
 
 const SUPABASE_URL =
-    "JOUW_BESTAANDE_SUPABASE_URL";
+    "https://qelqaiczgibxyxfqtapg.supabase.co";
+
+
+/*
+ * BELANGRIJK:
+ *
+ * Zet hieronder DEZELFDE PUBLISHABLE/ANON KEY
+ * als in jouw bestaande game.html.
+ *
+ * GEBRUIK HIER NIET DE SERVICE_ROLE KEY.
+ */
 
 const SUPABASE_KEY =
-    "JOUW_BESTAANDE_PUBLISHABLE_KEY";
+    "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
+
 
 const database =
     window.supabase.createClient(
@@ -1505,16 +1593,6 @@ const sessionToken =
     sessionStorage.getItem(
         "globalConquestSession"
     );
-
-if (!playerName || !sessionToken) {
-
-    console.warn(
-        "Geen geldige Global Conquest sessie gevonden."
-    );
-
-    window.location.href =
-        "./index.html";
-}
 
 
 /* =========================================================
@@ -1587,11 +1665,27 @@ const loadMapButton =
 
 
 /* =========================================================
-   ACCOUNT INFO
+   BASIC SESSION CHECK
    ========================================================= */
 
-commanderName.textContent =
-    playerName;
+if (
+    !playerName ||
+    !sessionToken
+) {
+
+    console.warn(
+        "Geen geldige Global Conquest sessie gevonden."
+    );
+
+    window.location.href =
+        "./index.html";
+
+} else {
+
+    commanderName.textContent =
+        playerName;
+
+}
 
 
 /* =========================================================
@@ -1600,26 +1694,14 @@ commanderName.textContent =
 
 let activeWW3 = null;
 
-let occupiedCountries = new Map();
+let occupiedCountries =
+    new Map();
 
 let myWW3 = null;
 
 let selectedPower = null;
 
 let isGovernment = false;
-
-
-/* =========================================================
-   COUNTRY DATA
-   ========================================================= */
-
-/*
- * LAAT HIER JE BESTAANDE powers = [ ... ];
- * VOLLEDIG STAAN.
- *
- * Dus jouw huidige powers-array blijft precies
- * zoals hij nu is.
- */
 
 
 /* =========================================================
@@ -1675,9 +1757,12 @@ function setLocalNation(power) {
 
 function showSelectedPower(power) {
 
-    if (!power) return;
+    if (!power) {
+        return;
+    }
 
-    selectedPower = power;
+    selectedPower =
+        power;
 
     selectedName.textContent =
         `${power.flag} ${power.name}`;
@@ -1701,25 +1786,29 @@ function showSelectedPower(power) {
 
 
 /* =========================================================
-   CHECK ACCOUNT ROLE
+   ACCOUNT ROLE
    ========================================================= */
 
 async function checkAccountRole() {
 
+    isGovernment = false;
+
     try {
 
-        /*
-         * We gebruiken de serverfunctie om het account
-         * uit de beveiligde sessie te halen.
-         */
-
-        const { data, error } =
+        const result =
             await database.rpc(
                 "get_player_from_session",
                 {
-                    p_token: sessionToken
+                    p_token:
+                        sessionToken
                 }
             );
+
+        const data =
+            result.data;
+
+        const error =
+            result.error;
 
         if (error) {
             throw error;
@@ -1731,24 +1820,31 @@ async function checkAccountRole() {
             );
         }
 
-        isGovernment =
-            String(data.account_role || "")
-                .toLowerCase() ===
-            "government";
+        const role =
+            String(
+                data.account_role || ""
+            ).toLowerCase();
 
-        /*
-         * Extra controle:
-         * alleen het echte Overheid-account
-         * krijgt de WW3-beheerfunctie.
-         */
+        const name =
+            String(
+                data.naam || ""
+            ).toLowerCase();
 
         if (
-            String(data.naam || "")
-                .toLowerCase() !==
-            "overheid"
+            role === "government" &&
+            name === "overheid"
         ) {
-            isGovernment = false;
+
+            isGovernment = true;
+
         }
+
+        console.log(
+            "Account:",
+            data.naam,
+            "Role:",
+            data.account_role
+        );
 
     } catch (error) {
 
@@ -1758,6 +1854,7 @@ async function checkAccountRole() {
         );
 
         isGovernment = false;
+
     }
 
 }
@@ -1771,10 +1868,16 @@ async function loadActiveWW3() {
 
     try {
 
-        const { data, error } =
+        const result =
             await database.rpc(
                 "get_active_ww3"
             );
+
+        const data =
+            result.data;
+
+        const error =
+            result.error;
 
         if (error) {
             throw error;
@@ -1785,11 +1888,13 @@ async function loadActiveWW3() {
             data.length > 0
         ) {
 
-            activeWW3 = data[0];
+            activeWW3 =
+                data[0];
 
         } else {
 
-            activeWW3 = null;
+            activeWW3 =
+                null;
 
         }
 
@@ -1801,6 +1906,7 @@ async function loadActiveWW3() {
         );
 
         activeWW3 = null;
+
     }
 
 }
@@ -1821,10 +1927,16 @@ async function loadOccupiedCountries() {
 
     try {
 
-        const { data, error } =
+        const result =
             await database.rpc(
                 "get_ww3_countries"
             );
+
+        const data =
+            result.data;
+
+        const error =
+            result.error;
 
         if (error) {
             throw error;
@@ -1873,7 +1985,7 @@ async function loadMyWW3() {
 
     try {
 
-        const { data, error } =
+        const result =
             await database.rpc(
                 "get_my_ww3",
                 {
@@ -1881,6 +1993,12 @@ async function loadMyWW3() {
                         sessionToken
                 }
             );
+
+        const data =
+            result.data;
+
+        const error =
+            result.error;
 
         if (error) {
             throw error;
@@ -1891,7 +2009,8 @@ async function loadMyWW3() {
             data.length > 0
         ) {
 
-            myWW3 = data[0];
+            myWW3 =
+                data[0];
 
         }
 
@@ -1914,11 +2033,6 @@ async function loadMyWW3() {
 function renderCountryList() {
 
     countryList.innerHTML = "";
-
-    /*
-     * Beschikbare landen eerst.
-     * Bezette landen onderaan.
-     */
 
     const sortedPowers =
         [...powers].sort(
@@ -1961,6 +2075,7 @@ function renderCountryList() {
                     power.id
                 );
 
+
             const button =
                 document.createElement(
                     "button"
@@ -1992,7 +2107,7 @@ function renderCountryList() {
                 <div class="country-option-region">
                     ${
                         isTaken
-                            ? `BEZET — ${owner}`
+                            ? `BEZET — ${owner || "UNKNOWN"}`
                             : `${power.region} · 7 CONQUEST ZONES`
                     }
                 </div>
@@ -2010,21 +2125,28 @@ function renderCountryList() {
                                 ".country-option"
                             )
                             .forEach(
-                                element =>
+                                element => {
+
                                     element.classList.remove(
                                         "active"
-                                    )
+                                    );
+
+                                }
                             );
+
 
                         button.classList.add(
                             "active"
                         );
 
+
                         selectedPower =
                             power;
 
+
                         countrySelectedText.textContent =
                             `${power.flag} ${power.name}`;
+
 
                         selectCountryButton.disabled =
                             false;
@@ -2046,25 +2168,27 @@ function renderCountryList() {
 
 
 /* =========================================================
-   UPDATE MAIN UI
+   UPDATE WORLD UI
    ========================================================= */
 
 function updateWorldUI() {
 
     /*
-     * Geen actieve WW3
+     * GEEN WW3
      */
 
     if (!activeWW3) {
 
-        chooseCountryButton.disabled =
-            true;
+        selectedPower = null;
 
-        chooseCountryButton.style.opacity =
-            "0.45";
+        selectedCountry.classList.remove(
+            "show"
+        );
 
-        chooseCountryButton.style.cursor =
-            "not-allowed";
+        loadMapButton.classList.remove(
+            "show"
+        );
+
 
         if (isGovernment) {
 
@@ -2083,6 +2207,15 @@ function updateWorldUI() {
 
         } else {
 
+            chooseCountryButton.disabled =
+                true;
+
+            chooseCountryButton.style.opacity =
+                "0.45";
+
+            chooseCountryButton.style.cursor =
+                "not-allowed";
+
             chooseCountryButton.innerHTML =
                 `WW3 WACHT OP OVERHEID`;
 
@@ -2093,7 +2226,7 @@ function updateWorldUI() {
 
 
     /*
-     * Er is een actieve WW3.
+     * ACTIEVE WW3
      */
 
     chooseCountryButton.disabled =
@@ -2107,7 +2240,7 @@ function updateWorldUI() {
 
 
     /*
-     * Speler heeft al een land.
+     * AL EEN LAND GEKOZEN
      */
 
     if (myWW3) {
@@ -2117,32 +2250,40 @@ function updateWorldUI() {
                 myWW3.country_id
             );
 
+
         if (myPower) {
 
             showSelectedPower(
                 myPower
             );
 
+            chooseCountryButton.innerHTML =
+                `✓ ${myPower.name}
+                 <span class="arrow">→</span>`;
+
+        } else {
+
+            chooseCountryButton.innerHTML =
+                `✓ COUNTRY SELECTED
+                 <span class="arrow">→</span>`;
+
         }
-
-        chooseCountryButton.innerHTML =
-            `✓ ${myPower
-                ? myPower.name
-                : "COUNTRY SELECTED"}
-             <span class="arrow">→</span>`;
-
-        /*
-         * Niet opnieuw kiezen zolang je
-         * nog in deze WW3 zit.
-         */
 
         return;
     }
 
 
     /*
-     * Normale speler zonder land.
+     * GEEN LAND
      */
+
+    selectedCountry.classList.remove(
+        "show"
+    );
+
+    loadMapButton.classList.remove(
+        "show"
+    );
 
     chooseCountryButton.innerHTML =
         `CHOOSE COUNTRY
@@ -2152,7 +2293,7 @@ function updateWorldUI() {
 
 
 /* =========================================================
-   START WW3 — ONLY GOVERNMENT
+   CREATE WW3
    ========================================================= */
 
 async function createWW3() {
@@ -2166,12 +2307,14 @@ async function createWW3() {
         return;
     }
 
+
     chooseCountryButton.disabled =
         true;
 
+
     try {
 
-        const { data, error } =
+        const result =
             await database.rpc(
                 "create_ww3",
                 {
@@ -2180,17 +2323,27 @@ async function createWW3() {
                 }
             );
 
+        const data =
+            result.data;
+
+        const error =
+            result.error;
+
         if (error) {
             throw error;
         }
 
-        activeWW3 = data;
+
+        activeWW3 =
+            data;
+
+
+        await refreshWW3();
+
 
         alert(
             "WW3 is gestart."
         );
-
-        await refreshWW3();
 
     } catch (error) {
 
@@ -2207,6 +2360,8 @@ async function createWW3() {
         chooseCountryButton.disabled =
             false;
 
+        await refreshWW3();
+
     }
 
 }
@@ -2222,6 +2377,7 @@ async function joinWW3(power) {
         return;
     }
 
+
     if (!activeWW3) {
 
         alert(
@@ -2230,6 +2386,7 @@ async function joinWW3(power) {
 
         return;
     }
+
 
     if (myWW3) {
 
@@ -2244,9 +2401,10 @@ async function joinWW3(power) {
     selectCountryButton.disabled =
         true;
 
+
     try {
 
-        const { data, error } =
+        const result =
             await database.rpc(
                 "join_ww3",
                 {
@@ -2258,20 +2416,29 @@ async function joinWW3(power) {
                 }
             );
 
+        const data =
+            result.data;
+
+        const error =
+            result.error;
+
         if (error) {
             throw error;
         }
 
 
         /*
-         * Server heeft het land bevestigd.
+         * SERVER HEEFT LAND GOEDGEKEURD
          */
 
         setLocalNation(
             power
         );
 
-        myWW3 = data;
+
+        myWW3 =
+            data;
+
 
         showSelectedPower(
             power
@@ -2285,6 +2452,7 @@ async function joinWW3(power) {
 
         await refreshWW3();
 
+
     } catch (error) {
 
         console.error(
@@ -2292,15 +2460,12 @@ async function joinWW3(power) {
             error
         );
 
+
         alert(
             error.message ||
             "Dit land kon niet worden gekozen."
         );
 
-        /*
-         * Mogelijk heeft iemand anders
-         * het land net gekozen.
-         */
 
         await refreshWW3();
 
@@ -2324,10 +2489,12 @@ async function leaveWW3() {
         return;
     }
 
+
     const confirmed =
         confirm(
             "Weet je zeker dat je je huidige land wilt verlaten?"
         );
+
 
     if (!confirmed) {
         return;
@@ -2336,7 +2503,7 @@ async function leaveWW3() {
 
     try {
 
-        const { error } =
+        const result =
             await database.rpc(
                 "leave_ww3",
                 {
@@ -2345,32 +2512,46 @@ async function leaveWW3() {
                 }
             );
 
+        const error =
+            result.error;
+
         if (error) {
             throw error;
         }
 
-        myWW3 = null;
+
+        myWW3 =
+            null;
+
 
         clearLocalNation();
 
-        selectedPower = null;
+
+        selectedPower =
+            null;
+
 
         selectedCountry.classList.remove(
             "show"
         );
 
+
         loadMapButton.classList.remove(
             "show"
         );
 
+
         countrySelectedText.textContent =
             "NONE";
 
+
         await refreshWW3();
+
 
         alert(
             "Je hebt je land verlaten."
         );
+
 
     } catch (error) {
 
@@ -2378,6 +2559,7 @@ async function leaveWW3() {
             "WW3 verlaten mislukt:",
             error
         );
+
 
         alert(
             error.message ||
@@ -2390,7 +2572,7 @@ async function leaveWW3() {
 
 
 /* =========================================================
-   REFRESH
+   REFRESH WW3
    ========================================================= */
 
 async function refreshWW3() {
@@ -2409,7 +2591,7 @@ async function refreshWW3() {
 
 
 /* =========================================================
-   OPEN / CLOSE
+   CHOOSE COUNTRY BUTTON
    ========================================================= */
 
 chooseCountryButton.addEventListener(
@@ -2417,7 +2599,7 @@ chooseCountryButton.addEventListener(
     async () => {
 
         /*
-         * Overheid kan WW3 starten.
+         * OVERHEID START WW3
          */
 
         if (
@@ -2432,7 +2614,7 @@ chooseCountryButton.addEventListener(
 
 
         /*
-         * Geen server.
+         * GEEN WW3
          */
 
         if (!activeWW3) {
@@ -2446,22 +2628,35 @@ chooseCountryButton.addEventListener(
 
 
         /*
-         * Speler heeft al een land.
+         * AL EEN LAND
          */
 
         if (myWW3) {
 
             alert(
-                "Je hebt al een land in deze WW3. " +
-                "Je kunt pas opnieuw kiezen nadat je " +
-                "je land hebt verlaten of bent overgenomen."
+                "Je hebt al een land in deze WW3."
             );
 
             return;
         }
 
 
+        /*
+         * OPEN LANDENLIJST
+         */
+
         await refreshWW3();
+
+
+        if (!activeWW3) {
+
+            alert(
+                "WW3 is niet meer actief."
+            );
+
+            return;
+        }
+
 
         countryOverlay.classList.add(
             "show"
@@ -2470,6 +2665,10 @@ chooseCountryButton.addEventListener(
     }
 );
 
+
+/* =========================================================
+   CLOSE COUNTRY WINDOW
+   ========================================================= */
 
 closeCountry.addEventListener(
     "click",
@@ -2503,7 +2702,7 @@ countryOverlay.addEventListener(
 
 
 /* =========================================================
-   SELECT COUNTRY BUTTON
+   SELECT COUNTRY
    ========================================================= */
 
 selectCountryButton.addEventListener(
@@ -2539,6 +2738,7 @@ loadMapButton.addEventListener(
             return;
         }
 
+
         window.location.href =
             "./map.html";
 
@@ -2554,21 +2754,46 @@ async function initializeWorld() {
 
     try {
 
+        /*
+         * Eerst controleren of Supabase werkt.
+         */
+
+        if (
+            !window.supabase
+        ) {
+
+            throw new Error(
+                "Supabase library is niet geladen."
+            );
+
+        }
+
+
+        /*
+         * Account controleren
+         */
+
         await checkAccountRole();
+
+
+        /*
+         * WW3 laden
+         */
 
         await refreshWW3();
 
+
         /*
-         * Oude lokale keuze verwijderen als de
-         * server zegt dat deze speler niet meer
-         * in een actieve WW3 zit.
+         * Oude lokale keuze verwijderen
+         * als speler niet meer in WW3 zit.
          */
 
         if (!myWW3) {
 
             clearLocalNation();
 
-            selectedPower = null;
+            selectedPower =
+                null;
 
             selectedCountry.classList.remove(
                 "show"
@@ -2580,12 +2805,51 @@ async function initializeWorld() {
 
         }
 
+
+        console.log(
+            "WORLD INITIALIZED"
+        );
+
+        console.log(
+            "Commander:",
+            playerName
+        );
+
+        console.log(
+            "Government:",
+            isGovernment
+        );
+
+        console.log(
+            "Active WW3:",
+            activeWW3
+        );
+
+        console.log(
+            "My WW3:",
+            myWW3
+        );
+
+
     } catch (error) {
 
         console.error(
             "World initialization error:",
             error
         );
+
+
+        /*
+         * Commander blijft zichtbaar,
+         * ook als WW3 tijdelijk niet geladen kan worden.
+         */
+
+        if (playerName) {
+
+            commanderName.textContent =
+                playerName;
+
+        }
 
     }
 
@@ -2596,13 +2860,6 @@ async function initializeWorld() {
    AUTO REFRESH
    ========================================================= */
 
-/*
- * Elke 10 seconden opnieuw controleren.
- *
- * Hierdoor ziet een speler bijvoorbeeld vrij snel
- * dat België inmiddels door iemand anders is gekozen.
- */
-
 setInterval(
     async () => {
 
@@ -2611,7 +2868,18 @@ setInterval(
             "visible"
         ) {
 
-            await refreshWW3();
+            try {
+
+                await refreshWW3();
+
+            } catch (error) {
+
+                console.error(
+                    "WW3 auto refresh fout:",
+                    error
+                );
+
+            }
 
         }
 
@@ -2620,9 +2888,11 @@ setInterval(
 );
 
 
-initializeWorld();
+/* =========================================================
+   START
+   ========================================================= */
 
-</script>
+initializeWorld();
 
 </script>
 
