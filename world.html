@@ -1825,7 +1825,7 @@ async function checkAccountRole() {
     try {
         const { data, error } =
             await database.rpc(
-                "get_player_role_from_session",
+                "get_player_from_session",
                 {
                     p_token: sessionToken
                 }
@@ -1838,9 +1838,10 @@ async function checkAccountRole() {
             );
             return;
         }
-console.log("WW3 ROLE RAW DATA:", data);
-console.log("WW3 ROLE DATA TYPE:", Array.isArray(data));
-        const speler = data?.[0];
+
+        const speler = Array.isArray(data)
+            ? data[0]
+            : data;
 
         console.log(
             "WW3 PLAYER NAME:",
