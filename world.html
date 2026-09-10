@@ -825,9 +825,7 @@
     <div class="world-select-scanlines"></div>
 
 
-    <!-- =====================================================
-         HEADER
-         ===================================================== -->
+    <!-- HEADER -->
 
     <header class="world-header">
 
@@ -849,16 +847,12 @@
     </header>
 
 
-    <!-- =====================================================
-         MAIN LAYOUT
-         ===================================================== -->
+    <!-- MAIN LAYOUT -->
 
     <div class="world-layout">
 
 
-        <!-- =================================================
-             STATS
-             ================================================= -->
+        <!-- STATS -->
 
         <aside class="world-stats">
 
@@ -920,9 +914,7 @@
         </aside>
 
 
-        <!-- =================================================
-             CENTER
-             ================================================= -->
+        <!-- CENTER -->
 
         <main class="world-select-center">
 
@@ -999,9 +991,7 @@
 </div>
 
 
-<!-- =========================================================
-     COUNTRY SELECT WINDOW
-     ========================================================= -->
+<!-- COUNTRY SELECT WINDOW -->
 
 <div
     class="country-overlay"
@@ -1073,22 +1063,30 @@
 </div>
 
 
-
 <script>
 
-   console.log("=== WORLD SCRIPT START ===");
+/* =========================================================
+   DEBUG
+   ========================================================= */
+
+console.log("=== WORLD SCRIPT START ===");
+
 console.log(
     "WORLD PLAYER:",
     sessionStorage.getItem("globalConquestPlayer")
 );
+
 console.log(
     "WORLD SESSION:",
     !!sessionStorage.getItem("globalConquestSession")
 );
+
 console.log(
     "WORLD PLAYER ID:",
     sessionStorage.getItem("globalConquestPlayerId")
 );
+
+
 /* =========================================================
    GLOBAL CONQUEST — COUNTRY DATA
    ========================================================= */
@@ -1561,7 +1559,7 @@ const powers = [
 
 
 /* =========================================================
-   ACCOUNT / SESSION — EERST LADEN
+   ACCOUNT / SESSION
    ========================================================= */
 
 const playerName =
@@ -1581,7 +1579,7 @@ const sessionToken =
 
 
 /* =========================================================
-   ELEMENTS — DIRECT VINDEN
+   ELEMENTS
    ========================================================= */
 
 const commanderName =
@@ -1590,13 +1588,19 @@ const commanderName =
     );
 
 const points =
-    document.getElementById("points");
+    document.getElementById(
+        "points"
+    );
 
 const manpower =
-    document.getElementById("manpower");
+    document.getElementById(
+        "manpower"
+    );
 
 const factories =
-    document.getElementById("factories");
+    document.getElementById(
+        "factories"
+    );
 
 const chooseCountryButton =
     document.getElementById(
@@ -1650,7 +1654,7 @@ const loadMapButton =
 
 
 /* =========================================================
-   COMMANDER DIRECT TONEN
+   COMMANDER
    ========================================================= */
 
 if (playerName) {
@@ -1671,7 +1675,7 @@ if (playerName) {
 
 
 /* =========================================================
-   SESSION CONTROLEREN
+   SESSION CONTROL
    ========================================================= */
 
 if (
@@ -1685,7 +1689,6 @@ if (
 
     window.location.href =
         "./index.html";
-
 }
 
 
@@ -1696,8 +1699,11 @@ if (
 const SUPABASE_URL =
     "https://qelqaiczgibxyxfqtapg.supabase.co";
 
+/*
+ * PLAATS HIER JE BESTAANDE PUBLISHABLE KEY.
+ */
 const SUPABASE_KEY =
-    "sb_publishable_aZSOOfRnROvePvZ2WWNv8g_ZhfZTCes";
+    "YOUR_EXISTING_PUBLISHABLE_KEY";
 
 
 if (!window.supabase) {
@@ -1806,10 +1812,6 @@ function showSelectedPower(power) {
         "show"
     );
 
-    chooseCountryButton.innerHTML =
-        `✓ ${power.name}
-         <span class="arrow">→</span>`;
-
     loadMapButton.classList.add(
         "show"
     );
@@ -1821,25 +1823,55 @@ function showSelectedPower(power) {
    ACCOUNT ROLE
    ========================================================= */
 
-const { data, error } =
-    await database.rpc(
-        "get_player_from_session",
-        {
-            p_token: sessionToken
-        }
-    );
+async function checkAccountRole() {
+
+    try {
+
+        console.log(
+            "ACCOUNT ROLE CHECK START"
+        );
+
+        const result =
+            await database.rpc(
+                "get_player_from_session",
+                {
+                    p_token:
+                        sessionToken
+                }
+            );
+
+        const data =
+            result.data;
+
+        const error =
+            result.error;
+
 
         if (error) {
+
             console.error(
                 "ACCOUNT ROLE ERROR:",
                 error
             );
+
+            isGovernment =
+                false;
+
             return;
+
         }
 
-        const speler = Array.isArray(data)
-            ? data[0]
-            : data;
+
+        /*
+         * get_player_from_session retourneert
+         * één players-record.
+         */
+
+        const speler =
+            Array.isArray(data)
+                ? data[0]
+                : data;
+
 
         console.log(
             "WW3 PLAYER NAME:",
@@ -1851,9 +1883,13 @@ const { data, error } =
             speler?.account_role
         );
 
+
         isGovernment =
-            speler?.account_role?.toLowerCase() ===
+            String(
+                speler?.account_role || ""
+            ).toLowerCase() ===
             "government";
+
 
         console.log(
             "WW3 IS GOVERNMENT:",
@@ -1861,12 +1897,20 @@ const { data, error } =
         );
 
     } catch (error) {
+
         console.error(
             "ACCOUNT ROLE CHECK MISLUKT:",
             error
         );
+
+        isGovernment =
+            false;
+
     }
+
 }
+
+
 /* =========================================================
    LOAD ACTIVE WW3
    ========================================================= */
@@ -1886,9 +1930,11 @@ async function loadActiveWW3() {
         const error =
             result.error;
 
+
         if (error) {
             throw error;
         }
+
 
         if (
             data &&
@@ -1912,7 +1958,8 @@ async function loadActiveWW3() {
             error
         );
 
-        activeWW3 = null;
+        activeWW3 =
+            null;
 
     }
 
@@ -1928,9 +1975,11 @@ async function loadOccupiedCountries() {
     occupiedCountries =
         new Map();
 
+
     if (!activeWW3) {
         return;
     }
+
 
     try {
 
@@ -1945,9 +1994,11 @@ async function loadOccupiedCountries() {
         const error =
             result.error;
 
+
         if (error) {
             throw error;
         }
+
 
         (data || []).forEach(
             row => {
@@ -1965,6 +2016,7 @@ async function loadOccupiedCountries() {
 
             }
         );
+
 
     } catch (error) {
 
@@ -1984,11 +2036,14 @@ async function loadOccupiedCountries() {
 
 async function loadMyWW3() {
 
-    myWW3 = null;
+    myWW3 =
+        null;
+
 
     if (!activeWW3) {
         return;
     }
+
 
     try {
 
@@ -2007,9 +2062,11 @@ async function loadMyWW3() {
         const error =
             result.error;
 
+
         if (error) {
             throw error;
         }
+
 
         if (
             data &&
@@ -2039,7 +2096,9 @@ async function loadMyWW3() {
 
 function renderCountryList() {
 
-    countryList.innerHTML = "";
+    countryList.innerHTML =
+        "";
+
 
     const sortedPowers =
         [...powers].sort(
@@ -2055,11 +2114,13 @@ function renderCountryList() {
                         b.id
                     );
 
+
                 if (
                     aTaken === bTaken
                 ) {
                     return 0;
                 }
+
 
                 return aTaken
                     ? 1
@@ -2087,6 +2148,7 @@ function renderCountryList() {
                 document.createElement(
                     "button"
                 );
+
 
             button.className =
                 "country-option";
@@ -2186,7 +2248,8 @@ function updateWorldUI() {
 
     if (!activeWW3) {
 
-        selectedPower = null;
+        selectedPower =
+            null;
 
         selectedCountry.classList.remove(
             "show"
@@ -2336,13 +2399,16 @@ async function createWW3() {
         const error =
             result.error;
 
+
         if (error) {
             throw error;
         }
 
 
         activeWW3 =
-            data;
+            Array.isArray(data)
+                ? data[0]
+                : data;
 
 
         await refreshWW3();
@@ -2352,6 +2418,7 @@ async function createWW3() {
             "WW3 is gestart."
         );
 
+
     } catch (error) {
 
         console.error(
@@ -2359,13 +2426,16 @@ async function createWW3() {
             error
         );
 
+
         alert(
             error.message ||
             "WW3 kon niet worden gestart."
         );
 
+
         chooseCountryButton.disabled =
             false;
+
 
         await refreshWW3();
 
@@ -2429,6 +2499,7 @@ async function joinWW3(power) {
         const error =
             result.error;
 
+
         if (error) {
             throw error;
         }
@@ -2444,7 +2515,9 @@ async function joinWW3(power) {
 
 
         myWW3 =
-            data;
+            Array.isArray(data)
+                ? data[0]
+                : data;
 
 
         showSelectedPower(
@@ -2521,6 +2594,7 @@ async function leaveWW3() {
 
         const error =
             result.error;
+
 
         if (error) {
             throw error;
@@ -2762,7 +2836,7 @@ async function initializeWorld() {
     try {
 
         /*
-         * Eerst controleren of Supabase werkt.
+         * Supabase controleren
          */
 
         if (
@@ -2845,11 +2919,6 @@ async function initializeWorld() {
             error
         );
 
-
-        /*
-         * Commander blijft zichtbaar,
-         * ook als WW3 tijdelijk niet geladen kan worden.
-         */
 
         if (playerName) {
 
